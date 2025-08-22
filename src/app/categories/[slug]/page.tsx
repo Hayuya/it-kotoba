@@ -6,7 +6,7 @@ import Sidebar from '../../../components/Sidebar'
 import Footer from '../../../components/Footer'
 import { 
   getCategoryBySlug,
-  getAllCategories, // getCategories から getAllCategories に変更
+  getCategories,
   getTermsByCategory,
   getDifficultyColor,
   getDifficultyLabel
@@ -43,7 +43,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
 
   const [category, categories, termsResponse] = await Promise.all([
     getCategoryBySlug(params.slug),
-    getAllCategories(), // getCategories から getAllCategories に変更
+    getCategories(),
     getTermsByCategory(params.slug, { limit, offset, orders: 'order' })
   ])
   
@@ -52,9 +52,6 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   }
 
   const totalPages = Math.ceil(termsResponse.totalCount / limit)
-
-  console.log('カテゴリー詳細ページ - カテゴリー:', category.name)
-  console.log('カテゴリー詳細ページ - 用語数:', termsResponse.totalCount)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -91,24 +88,12 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             {/* カテゴリーヘッダー */}
             <header className="bg-white rounded-lg shadow-md p-8 mb-8">
               <div className="flex items-center space-x-4 mb-4">
-                <span className="text-4xl">{category.icon || '📁'}</span>
+                <span className="text-4xl">{category.icon}</span>
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900">{category.name}</h1>
                   <p className="text-gray-600 mt-2">
                     {category.description || `${category.name}に関連するIT用語の解説`}
                   </p>
-                  {/* 親カテゴリー情報 */}
-                  {category.parent && (
-                    <div className="mt-2">
-                      <Link 
-                        href={`/category/${category.parent.slug}`}
-                        className="text-sm text-blue-600 hover:text-blue-800"
-                      >
-                        <span className="mr-1">{category.parent.icon}</span>
-                        {category.parent.name} の子カテゴリー
-                      </Link>
-                    </div>
-                  )}
                 </div>
               </div>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">

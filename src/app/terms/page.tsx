@@ -6,7 +6,7 @@ import Footer from '../../components/Footer'
 import TermsFilter from '../../components/TermsFilter'
 import { 
   getTerms, 
-  getAllCategories, // getCategories から getAllCategories に変更
+  getCategories, 
   getDifficultyColor, 
   getDifficultyLabel 
 } from '../../lib/microcms'
@@ -47,13 +47,10 @@ export default async function TermsPage({ searchParams }: Props) {
       orders: 'order',
       filters: filters.length > 0 ? filters.join('[and]') : undefined
     }),
-    getAllCategories() // getCategories から getAllCategories に変更
+    getCategories()
   ])
 
   const totalPages = Math.ceil(termsResponse.totalCount / limit)
-
-  console.log('用語ページ - カテゴリー数:', categories.length)
-  console.log('用語ページ - 用語数:', termsResponse.totalCount)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -116,7 +113,7 @@ export default async function TermsPage({ searchParams }: Props) {
                       </p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <span className="text-lg">{term.category.icon || '📄'}</span>
+                          <span className="text-lg">{term.category.icon}</span>
                           <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
                             {term.category.name}
                           </span>
