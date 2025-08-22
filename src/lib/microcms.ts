@@ -19,8 +19,8 @@ if (!serviceDomain || !apiKey) {
 
 // microCMSクライアントの設定（サーバーサイド専用）
 export const client = createClient({
-  serviceDomain: serviceDomain || 'itaikotoba',
-  apiKey: apiKey || 'ZDrwYZn5Hn4ApxEFVn9KB9L4fKPVI2aZqv1P',
+  serviceDomain: serviceDomain || 'MICROCMS_SERVICE_DOMAIN',
+  apiKey: apiKey || 'MICROCMS_API_KEY',
 })
 
 // API関連の型定義
