@@ -3,14 +3,16 @@ import Header from '../components/Header'
 import Sidebar from '../components/Sidebar'
 import Footer from '../components/Footer'
 import RecommendedSlider from '../components/RecommendedSlider'
-import { getCategories, getStats } from '../lib/microcms'
+import { getAllCategories, getStats } from '../lib/microcms'
 
 export default async function Home() {
   // microCMSからデータを取得
   const [categories, stats] = await Promise.all([
-    getCategories(),
+    getAllCategories(), // getCategories から getAllCategories に変更
     getStats()
   ])
+
+  console.log('ホームページで取得したカテゴリー数:', categories.length)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -53,13 +55,16 @@ export default async function Home() {
 
             {/* カテゴリー別用語紹介 */}
             <section className="mb-8">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800">カテゴリー別用語</h2>
+              <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                カテゴリー別用語 
+                <span className="text-lg text-gray-600 ml-2">({categories.length}個のカテゴリー)</span>
+              </h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {categories.map((category) => (
+                {categories.slice(0, 12).map((category) => (
                   <div key={category.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-                    <div className="text-3xl mb-3">{category.icon}</div>
+                    <div className="text-3xl mb-3">{category.icon || '📁'}</div>
                     <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.name}</h3>
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-gray-600 mb-4 text-sm">
                       {category.description || `${category.name}に関連するIT用語の解説`}
                     </p>
                     <a 
@@ -71,6 +76,18 @@ export default async function Home() {
                   </div>
                 ))}
               </div>
+              
+              {/* 全カテゴリー表示ボタン */}
+              {categories.length > 12 && (
+                <div className="text-center mt-8">
+                  <a 
+                    href="/categories" 
+                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    すべてのカテゴリーを見る（{categories.length}個）
+                  </a>
+                </div>
+              )}
             </section>
 
             {/* 統計情報 */}
