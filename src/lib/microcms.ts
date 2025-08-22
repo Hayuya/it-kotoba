@@ -2,9 +2,21 @@ import { createClient } from 'microcms-js-sdk'
 
 // microCMSクライアントの設定
 export const client = createClient({
-  serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN || '',
-  apiKey: process.env.MICROCMS_API_KEY || '',
+  serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN || 'itaikotoba',
+  apiKey: process.env.MICROCMS_API_KEY || 'ZDrwYZn5Hn4ApxEFVn9KB9L4fKPVI2aZqv1P',
 })
+
+// クライアント用の設定（ブラウザでも使用可能）
+export const createClientSideClient = () => {
+  if (typeof window !== 'undefined') {
+    // ブラウザ環境では制限されたAPIキーを使用
+    return createClient({
+      serviceDomain: process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN || 'itaikotoba',
+      apiKey: process.env.NEXT_PUBLIC_MICROCMS_API_KEY || 'ZDrwYZn5Hn4ApxEFVn9KB9L4fKPVI2aZqv1P',
+    })
+  }
+  return client
+}
 
 // API関連の型定義
 export interface Category {

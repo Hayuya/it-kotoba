@@ -2,85 +2,15 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { Category } from '../lib/microcms'
 
-export default function Sidebar() {
+interface SidebarProps {
+  categories?: Category[]
+}
+
+export default function Sidebar({ categories = [] }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedCategories, setExpandedCategories] = useState<string[]>([])
-
-  const categories = [
-    {
-      id: 'crypto',
-      name: '暗号・認証',
-      icon: '🔐',
-      subcategories: [
-        { id: 'symmetric-crypto', name: '共通鍵暗号' },
-        { id: 'asymmetric-crypto', name: '公開鍵暗号' },
-        { id: 'hash', name: 'ハッシュ関数' },
-        { id: 'digital-signature', name: 'デジタル署名' },
-        { id: 'authentication', name: '認証技術' },
-        { id: 'pki', name: 'PKI' }
-      ]
-    },
-    {
-      id: 'threats',
-      name: '脅威・攻撃',
-      icon: '🛡️',
-      subcategories: [
-        { id: 'malware', name: 'マルウェア' },
-        { id: 'network-attack', name: 'ネットワーク攻撃' },
-        { id: 'web-attack', name: 'Web攻撃' },
-        { id: 'social-engineering', name: 'ソーシャルエンジニアリング' },
-        { id: 'vulnerability', name: '脆弱性' }
-      ]
-    },
-    {
-      id: 'network',
-      name: 'ネットワーク',
-      icon: '🌐',
-      subcategories: [
-        { id: 'tcp-ip', name: 'TCP/IP' },
-        { id: 'firewall', name: 'ファイアウォール' },
-        { id: 'vpn', name: 'VPN' },
-        { id: 'ids-ips', name: 'IDS/IPS' },
-        { id: 'wireless', name: '無線LAN' }
-      ]
-    },
-    {
-      id: 'legal',
-      name: '法律・制度',
-      icon: '📋',
-      subcategories: [
-        { id: 'privacy-law', name: '個人情報保護法' },
-        { id: 'cyber-law', name: 'サイバーセキュリティ基本法' },
-        { id: 'computer-fraud', name: '不正アクセス禁止法' },
-        { id: 'international-law', name: '国際法・条約' }
-      ]
-    },
-    {
-      id: 'management',
-      name: '組織・管理',
-      icon: '🏢',
-      subcategories: [
-        { id: 'isms', name: 'ISMS' },
-        { id: 'risk-management', name: 'リスク管理' },
-        { id: 'incident-response', name: 'インシデント対応' },
-        { id: 'bcp', name: 'BCP/DR' },
-        { id: 'audit', name: '監査' }
-      ]
-    },
-    {
-      id: 'systems',
-      name: 'システム',
-      icon: '💻',
-      subcategories: [
-        { id: 'os-security', name: 'OS セキュリティ' },
-        { id: 'database', name: 'データベース' },
-        { id: 'web-app', name: 'Webアプリケーション' },
-        { id: 'cloud', name: 'クラウド' },
-        { id: 'mobile', name: 'モバイル' }
-      ]
-    }
-  ]
 
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories(prev =>
@@ -149,16 +79,13 @@ export default function Sidebar() {
               </button>
 
               {expandedCategories.includes(category.id) && (
-                <div className="ml-6 mt-2 space-y-1">
-                  {category.subcategories.map((subcategory) => (
-                    <Link
-                      key={subcategory.id}
-                      href={`/category/${category.id}/${subcategory.id}`}
-                      className="block py-2 px-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                    >
-                      {subcategory.name}
-                    </Link>
-                  ))}
+                <div className="ml-6 mt-2">
+                  <Link
+                    href={`/category/${category.slug}`}
+                    className="block py-2 px-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  >
+                    {category.name}の用語一覧を見る
+                  </Link>
                 </div>
               )}
             </div>
@@ -170,16 +97,7 @@ export default function Sidebar() {
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold mb-4 text-gray-800">解説者プロフィール</h3>
         <div className="flex items-start space-x-4">
-          <img
-            src="/images/profile.jpg"
-            alt="解説者プロフィール"
-            className="w-16 h-16 rounded-full bg-gray-200"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none'
-              e.currentTarget.nextElementSibling?.classList.remove('hidden')
-            }}
-          />
-          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl hidden">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
             IT
           </div>
           <div>

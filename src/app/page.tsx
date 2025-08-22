@@ -2,8 +2,15 @@ import Header from '../components/Header'
 import Sidebar from '../components/Sidebar'
 import Footer from '../components/Footer'
 import RecommendedSlider from '../components/RecommendedSlider'
+import { getCategories, getStats } from '../lib/microcms'
 
-export default function Home() {
+export default async function Home() {
+  // microCMSからデータを取得
+  const [categories, stats] = await Promise.all([
+    getCategories(),
+    getStats()
+  ])
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -11,7 +18,7 @@ export default function Home() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* サイドバー */}
           <aside className="lg:w-1/4">
-            <Sidebar />
+            <Sidebar categories={categories} />
           </aside>
 
           {/* メインコンテンツ */}
@@ -46,71 +53,21 @@ export default function Home() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold mb-6 text-gray-800">カテゴリー別用語</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-                  <div className="text-3xl mb-3">🔐</div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800">暗号・認証</h3>
-                  <p className="text-gray-600 mb-4">
-                    暗号化技術、認証方式、デジタル署名などのセキュリティ基盤技術
-                  </p>
-                  <a href="/category/crypto" className="text-blue-600 hover:text-blue-800 font-medium">
-                    詳細を見る →
-                  </a>
-                </div>
-
-                <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-                  <div className="text-3xl mb-3">🛡️</div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800">脅威・攻撃</h3>
-                  <p className="text-gray-600 mb-4">
-                    サイバー攻撃、脆弱性、マルウェアなどのセキュリティ脅威
-                  </p>
-                  <a href="/category/threats" className="text-blue-600 hover:text-blue-800 font-medium">
-                    詳細を見る →
-                  </a>
-                </div>
-
-                <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-                  <div className="text-3xl mb-3">🌐</div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800">ネットワーク</h3>
-                  <p className="text-gray-600 mb-4">
-                    TCP/IP、ファイアウォール、VPNなどのネットワークセキュリティ
-                  </p>
-                  <a href="/category/network" className="text-blue-600 hover:text-blue-800 font-medium">
-                    詳細を見る →
-                  </a>
-                </div>
-
-                <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-                  <div className="text-3xl mb-3">📋</div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800">法律・制度</h3>
-                  <p className="text-gray-600 mb-4">
-                    個人情報保護法、サイバーセキュリティ基本法などの関連法規
-                  </p>
-                  <a href="/category/legal" className="text-blue-600 hover:text-blue-800 font-medium">
-                    詳細を見る →
-                  </a>
-                </div>
-
-                <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-                  <div className="text-3xl mb-3">🏢</div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800">組織・管理</h3>
-                  <p className="text-gray-600 mb-4">
-                    ISMS、リスク管理、インシデント対応などの組織的対策
-                  </p>
-                  <a href="/category/management" className="text-blue-600 hover:text-blue-800 font-medium">
-                    詳細を見る →
-                  </a>
-                </div>
-
-                <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-                  <div className="text-3xl mb-3">💻</div>
-                  <h3 className="text-xl font-semibold mb-2 text-gray-800">システム</h3>
-                  <p className="text-gray-600 mb-4">
-                    OS、データベース、Webアプリケーションのセキュリティ
-                  </p>
-                  <a href="/category/systems" className="text-blue-600 hover:text-blue-800 font-medium">
-                    詳細を見る →
-                  </a>
-                </div>
+                {categories.map((category) => (
+                  <div key={category.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <div className="text-3xl mb-3">{category.icon}</div>
+                    <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.name}</h3>
+                    <p className="text-gray-600 mb-4">
+                      {category.description || `${category.name}に関連するIT用語の解説`}
+                    </p>
+                    <a 
+                      href={`/category/${category.slug}`} 
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      詳細を見る →
+                    </a>
+                  </div>
+                ))}
               </div>
             </section>
 
@@ -119,11 +76,15 @@ export default function Home() {
               <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">サイト統計</h2>
               <div className="grid md:grid-cols-3 gap-6 text-center">
                 <div>
-                  <div className="text-3xl font-bold text-blue-600 mb-2">500+</div>
+                  <div className="text-3xl font-bold text-blue-600 mb-2">
+                    {stats.totalTerms}+
+                  </div>
                   <div className="text-gray-600">登録用語数</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-green-600 mb-2">15</div>
+                  <div className="text-3xl font-bold text-green-600 mb-2">
+                    {stats.totalCategories}
+                  </div>
                   <div className="text-gray-600">カテゴリー数</div>
                 </div>
                 <div>
