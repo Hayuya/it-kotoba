@@ -1,22 +1,27 @@
 import { createClient } from 'microcms-js-sdk'
 
-// microCMSクライアントの設定
-export const client = createClient({
-  serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN || 'itaikotoba',
-  apiKey: process.env.MICROCMS_API_KEY || 'ZDrwYZn5Hn4ApxEFVn9KB9L4fKPVI2aZqv1P',
-})
 
-// クライアント用の設定（ブラウザでも使用可能）
-export const createClientSideClient = () => {
-  if (typeof window !== 'undefined') {
-    // ブラウザ環境では制限されたAPIキーを使用
-    return createClient({
-      serviceDomain: process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN || 'itaikotoba',
-      apiKey: process.env.NEXT_PUBLIC_MICROCMS_API_KEY || 'ZDrwYZn5Hn4ApxEFVn9KB9L4fKPVI2aZqv1P',
-    })
-  }
-  return client
+// 環境変数の確認（サーバーサイドのみ使用）
+const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN
+const apiKey = process.env.MICROCMS_API_KEY
+
+// デバッグ情報をログ出力
+console.log('microCMS設定確認:')
+console.log('- Service Domain:', serviceDomain || 'NOT SET')
+console.log('- API Key:', apiKey ? `${apiKey.substring(0, 8)}...` : 'NOT SET')
+
+if (!serviceDomain || !apiKey) {
+  console.warn('⚠️ microCMSの環境変数が設定されていません。開発環境では一部機能が制限されます。')
+  console.warn('必要な環境変数:')
+  console.warn('- MICROCMS_SERVICE_DOMAIN')
+  console.warn('- MICROCMS_API_KEY')
 }
+
+// microCMSクライアントの設定（サーバーサイド専用）
+export const client = createClient({
+  serviceDomain: serviceDomain || 'itaikotoba',
+  apiKey: apiKey || 'ZDrwYZn5Hn4ApxEFVn9KB9L4fKPVI2aZqv1P',
+})
 
 // API関連の型定義
 export interface Category {
@@ -26,6 +31,13 @@ export interface Category {
   description?: string
   icon: string
   order: number
+  parent?: {
+    id: string
+    name: string
+    slug: string
+    icon: string
+    description?: string
+  } | null
   createdAt: string
   updatedAt: string
   publishedAt: string
@@ -49,11 +61,11 @@ export interface Term {
   description: string
   content: string
   category: Category
-  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  difficulty: string[] // 配列形式に変更
   tags: Tag[]
   relatedTerms: Term[]
   isRecommended: boolean
-  order: number
+  order?: number
   createdAt: string
   updatedAt: string
   publishedAt: string
@@ -76,23 +88,33 @@ export const getTerms = async (queries?: {
   filters?: string
   fields?: string[]
 }): Promise<MicroCMSListResponse<Term>> => {
-  const { contents, totalCount, offset, limit } = await client.get({
-    endpoint: 'terms',
-    queries: {
-      limit: queries?.limit || 10,
-      offset: queries?.offset || 0,
-      orders: queries?.orders || '-publishedAt',
-      q: queries?.q,
-      filters: queries?.filters,
-      fields: queries?.fields?.join(','),
-    },
-  })
+  try {
+    const { contents, totalCount, offset, limit } = await client.get({
+      endpoint: 'terms',
+      queries: {
+        limit: queries?.limit || 10,
+        offset: queries?.offset || 0,
+        orders: queries?.orders || '-publishedAt',
+        q: queries?.q,
+        filters: queries?.filters,
+        fields: queries?.fields?.join(','),
+      },
+    })
 
-  return {
-    contents,
-    totalCount,
-    offset,
-    limit,
+    return {
+      contents,
+      totalCount,
+      offset,
+      limit,
+    }
+  } catch (error) {
+    console.error('Error fetching terms:', error)
+    return {
+      contents: [],
+      totalCount: 0,
+      offset: 0,
+      limit: 0,
+    }
   }
 }
 
@@ -132,28 +154,49 @@ export const getRecommendedTerms = async (limit: number = 6): Promise<Term[]> =>
 }
 
 export const getTermsByCategory = async (
-  categoryId: string,
+  categorySlug: string,
   queries?: {
     limit?: number
     offset?: number
     orders?: string
   }
 ): Promise<MicroCMSListResponse<Term>> => {
-  const { contents, totalCount, offset, limit } = await client.get({
-    endpoint: 'terms',
-    queries: {
-      filters: `category[equals]${categoryId}`,
-      limit: queries?.limit || 10,
-      offset: queries?.offset || 0,
-      orders: queries?.orders || 'order',
-    },
-  })
+  try {
+    // まずカテゴリーIDを取得
+    const category = await getCategoryBySlug(categorySlug)
+    if (!category) {
+      return {
+        contents: [],
+        totalCount: 0,
+        offset: 0,
+        limit: 0,
+      }
+    }
 
-  return {
-    contents,
-    totalCount,
-    offset,
-    limit,
+    const { contents, totalCount, offset, limit } = await client.get({
+      endpoint: 'terms',
+      queries: {
+        filters: `category[equals]${category.id}`,
+        limit: queries?.limit || 10,
+        offset: queries?.offset || 0,
+        orders: queries?.orders || 'order',
+      },
+    })
+
+    return {
+      contents,
+      totalCount,
+      offset,
+      limit,
+    }
+  } catch (error) {
+    console.error('Error fetching terms by category:', error)
+    return {
+      contents: [],
+      totalCount: 0,
+      offset: 0,
+      limit: 0,
+    }
   }
 }
 
@@ -164,21 +207,31 @@ export const getTermsByTag = async (
     offset?: number
   }
 ): Promise<MicroCMSListResponse<Term>> => {
-  const { contents, totalCount, offset, limit } = await client.get({
-    endpoint: 'terms',
-    queries: {
-      filters: `tags[contains]${tagId}`,
-      limit: queries?.limit || 10,
-      offset: queries?.offset || 0,
-      orders: '-publishedAt',
-    },
-  })
+  try {
+    const { contents, totalCount, offset, limit } = await client.get({
+      endpoint: 'terms',
+      queries: {
+        filters: `tags[contains]${tagId}`,
+        limit: queries?.limit || 10,
+        offset: queries?.offset || 0,
+        orders: '-publishedAt',
+      },
+    })
 
-  return {
-    contents,
-    totalCount,
-    offset,
-    limit,
+    return {
+      contents,
+      totalCount,
+      offset,
+      limit,
+    }
+  } catch (error) {
+    console.error('Error fetching terms by tag:', error)
+    return {
+      contents: [],
+      totalCount: 0,
+      offset: 0,
+      limit: 0,
+    }
   }
 }
 
@@ -189,21 +242,31 @@ export const searchTerms = async (
     offset?: number
   }
 ): Promise<MicroCMSListResponse<Term>> => {
-  const { contents, totalCount, offset, limit } = await client.get({
-    endpoint: 'terms',
-    queries: {
-      q: keyword,
-      limit: queries?.limit || 10,
-      offset: queries?.offset || 0,
-      orders: '-publishedAt',
-    },
-  })
+  try {
+    const { contents, totalCount, offset, limit } = await client.get({
+      endpoint: 'terms',
+      queries: {
+        q: keyword,
+        limit: queries?.limit || 10,
+        offset: queries?.offset || 0,
+        orders: '-publishedAt',
+      },
+    })
 
-  return {
-    contents,
-    totalCount,
-    offset,
-    limit,
+    return {
+      contents,
+      totalCount,
+      offset,
+      limit,
+    }
+  } catch (error) {
+    console.error('Error searching terms:', error)
+    return {
+      contents: [],
+      totalCount: 0,
+      offset: 0,
+      limit: 0,
+    }
   }
 }
 
@@ -218,9 +281,28 @@ export const getCategories = async (): Promise<Category[]> => {
       },
     })
 
-    return contents
+    // 親カテゴリーのみを返す（階層構造の最上位のみ）
+    return contents.filter((category: Category) => !category.parent)
   } catch (error) {
     console.error('Error fetching categories:', error)
+    return []
+  }
+}
+
+// 全カテゴリー（階層構造含む）を取得
+export const getAllCategories = async (): Promise<Category[]> => {
+  try {
+    const { contents } = await client.get({
+      endpoint: 'categories',
+      queries: {
+        limit: 100,
+        orders: 'order',
+      },
+    })
+
+    return contents
+  } catch (error) {
+    console.error('Error fetching all categories:', error)
     return []
   }
 }
@@ -286,8 +368,11 @@ export const formatDate = (dateString: string): string => {
   })
 }
 
-export const getDifficultyLabel = (difficulty: string): string => {
-  switch (difficulty) {
+export const getDifficultyLabel = (difficulty: string | string[]): string => {
+  // 配列の場合は最初の要素を使用
+  const level = Array.isArray(difficulty) ? difficulty[0] : difficulty
+  
+  switch (level) {
     case 'beginner':
       return '初級'
     case 'intermediate':
@@ -299,8 +384,11 @@ export const getDifficultyLabel = (difficulty: string): string => {
   }
 }
 
-export const getDifficultyColor = (difficulty: string): string => {
-  switch (difficulty) {
+export const getDifficultyColor = (difficulty: string | string[]): string => {
+  // 配列の場合は最初の要素を使用
+  const level = Array.isArray(difficulty) ? difficulty[0] : difficulty
+  
+  switch (level) {
     case 'beginner':
       return 'bg-green-100 text-green-800'
     case 'intermediate':

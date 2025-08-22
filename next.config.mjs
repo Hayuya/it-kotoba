@@ -4,6 +4,9 @@ const nextConfig = {
     domains: ['images.microcms-assets.io'],
     formats: ['image/webp', 'image/avif'],
   },
+  experimental: {
+    optimizePackageImports: ['microcms-js-sdk'],
+  },
   async headers() {
     return [
       {
@@ -31,6 +34,15 @@ const nextConfig = {
         source: '/home',
         destination: '/',
         permanent: true,
+      },
+    ];
+  },
+  // ISR (Incremental Static Regeneration) 設定
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap.xml',
+        destination: '/api/sitemap',
       },
     ];
   },

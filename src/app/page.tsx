@@ -1,3 +1,4 @@
+import DebugMicroCMS from '../components/DebugMicroCMS'
 import Header from '../components/Header'
 import Sidebar from '../components/Sidebar'
 import Footer from '../components/Footer'
@@ -14,6 +15,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      <DebugMicroCMS />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* サイドバー */}

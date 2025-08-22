@@ -56,48 +56,73 @@ export default function Sidebar({ categories = [] }: SidebarProps) {
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold mb-4 text-gray-800">カリキュラムもくじ</h3>
         <nav className="space-y-2">
-          {categories.map((category) => (
-            <div key={category.id}>
-              <button
-                onClick={() => toggleCategory(category.id)}
-                className="w-full flex items-center justify-between p-3 text-left rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg">{category.icon}</span>
-                  <span className="font-medium text-gray-700">{category.name}</span>
-                </div>
-                <svg
-                  className={`w-4 h-4 text-gray-400 transition-transform ${
-                    expandedCategories.includes(category.id) ? 'rotate-180' : ''
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {expandedCategories.includes(category.id) && (
-                <div className="ml-6 mt-2">
-                  <Link
-                    href={`/category/${category.slug}`}
-                    className="block py-2 px-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+          {categories.length > 0 ? (
+            categories.map((category) => (
+              <div key={category.id}>
+                {/* カテゴリヘッダー */}
+                <div className="flex items-center">
+                  <button
+                    onClick={() => toggleCategory(category.id)}
+                    className="flex items-center justify-between p-3 text-left rounded-lg hover:bg-gray-50 transition-colors flex-1"
                   >
-                    {category.name}の用語一覧を見る
-                  </Link>
+                    <div className="flex items-center space-x-3">
+                      <span className="text-lg">{category.icon}</span>
+                      <span className="font-medium text-gray-700">{category.name}</span>
+                    </div>
+                    <svg
+                      className={`w-4 h-4 text-gray-400 transition-transform ${
+                        expandedCategories.includes(category.id) ? 'rotate-180' : ''
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
                 </div>
-              )}
+
+                {/* 展開されたメニュー */}
+                {expandedCategories.includes(category.id) && (
+                  <div className="ml-6 mt-2 space-y-1">
+                    <Link
+                      href={`/category/${category.slug}`}
+                      className="block py-2 px-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    >
+                      📋 {category.name}の用語一覧
+                    </Link>
+                    {category.description && (
+                      <div className="py-2 px-3 text-xs text-gray-500">
+                        {category.description}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="text-gray-500 text-sm text-center py-4">
+              カテゴリーが見つかりません
             </div>
-          ))}
+          )}
         </nav>
+
+        {/* 全カテゴリー表示ボタン */}
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <Link
+            href="/categories"
+            className="block w-full text-center py-2 px-4 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+          >
+            すべてのカテゴリーを見る
+          </Link>
+        </div>
       </div>
 
       {/* 解説者プロフィール */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold mb-4 text-gray-800">解説者プロフィール</h3>
         <div className="flex items-start space-x-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
             IT
           </div>
           <div>
