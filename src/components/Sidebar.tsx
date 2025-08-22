@@ -123,17 +123,17 @@ export default function Sidebar({ categories = [] }: SidebarProps) {
         <h3 className="text-lg font-semibold mb-4 text-gray-800">解説者プロフィール</h3>
         <div className="flex items-start space-x-4">
           <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
-            IT
+            🐟〜
           </div>
           <div>
-            <h4 className="font-semibold text-gray-800 mb-2">セキュリティ専門家</h4>
+            <h4 className="font-semibold text-gray-800 mb-2">匿名200</h4>
             <p className="text-sm text-gray-600 mb-3">
-              情報処理安全確保支援士（登録セキスペ）として10年以上の実務経験。
-              企業のセキュリティ対策や人材育成に従事。
+              データ解析とWebアプリケーションの専門家。
+              企業のセキュリティ対策に従事。
             </p>
             <div className="flex flex-wrap gap-2">
               <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                情報処理安全確保支援士
+                システムエンジニア
               </span>
               <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
                 CISSP
