@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getTerms } from '../../../lib/microcms'
 
-
+// この関数を動的にする設定
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams
+    const { searchParams } = new URL(request.url)
     const indexType = searchParams.get('type') // 'alphabet', 'number'
     const indexChar = searchParams.get('char') // 'A', '0-9' など
 
@@ -19,8 +20,6 @@ export async function GET(request: NextRequest) {
     let filters: string[] = []
 
     switch (indexType) {
-      
-
       case 'alphabet':
         // アルファベット索引の場合
         filters = [`title[begins_with]${indexChar.toUpperCase()}`]

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getRecommendedTerms } from '../../../lib/microcms'
 
+// この関数を動的にする設定
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams
+    const { searchParams } = new URL(request.url)
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 6
 
     console.log('おすすめ用語取得開始:', limit, '件')

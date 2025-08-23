@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { client } from '../../../lib/microcms'
 
+// この関数を動的にする設定
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     console.log('=== カテゴリーデバッグ開始 ===')
