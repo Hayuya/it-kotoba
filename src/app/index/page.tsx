@@ -4,7 +4,7 @@ import Header from '../../components/Header'
 import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories, getAllTermSlugs } from '../../lib/microcms'
 
-export const dynamic = 'force-dynamic';
+
 
 
 export const metadata: Metadata = {

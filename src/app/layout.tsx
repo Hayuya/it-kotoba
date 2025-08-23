@@ -4,7 +4,6 @@ import './globals.css'
 import RecommendedSlider from '../components/RecommendedSlider'
 import Footer from '../components/Footer'
 
-export const dynamic = 'force-dynamic';
 
 const inter = Inter({ subsets: ['latin'] })
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] })
