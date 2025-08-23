@@ -1,14 +1,9 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '../../components/Header'
-
+import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories, getAllTermSlugs } from '../../lib/microcms'
-import dynamic from 'next/dynamic'
 
-const IndexSidebar = dynamic(() => import('../../components/IndexSidebar'), {
-  ssr: false, 
-  loading: () => <p>Loading Sidebar...</p> // ローディング中の表示（任意）
-})
 
 
 
