@@ -3,6 +3,9 @@ import IndexSidebar from '../components/IndexSidebar' // 変更：Sidebarから 
 import LatestArticles from '../components/LatestArticles'
 import { getCategories, getStats } from '../lib/microcms'
 
+
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   // microCMSからデータを取得
   const [categories, stats] = await Promise.all([
@@ -57,40 +60,7 @@ export default async function Home() {
               <LatestArticles />
             </section>
 
-            {/* カテゴリー案内セクション */}
-            <section className="mb-8">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800">📚 学習カテゴリー</h2>
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <p className="text-gray-600 mb-6">
-                  情報処理安全確保支援士試験の学習範囲を体系的に分類しています。
-                  各カテゴリーから興味のある分野を選んで効率的に学習を進めましょう。
-                </p>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {categories.slice(0, 8).map((category) => (
-                    <a
-                      key={category.id}
-                      href={`/categories/${category.slug}`}
-                      className="group flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <span className="text-2xl">{category.icon}</span>
-                      <div>
-                        <h3 className="font-medium text-gray-800 group-hover:text-blue-600 text-sm">
-                          {category.name}
-                        </h3>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-                <div className="mt-6 text-center">
-                  <a 
-                    href="/categories" 
-                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    すべてのカテゴリーを見る
-                  </a>
-                </div>
-              </div>
-            </section>
+
 
             {/* 統計情報 */}
             <section className="bg-white rounded-lg shadow-md p-8">
