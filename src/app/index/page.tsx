@@ -17,7 +17,9 @@ export const metadata: Metadata = {
 }
 
 export default async function IndexPage() {
-  let categories = []
+  // FIX: Explicitly define the type for 'categories'
+  // This infers the type from the return value of the `getCategories` function.
+  let categories: Awaited<ReturnType<typeof getCategories>> = []
   
   try {
     categories = await getCategories()
