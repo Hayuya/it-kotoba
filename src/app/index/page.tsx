@@ -1,11 +1,14 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import Header from '../../components/Header'
+
 import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories, getAllTermSlugs } from '../../lib/microcms'
 
+import dynamic from 'next/dynamic'
 
-
+const Header = dynamic(() => import('../../components/Header'), {
+  ssr: false,
+})
 
 export const metadata: Metadata = {
   title: '用語索引 - IT合言葉',
@@ -65,7 +68,7 @@ export default async function IndexPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* サイドバー */}
           <aside className="lg:w-1/4">
-            {/* <IndexSidebar categories={categories} /> */}
+            <IndexSidebar categories={categories} />
           </aside>
 
           {/* メインコンテンツ */}
