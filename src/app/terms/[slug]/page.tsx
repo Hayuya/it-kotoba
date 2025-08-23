@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Header from '../../../components/Header'
-import Sidebar from '../../../components/Sidebar'
+import IndexSidebar from '../../../components/IndexSidebar'
 import CopyUrlButton from '../../../components/CopyUrlButton'
 import { 
   getTermBySlug, 
@@ -75,7 +75,7 @@ export default async function TermPage({ params }: Props) {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* サイドバー */}
           <aside className="lg:w-1/4">
-            <Sidebar categories={categories} />
+            <IndexSidebar categories={categories} />
           </aside>
 
           {/* メインコンテンツ */}

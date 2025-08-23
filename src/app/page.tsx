@@ -1,5 +1,5 @@
 import Header from '../components/Header'
-import Sidebar from '../components/Sidebar'
+import IndexSidebar from '../components/IndexSidebar' // 変更：Sidebarから IndexSidebar に
 import LatestArticles from '../components/LatestArticles'
 import { getCategories, getStats } from '../lib/microcms'
 
@@ -18,7 +18,7 @@ export default async function Home() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* サイドバー */}
           <aside className="lg:w-1/4">
-            <Sidebar categories={categories} />
+            <IndexSidebar categories={categories} />
           </aside>
 
           {/* メインコンテンツ */}

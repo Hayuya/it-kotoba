@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '../../components/Header'
-import Sidebar from '../../components/Sidebar'
+import IndexSidebar from '../../components/IndexSidebar'
 import TermsFilter from '../../components/TermsFilter'
 import { 
   getTerms, 
@@ -59,7 +59,7 @@ export default async function TermsPage({ searchParams }: Props) {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* サイドバー */}
           <aside className="lg:w-1/4">
-            <Sidebar categories={categories} />
+            <IndexSidebar categories={categories} />
           </aside>
 
           {/* メインコンテンツ */}
