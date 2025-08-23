@@ -65,7 +65,7 @@ export default async function IndexPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* サイドバー */}
           <aside className="lg:w-1/4">
-            <IndexSidebar categories={categories} />
+            {/* <IndexSidebar categories={categories} /> */}
           </aside>
 
           {/* メインコンテンツ */}
