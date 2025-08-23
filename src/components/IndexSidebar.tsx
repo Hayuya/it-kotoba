@@ -23,6 +23,12 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([])
   const [indexTerms, setIndexTerms] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // コンポーネントがマウントされた後にAPI呼び出しを許可
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories(prev =>
@@ -32,9 +38,9 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
     )
   }
 
-  // 索引で用語を取得
+  // 索引で用語を取得（マウント後のみ実行）
   const fetchIndexTerms = async (index: string, type: 'alphabet' | 'number') => {
-    if (!index) {
+    if (!index || !mounted) {
       setIndexTerms([])
       return
     }
@@ -59,6 +65,7 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
         const data = await response.json()
         setIndexTerms(data.success ? data.data.contents : [])
       } else {
+        console.warn('API request failed:', response.status, response.statusText)
         setIndexTerms([])
       }
     } catch (error) {
@@ -69,10 +76,12 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
     }
   }
 
-  // 索引が変更された時の処理
+  // 索引が変更された時の処理（マウント後のみ）
   useEffect(() => {
-    fetchIndexTerms(selectedIndex, indexType)
-  }, [selectedIndex, indexType])
+    if (mounted) {
+      fetchIndexTerms(selectedIndex, indexType)
+    }
+  }, [selectedIndex, indexType, mounted])
 
   // 索引タイプ切り替え
   const handleIndexTypeChange = (type: 'alphabet' | 'number') => {
@@ -157,7 +166,7 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
         </div>
 
         {/* 索引結果 */}
-        {selectedIndex && (
+        {selectedIndex && mounted && (
           <div className="border-t border-gray-200 pt-4">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">
               「{selectedIndex}」で始まる用語 
