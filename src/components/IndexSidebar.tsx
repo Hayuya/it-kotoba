@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Category } from '../lib/microcms'
 
@@ -20,26 +20,34 @@ const NUMBER_GROUP = '0-9'
 export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
   const [selectedIndex, setSelectedIndex] = useState<string>('')
   const [indexType, setIndexType] = useState<'alphabet' | 'number'>('alphabet')
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([])
   const [indexTerms, setIndexTerms] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+
+  const toggleCategory = (categoryId: string) => {
+    setExpandedCategories(prev =>
+      prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    )
+  }
 
   // 索引で用語を取得
-  const fetchIndexTerms = useCallback(async (index: string, type: 'alphabet' | 'number') => {
+  const fetchIndexTerms = async (index: string, type: 'alphabet' | 'number') => {
     if (!index) {
       setIndexTerms([])
       return
     }
 
     setLoading(true)
-    setError(null)
-    
     try {
       let filter = ''
       
       if (type === 'alphabet') {
+        // アルファベット索引の場合
         filter = `title[begins_with]${index}`
       } else if (type === 'number') {
+        // 数字索引の場合
         const numberConditions = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
           .map(num => `title[begins_with]${num}`).join('[or]')
         filter = numberConditions
@@ -47,52 +55,40 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
 
       const response = await fetch(`/api/terms?filters=${encodeURIComponent(filter)}&limit=50&orders=title`)
       
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-      }
-
-      const data = await response.json()
-      
-      if (data.success) {
-        setIndexTerms(data.data.contents || [])
+      if (response.ok) {
+        const data = await response.json()
+        setIndexTerms(data.success ? data.data.contents : [])
       } else {
-        throw new Error(data.error || 'API returned error')
+        setIndexTerms([])
       }
     } catch (error) {
       console.error('Error fetching index terms:', error)
-      setError(error instanceof Error ? error.message : 'Unknown error')
       setIndexTerms([])
     } finally {
       setLoading(false)
     }
-  }, [])
+  }
 
   // 索引が変更された時の処理
   useEffect(() => {
-    if (selectedIndex) {
-      fetchIndexTerms(selectedIndex, indexType)
-    } else {
-      setIndexTerms([])
-      setError(null)
-    }
-  }, [selectedIndex, indexType, fetchIndexTerms])
+    fetchIndexTerms(selectedIndex, indexType)
+  }, [selectedIndex, indexType])
 
   // 索引タイプ切り替え
-  const handleIndexTypeChange = useCallback((type: 'alphabet' | 'number') => {
+  const handleIndexTypeChange = (type: 'alphabet' | 'number') => {
     setIndexType(type)
     setSelectedIndex('')
     setIndexTerms([])
-    setError(null)
-  }, [])
+  }
 
   // 索引項目をクリック
-  const handleIndexClick = useCallback((index: string) => {
+  const handleIndexClick = (index: string) => {
     if (selectedIndex === index) {
       setSelectedIndex('')
     } else {
       setSelectedIndex(index)
     }
-  }, [selectedIndex])
+  }
 
   return (
     <div className="space-y-6">
@@ -173,16 +169,6 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
                 <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                 <p className="text-sm text-gray-600 mt-2">読み込み中...</p>
               </div>
-            ) : error ? (
-              <div className="text-center py-4">
-                <p className="text-sm text-red-600 mb-2">エラーが発生しました</p>
-                <button 
-                  onClick={() => fetchIndexTerms(selectedIndex, indexType)}
-                  className="text-xs text-blue-600 hover:text-blue-800"
-                >
-                  再試行
-                </button>
-              </div>
             ) : indexTerms.length > 0 ? (
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {indexTerms.map((term) => (
@@ -207,7 +193,63 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
             )}
           </div>
         )}
-      
+      </div>
+
+      {/* カリキュラムもくじ */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h3 className="text-lg font-semibold mb-4 text-gray-800">カリキュラムもくじ</h3>
+        <nav className="space-y-2">
+          {categories.length > 0 ? (
+            categories.map((category) => (
+              <div key={category.id}>
+                {/* カテゴリヘッダー */}
+                <div className="flex items-center">
+                  <button
+                    onClick={() => toggleCategory(category.id)}
+                    className="flex items-center justify-between p-3 text-left rounded-lg hover:bg-gray-50 transition-colors flex-1"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <span className="text-lg">{category.icon}</span>
+                      <span className="font-medium text-gray-700">{category.name}</span>
+                    </div>
+                    <svg
+                      className={`w-4 h-4 text-gray-400 transition-transform ${
+                        expandedCategories.includes(category.id) ? 'rotate-180' : ''
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* 展開されたメニュー */}
+                {expandedCategories.includes(category.id) && (
+                  <div className="ml-6 mt-2 space-y-1">
+                    <Link
+                      href={`/categories/${category.slug}`}
+                      className="block py-2 px-3 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    >
+                      📋 {category.name}の用語一覧
+                    </Link>
+                    {category.description && (
+                      <div className="py-2 px-3 text-xs text-gray-500">
+                        {category.description}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="text-gray-500 text-sm text-center py-4">
+              カテゴリーが見つかりません
+            </div>
+          )}
+        </nav>
+
         {/* 全カテゴリー表示ボタン */}
         <div className="mt-4 pt-4 border-t border-gray-200">
           <Link
