@@ -4,6 +4,9 @@ import Header from '../../components/Header'
 import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories } from '../../lib/microcms'
 
+// 動的レンダリングを強制
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: '用語索引 - IT合言葉',
   description: 'アルファベット順・数字順でIT用語を検索できます。効率的に目的の用語を見つけられます。',
@@ -13,29 +16,15 @@ export const metadata: Metadata = {
   }
 }
 
-// 簡略化された統計情報（静的データ）
-function getStaticIndexStats() {
-  const alphabetStats = new Map<string, number>()
-  
-  // アルファベットの初期化（実際の統計は動的に取得）
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(letter => {
-    alphabetStats.set(letter, 0) // 0で初期化、実際のデータは後でJavaScriptで更新
-  })
-
-  return {
-    alphabet: alphabetStats,
-    number: 0,
-    total: 0
-  }
-}
-
 export default async function IndexPage() {
-  const [categories] = await Promise.all([
-    getCategories()
-  ])
-
-  // 静的な統計情報を使用
-  const stats = getStaticIndexStats()
+  let categories = []
+  
+  try {
+    categories = await getCategories()
+  } catch (error) {
+    console.error('Failed to fetch categories:', error)
+    // カテゴリー取得に失敗してもページは表示する
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

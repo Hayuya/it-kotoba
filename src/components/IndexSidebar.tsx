@@ -20,40 +20,26 @@ const NUMBER_GROUP = '0-9'
 export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
   const [selectedIndex, setSelectedIndex] = useState<string>('')
   const [indexType, setIndexType] = useState<'alphabet' | 'number'>('alphabet')
-  const [expandedCategories, setExpandedCategories] = useState<string[]>([])
   const [indexTerms, setIndexTerms] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  // コンポーネントがマウントされた後にAPI呼び出しを許可
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const toggleCategory = (categoryId: string) => {
-    setExpandedCategories(prev =>
-      prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
-    )
-  }
-
-  // 索引で用語を取得（マウント後のみ実行）
+  // 索引で用語を取得
   const fetchIndexTerms = async (index: string, type: 'alphabet' | 'number') => {
-    if (!index || !mounted) {
+    if (!index) {
       setIndexTerms([])
       return
     }
 
     setLoading(true)
+    setError(null)
+    
     try {
       let filter = ''
       
       if (type === 'alphabet') {
-        // アルファベット索引の場合
         filter = `title[begins_with]${index}`
       } else if (type === 'number') {
-        // 数字索引の場合
         const numberConditions = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
           .map(num => `title[begins_with]${num}`).join('[or]')
         filter = numberConditions
@@ -61,33 +47,42 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
 
       const response = await fetch(`/api/terms?filters=${encodeURIComponent(filter)}&limit=50&orders=title`)
       
-      if (response.ok) {
-        const data = await response.json()
-        setIndexTerms(data.success ? data.data.contents : [])
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      
+      if (data.success) {
+        setIndexTerms(data.data.contents || [])
       } else {
-        console.warn('API request failed:', response.status, response.statusText)
-        setIndexTerms([])
+        throw new Error(data.error || 'API returned error')
       }
     } catch (error) {
       console.error('Error fetching index terms:', error)
+      setError(error instanceof Error ? error.message : 'Unknown error')
       setIndexTerms([])
     } finally {
       setLoading(false)
     }
   }
 
-  // 索引が変更された時の処理（マウント後のみ）
+  // 索引が変更された時の処理
   useEffect(() => {
-    if (mounted) {
+    if (selectedIndex) {
       fetchIndexTerms(selectedIndex, indexType)
+    } else {
+      setIndexTerms([])
+      setError(null)
     }
-  }, [selectedIndex, indexType, mounted])
+  }, [selectedIndex, indexType])
 
   // 索引タイプ切り替え
   const handleIndexTypeChange = (type: 'alphabet' | 'number') => {
     setIndexType(type)
     setSelectedIndex('')
     setIndexTerms([])
+    setError(null)
   }
 
   // 索引項目をクリック
@@ -166,7 +161,7 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
         </div>
 
         {/* 索引結果 */}
-        {selectedIndex && mounted && (
+        {selectedIndex && (
           <div className="border-t border-gray-200 pt-4">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">
               「{selectedIndex}」で始まる用語 
@@ -177,6 +172,16 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
               <div className="text-center py-4">
                 <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                 <p className="text-sm text-gray-600 mt-2">読み込み中...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-4">
+                <p className="text-sm text-red-600 mb-2">エラーが発生しました</p>
+                <button 
+                  onClick={() => fetchIndexTerms(selectedIndex, indexType)}
+                  className="text-xs text-blue-600 hover:text-blue-800"
+                >
+                  再試行
+                </button>
               </div>
             ) : indexTerms.length > 0 ? (
               <div className="space-y-2 max-h-60 overflow-y-auto">
