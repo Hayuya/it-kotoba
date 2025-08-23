@@ -2,24 +2,59 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { getRecommendedTerms, Term, getDifficultyColor, getDifficultyLabel } from '../lib/microcms'
+import { Term, getDifficultyColor, getDifficultyLabel } from '../lib/microcms'
 
 export default function RecommendedSlider() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlay, setIsAutoPlay] = useState(true)
   const [recommendedTerms, setRecommendedTerms] = useState<Term[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   // おすすめ用語を取得
   useEffect(() => {
     const fetchRecommendedTerms = async () => {
       try {
-        const terms = await getRecommendedTerms(6)
-        setRecommendedTerms(terms)
+        setLoading(true)
+        setError(null)
+        
+        console.log('おすすめ用語を取得中...')
+        
+        const response = await fetch('/api/recommended-terms?limit=6')
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        console.log('APIレスポンス:', data)
+        
+        if (data.success && data.data && data.data.contents) {
+          setRecommendedTerms(data.data.contents)
+          console.log('おすすめ用語を設定しました:', data.data.contents.length, '件')
+        } else {
+          throw new Error('APIレスポンスの形式が正しくありません')
+        }
       } catch (error) {
         console.error('Error fetching recommended terms:', error)
-        // エラー時はサンプルデータを表示
-        setRecommendedTerms([])
+        setError('おすすめ用語の取得に失敗しました')
+        
+        // エラー時はフォールバック用の最新記事を取得
+        try {
+          console.log('フォールバックとして最新記事を取得中...')
+          const fallbackResponse = await fetch('/api/terms?limit=6&orders=-publishedAt')
+          
+          if (fallbackResponse.ok) {
+            const fallbackData = await fallbackResponse.json()
+            if (fallbackData.success && fallbackData.data && fallbackData.data.contents) {
+              setRecommendedTerms(fallbackData.data.contents)
+              setError(null) // エラーをクリア
+              console.log('フォールバック記事を設定しました:', fallbackData.data.contents.length, '件')
+            }
+          }
+        } catch (fallbackError) {
+          console.error('Fallback also failed:', fallbackError)
+        }
       } finally {
         setLoading(false)
       }
@@ -53,9 +88,49 @@ export default function RecommendedSlider() {
 
   if (loading) {
     return (
+      <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="flex items-center justify-center space-x-2 mb-4">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+          <p className="text-gray-600">おすすめ用語を読み込み中...</p>
+        </div>
+        
+        {/* スケルトンローダー */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <div key={index} className="animate-pulse">
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-gray-200 rounded"></div>
+                <div className="flex-1">
+                  <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                  <div className="space-y-2 mb-3">
+                    <div className="h-4 bg-gray-200 rounded w-full"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="h-5 bg-gray-200 rounded w-20"></div>
+                    <div className="h-4 bg-gray-200 rounded w-16"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error && recommendedTerms.length === 0) {
+    return (
       <div className="bg-white rounded-lg shadow-md p-8 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">おすすめ用語を読み込み中...</p>
+        <div className="text-gray-400 text-6xl mb-4">⚠️</div>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">読み込みエラー</h3>
+        <p className="text-gray-600 mb-6">{error}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          再読み込み
+        </button>
       </div>
     )
   }
@@ -63,10 +138,14 @@ export default function RecommendedSlider() {
   if (recommendedTerms.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-md p-8 text-center">
-        <p className="text-gray-600">おすすめ用語がまだ登録されていません。</p>
+        <div className="text-gray-400 text-6xl mb-4">📝</div>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">用語がありません</h3>
+        <p className="text-gray-600 mb-6">
+          おすすめ用語がまだ登録されていません。
+        </p>
         <Link 
           href="/terms" 
-          className="mt-4 inline-block text-blue-600 hover:text-blue-800 font-medium"
+          className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
         >
           すべての用語を見る →
         </Link>
@@ -74,19 +153,29 @@ export default function RecommendedSlider() {
     )
   }
 
+  const totalSlides = Math.ceil(recommendedTerms.length / 2)
+
   return (
     <div 
       className="relative"
       onMouseEnter={() => setIsAutoPlay(false)}
       onMouseLeave={() => setIsAutoPlay(true)}
     >
+      {/* デバッグ情報（開発時のみ表示） */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mb-4 p-2 bg-gray-100 rounded text-sm text-gray-600">
+          用語数: {recommendedTerms.length}, スライド数: {totalSlides}, 現在: {currentSlide + 1}
+          {error && <div className="text-orange-600">警告: {error}</div>}
+        </div>
+      )}
+
       {/* スライダーコンテナ */}
       <div className="overflow-hidden rounded-lg">
         <div 
           className="flex transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
-          {Array.from({ length: Math.ceil(recommendedTerms.length / 2) }).map((_, slideIndex) => (
+          {Array.from({ length: totalSlides }).map((_, slideIndex) => (
             <div key={slideIndex} className="min-w-full">
               <div className="grid md:grid-cols-2 gap-6">
                 {recommendedTerms
@@ -98,13 +187,13 @@ export default function RecommendedSlider() {
                       className="block bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 group"
                     >
                       <div className="flex items-start space-x-4">
-                        <div className="text-3xl">{term.category.icon}</div>
-                        <div className="flex-1">
+                        <div className="text-3xl flex-shrink-0">{term.category.icon}</div>
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                            <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">
                               {term.title}
                             </h3>
-                            <span className={`text-xs px-2 py-1 rounded-full ${getDifficultyColor(term.difficulty)}`}>
+                            <span className={`text-xs px-2 py-1 rounded-full flex-shrink-0 ml-2 ${getDifficultyColor(term.difficulty)}`}>
                               {getDifficultyLabel(term.difficulty)}
                             </span>
                           </div>
@@ -123,18 +212,23 @@ export default function RecommendedSlider() {
                       </div>
                     </Link>
                   ))}
+                
+                {/* 奇数個の場合の空白スペース */}
+                {recommendedTerms.slice(slideIndex * 2, slideIndex * 2 + 2).length === 1 && (
+                  <div className="hidden md:block"></div>
+                )}
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ナビゲーションボタン */}
-      {recommendedTerms.length > 2 && (
+      {/* ナビゲーションボタン（複数スライドがある場合のみ表示） */}
+      {totalSlides > 1 && (
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-600 rounded-full p-2 shadow-md transition-all"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-600 rounded-full p-2 shadow-lg transition-all"
             aria-label="前のスライド"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,7 +238,7 @@ export default function RecommendedSlider() {
 
           <button
             onClick={nextSlide}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-600 rounded-full p-2 shadow-md transition-all"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-600 rounded-full p-2 shadow-lg transition-all"
             aria-label="次のスライド"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,8 +247,8 @@ export default function RecommendedSlider() {
           </button>
 
           {/* インジケーター */}
-          <div className="flex justify-center space-x-2 mt-4">
-            {Array.from({ length: Math.ceil(recommendedTerms.length / 2) }).map((_, index) => (
+          <div className="flex justify-center space-x-2 mt-6">
+            {Array.from({ length: totalSlides }).map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
@@ -167,12 +261,13 @@ export default function RecommendedSlider() {
           </div>
 
           {/* 自動再生コントロール */}
-          <div className="flex justify-center mt-2">
+          <div className="flex justify-center mt-3">
             <button
               onClick={() => setIsAutoPlay(!isAutoPlay)}
-              className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-xs text-gray-500 hover:text-gray-700 transition-colors flex items-center space-x-1"
             >
-              {isAutoPlay ? '⏸️ 自動再生を停止' : '▶️ 自動再生を開始'}
+              <span>{isAutoPlay ? '⏸️' : '▶️'}</span>
+              <span>{isAutoPlay ? '自動再生を停止' : '自動再生を開始'}</span>
             </button>
           </div>
         </>

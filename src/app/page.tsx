@@ -32,13 +32,13 @@ export default async function Home() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <div className="bg-white/20 rounded-lg px-4 py-2">
-                  <span className="text-sm">📚 最新シラバスに準拠</span>
+                  <span className="text-sm">⚪️ 最新シラバスに準拠</span>
                 </div>
                 <div className="bg-white/20 rounded-lg px-4 py-2">
-                  <span className="text-sm">🔍 高速検索機能</span>
+                  <span className="text-sm">⚪️ 現実主義</span>
                 </div>
                 <div className="bg-white/20 rounded-lg px-4 py-2">
-                  <span className="text-sm">📖 分かりやすい解説</span>
+                  <span className="text-sm">⚪️ わかりやすさ重視</span>
                 </div>
               </div>
             </section>
