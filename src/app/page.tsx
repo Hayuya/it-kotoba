@@ -1,8 +1,6 @@
-import DebugMicroCMS from '../components/DebugMicroCMS'
 import Header from '../components/Header'
 import Sidebar from '../components/Sidebar'
-import Footer from '../components/Footer'
-import RecommendedSlider from '../components/RecommendedSlider'
+import LatestArticles from '../components/LatestArticles'
 import { getCategories, getStats } from '../lib/microcms'
 
 export default async function Home() {
@@ -45,37 +43,58 @@ export default async function Home() {
               </div>
             </section>
 
-            {/* おすすめ記事スライダー */}
+            {/* 新着記事セクション */}
             <section className="mb-8">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">おすすめ用語</h2>
-              <RecommendedSlider />
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">📰 新着記事</h2>
+                <a 
+                  href="/terms" 
+                  className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+                >
+                  すべての記事を見る →
+                </a>
+              </div>
+              <LatestArticles />
             </section>
 
-            {/* カテゴリー別用語紹介 */}
+            {/* カテゴリー案内セクション */}
             <section className="mb-8">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800">カテゴリー別用語</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {categories.map((category) => (
-                  <div key={category.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-                    <div className="text-3xl mb-3">{category.icon}</div>
-                    <h3 className="text-xl font-semibold mb-2 text-gray-800">{category.name}</h3>
-                    <p className="text-gray-600 mb-4">
-                      {category.description || `${category.name}に関連するIT用語の解説`}
-                    </p>
-                    <a 
-                      href={`/category/${category.slug}`} 
-                      className="text-blue-600 hover:text-blue-800 font-medium"
+              <h2 className="text-2xl font-bold mb-6 text-gray-800">📚 学習カテゴリー</h2>
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <p className="text-gray-600 mb-6">
+                  情報処理安全確保支援士試験の学習範囲を体系的に分類しています。
+                  各カテゴリーから興味のある分野を選んで効率的に学習を進めましょう。
+                </p>
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {categories.slice(0, 8).map((category) => (
+                    <a
+                      key={category.id}
+                      href={`/categories/${category.slug}`}
+                      className="group flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      詳細を見る →
+                      <span className="text-2xl">{category.icon}</span>
+                      <div>
+                        <h3 className="font-medium text-gray-800 group-hover:text-blue-600 text-sm">
+                          {category.name}
+                        </h3>
+                      </div>
                     </a>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                <div className="mt-6 text-center">
+                  <a 
+                    href="/categories" 
+                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    すべてのカテゴリーを見る
+                  </a>
+                </div>
               </div>
             </section>
 
             {/* 統計情報 */}
             <section className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">サイト統計</h2>
+              <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">📊 サイト統計</h2>
               <div className="grid md:grid-cols-3 gap-6 text-center">
                 <div>
                   <div className="text-3xl font-bold text-blue-600 mb-2">
@@ -95,10 +114,46 @@ export default async function Home() {
                 </div>
               </div>
             </section>
+
+            {/* 学習のヒント */}
+            <section className="mt-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">💡 効率的な学習のコツ</h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <span className="mr-2">🎯</span>
+                    基礎固めから始める
+                  </h3>
+                  <ul className="text-gray-600 space-y-2 text-sm">
+                    <li>• セキュリティの基本概念を理解</li>
+                    <li>• 頻出用語から優先的に学習</li>
+                    <li>• 実際の事例と関連付けて記憶</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <span className="mr-2">🔄</span>
+                    継続的な復習
+                  </h3>
+                  <ul className="text-gray-600 space-y-2 text-sm">
+                    <li>• 定期的な見直しで定着させる</li>
+                    <li>• 関連用語をセットで覚える</li>
+                    <li>• 過去問題で実践力を向上</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="mt-6 text-center">
+                <a 
+                  href="/study-guide"
+                  className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  詳しい学習ガイドを見る
+                </a>
+              </div>
+            </section>
           </main>
         </div>
       </div>
-      <Footer />
     </div>
   )
 }

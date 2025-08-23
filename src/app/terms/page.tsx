@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '../../components/Header'
 import Sidebar from '../../components/Sidebar'
-import Footer from '../../components/Footer'
 import TermsFilter from '../../components/TermsFilter'
 import { 
   getTerms, 
@@ -195,8 +194,6 @@ export default async function TermsPage({ searchParams }: Props) {
           </main>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }

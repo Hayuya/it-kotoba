@@ -118,6 +118,47 @@ export const getTerms = async (queries?: {
   }
 }
 
+// クライアントサイド用のAPI関数（APIルート経由）
+export const getTermsClient = async (queries?: {
+  limit?: number
+  offset?: number
+  orders?: string
+  q?: string
+  filters?: string
+}): Promise<MicroCMSListResponse<Term>> => {
+  try {
+    const searchParams = new URLSearchParams()
+    
+    if (queries?.limit) searchParams.set('limit', queries.limit.toString())
+    if (queries?.offset) searchParams.set('offset', queries.offset.toString())
+    if (queries?.orders) searchParams.set('orders', queries.orders)
+    if (queries?.q) searchParams.set('q', queries.q)
+    if (queries?.filters) searchParams.set('filters', queries.filters)
+
+    const response = await fetch(`/api/terms?${searchParams.toString()}`)
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch terms')
+    }
+
+    const data = await response.json()
+    return data.success ? data.data : {
+      contents: [],
+      totalCount: 0,
+      offset: 0,
+      limit: 0,
+    }
+  } catch (error) {
+    console.error('Error fetching terms (client):', error)
+    return {
+      contents: [],
+      totalCount: 0,
+      offset: 0,
+      limit: 0,
+    }
+  }
+}
+
 export const getTermBySlug = async (slug: string): Promise<Term | null> => {
   try {
     const { contents } = await client.get({
@@ -165,6 +206,23 @@ export const getRecommendedTerms = async (limit: number = 6): Promise<Term[]> =>
     }))
   } catch (error) {
     console.error('Error fetching recommended terms:', error)
+    return []
+  }
+}
+
+// クライアントサイド用のおすすめ記事取得関数
+export const getRecommendedTermsClient = async (limit: number = 6): Promise<Term[]> => {
+  try {
+    const response = await fetch(`/api/terms?filters=isRecommended[equals]true&limit=${limit}&orders=order`)
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch recommended terms')
+    }
+
+    const data = await response.json()
+    return data.success ? data.data.contents : []
+  } catch (error) {
+    console.error('Error fetching recommended terms (client):', error)
     return []
   }
 }

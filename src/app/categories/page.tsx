@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '../../components/Header'
 import Sidebar from '../../components/Sidebar'
-import Footer from '../../components/Footer'
 import { getCategories, getStats } from '../../lib/microcms'
 
 export const metadata: Metadata = {
@@ -149,8 +148,6 @@ export default async function CategoriesPage() {
           </main>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }

@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Header from '../../../components/Header'
 import Sidebar from '../../../components/Sidebar'
-import Footer from '../../../components/Footer'
 import CopyUrlButton from '../../../components/CopyUrlButton'
 import { 
   getTermBySlug, 
@@ -207,8 +206,6 @@ export default async function TermPage({ params }: Props) {
           </main>
         </div>
       </div>
-
-      <Footer />
 
       {/* JSON-LD構造化データ */}
       <script

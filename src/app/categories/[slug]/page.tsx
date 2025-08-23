@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Header from '../../../components/Header'
 import Sidebar from '../../../components/Sidebar'
-import Footer from '../../../components/Footer'
 import { 
   getCategoryBySlug,
   getCategories,
@@ -203,8 +202,6 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           </main>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }
