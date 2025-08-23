@@ -6,6 +6,7 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: ['microcms-js-sdk'],
+    optimizeCss: true,
   },
   async headers() {
     return [
@@ -46,6 +47,23 @@ const nextConfig = {
       },
     ];
   },
+  // 最適化設定
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  // TypeScript設定
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  // ESLint設定
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
+  // 出力設定
+  output: 'standalone',
+  // パワード by Next.js の削除
+  poweredByHeader: false,
 };
 
 export default nextConfig;

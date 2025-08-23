@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Category } from '../lib/microcms'
 
@@ -25,7 +25,7 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
   const [error, setError] = useState<string | null>(null)
 
   // 索引で用語を取得
-  const fetchIndexTerms = async (index: string, type: 'alphabet' | 'number') => {
+  const fetchIndexTerms = useCallback(async (index: string, type: 'alphabet' | 'number') => {
     if (!index) {
       setIndexTerms([])
       return
@@ -65,7 +65,7 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   // 索引が変更された時の処理
   useEffect(() => {
@@ -75,24 +75,24 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
       setIndexTerms([])
       setError(null)
     }
-  }, [selectedIndex, indexType])
+  }, [selectedIndex, indexType, fetchIndexTerms])
 
   // 索引タイプ切り替え
-  const handleIndexTypeChange = (type: 'alphabet' | 'number') => {
+  const handleIndexTypeChange = useCallback((type: 'alphabet' | 'number') => {
     setIndexType(type)
     setSelectedIndex('')
     setIndexTerms([])
     setError(null)
-  }
+  }, [])
 
   // 索引項目をクリック
-  const handleIndexClick = (index: string) => {
+  const handleIndexClick = useCallback((index: string) => {
     if (selectedIndex === index) {
       setSelectedIndex('')
     } else {
       setSelectedIndex(index)
     }
-  }
+  }, [selectedIndex])
 
   return (
     <div className="space-y-6">

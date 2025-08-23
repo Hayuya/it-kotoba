@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Term, getDifficultyColor, getDifficultyLabel } from '../lib/microcms'
 
@@ -12,79 +12,82 @@ export default function RecommendedSlider() {
   const [error, setError] = useState<string | null>(null)
 
   // おすすめ用語を取得
-  useEffect(() => {
-    const fetchRecommendedTerms = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        
-        console.log('おすすめ用語を取得中...')
-        
-        const response = await fetch('/api/recommended-terms?limit=6')
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const data = await response.json()
-        console.log('APIレスポンス:', data)
-        
-        if (data.success && data.data && data.data.contents) {
-          setRecommendedTerms(data.data.contents)
-          console.log('おすすめ用語を設定しました:', data.data.contents.length, '件')
-        } else {
-          throw new Error('APIレスポンスの形式が正しくありません')
-        }
-      } catch (error) {
-        console.error('Error fetching recommended terms:', error)
-        setError('おすすめ用語の取得に失敗しました')
-        
-        // エラー時はフォールバック用の最新記事を取得
-        try {
-          console.log('フォールバックとして最新記事を取得中...')
-          const fallbackResponse = await fetch('/api/terms?limit=6&orders=-publishedAt')
-          
-          if (fallbackResponse.ok) {
-            const fallbackData = await fallbackResponse.json()
-            if (fallbackData.success && fallbackData.data && fallbackData.data.contents) {
-              setRecommendedTerms(fallbackData.data.contents)
-              setError(null) // エラーをクリア
-              console.log('フォールバック記事を設定しました:', fallbackData.data.contents.length, '件')
-            }
-          }
-        } catch (fallbackError) {
-          console.error('Fallback also failed:', fallbackError)
-        }
-      } finally {
-        setLoading(false)
+  const fetchRecommendedTerms = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      console.log('おすすめ用語を取得中...')
+      
+      const response = await fetch('/api/recommended-terms?limit=6')
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
+      
+      const data = await response.json()
+      console.log('APIレスポンス:', data)
+      
+      if (data.success && data.data && data.data.contents) {
+        setRecommendedTerms(data.data.contents)
+        console.log('おすすめ用語を設定しました:', data.data.contents.length, '件')
+      } else {
+        throw new Error('APIレスポンスの形式が正しくありません')
+      }
+    } catch (error) {
+      console.error('Error fetching recommended terms:', error)
+      setError('おすすめ用語の取得に失敗しました')
+      
+      // エラー時はフォールバック用の最新記事を取得
+      try {
+        console.log('フォールバックとして最新記事を取得中...')
+        const fallbackResponse = await fetch('/api/terms?limit=6&orders=-publishedAt')
+        
+        if (fallbackResponse.ok) {
+          const fallbackData = await fallbackResponse.json()
+          if (fallbackData.success && fallbackData.data && fallbackData.data.contents) {
+            setRecommendedTerms(fallbackData.data.contents)
+            setError(null) // エラーをクリア
+            console.log('フォールバック記事を設定しました:', fallbackData.data.contents.length, '件')
+          }
+        }
+      } catch (fallbackError) {
+        console.error('Fallback also failed:', fallbackError)
+      }
+    } finally {
+      setLoading(false)
     }
-
-    fetchRecommendedTerms()
   }, [])
+
+  useEffect(() => {
+    fetchRecommendedTerms()
+  }, [fetchRecommendedTerms])
 
   // 自動スライド機能
   useEffect(() => {
     if (!isAutoPlay || recommendedTerms.length === 0) return
 
+    const totalSlides = Math.ceil(recommendedTerms.length / 2)
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % Math.ceil(recommendedTerms.length / 2))
+      setCurrentSlide((prev) => (prev + 1) % totalSlides)
     }, 5000)
 
     return () => clearInterval(interval)
   }, [isAutoPlay, recommendedTerms.length])
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % Math.ceil(recommendedTerms.length / 2))
-  }
+  const nextSlide = useCallback(() => {
+    const totalSlides = Math.ceil(recommendedTerms.length / 2)
+    setCurrentSlide((prev) => (prev + 1) % totalSlides)
+  }, [recommendedTerms.length])
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + Math.ceil(recommendedTerms.length / 2)) % Math.ceil(recommendedTerms.length / 2))
-  }
+  const prevSlide = useCallback(() => {
+    const totalSlides = Math.ceil(recommendedTerms.length / 2)
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides)
+  }, [recommendedTerms.length])
 
-  const goToSlide = (index: number) => {
+  const goToSlide = useCallback((index: number) => {
     setCurrentSlide(index)
-  }
+  }, [])
 
   if (loading) {
     return (
@@ -126,7 +129,7 @@ export default function RecommendedSlider() {
         <h3 className="text-xl font-semibold text-gray-800 mb-2">読み込みエラー</h3>
         <p className="text-gray-600 mb-6">{error}</p>
         <button 
-          onClick={() => window.location.reload()}
+          onClick={fetchRecommendedTerms}
           className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
         >
           再読み込み
