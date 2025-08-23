@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '../../components/Header'
-import IndexSidebar from '../../components/IndexSidebar'
+import MainLayout from '../../components/MainLayout' //
 import { getCategories, getAllTermSlugs } from '../../lib/microcms'
 
 export const metadata: Metadata = {
@@ -60,13 +60,8 @@ export default async function IndexPage() {
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* サイドバー */}
-          <aside className="lg:w-1/4">
-            <IndexSidebar categories={categories} />
-          </aside>
-
-          {/* メインコンテンツ */}
-          <main className="lg:w-3/4">
+          {/* ★ ここを MainLayout でラップする */}
+          <MainLayout categories={categories}>
             {/* パンくずリスト */}
             <nav className="mb-6 text-sm">
               <ol className="flex items-center space-x-2 text-gray-500">
@@ -204,7 +199,7 @@ export default async function IndexPage() {
                 </Link>
               </div>
             </section>
-          </main>
+          </MainLayout>
         </div>
       </div>
     </div>

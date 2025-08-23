@@ -1,10 +1,9 @@
+// app/layout.tsx
+
 import type { Metadata } from 'next'
 import { Inter, Noto_Sans_JP } from 'next/font/google'
 import './globals.css'
-import RecommendedSlider from '../components/RecommendedSlider'
-import Footer from '../components/Footer'
-
-
+import PageWrapper from '../components/PageWrapper' // ★ 新規作成した PageWrapper をインポート
 
 const inter = Inter({ subsets: ['latin'] })
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] })
@@ -12,6 +11,7 @@ const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'IT合言葉 - 情報処理安全確保支援士試験対策',
   description: '情報処理安全確保支援士試験対策のためのIT用語解説サイト。試験範囲を完全網羅した分かりやすい解説で合格をサポートします。',
+  // ... その他のメタデータは変更なし
   keywords: '情報処理安全確保支援士,RISS,IT用語,セキュリティ,試験対策',
   authors: [{ name: 'IT合言葉編集部' }],
   openGraph: {
@@ -54,17 +54,10 @@ export default function RootLayout({
       </head>
       <body className={`${notoSansJP.className} antialiased`}>
         <div id="root">
-          {children}
-          
-          {/* Recommended Slider - フッター直上に配置 */}
-          <section className="bg-gray-50 py-12">
-            <div className="container mx-auto px-4">
-              <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">おすすめ用語</h2>
-              <RecommendedSlider />
-            </div>
-          </section>
-          
-          <Footer />
+          {/* ★ ここで PageWrapper を使い、子要素を渡す */}
+          <PageWrapper>
+            {children}
+          </PageWrapper>
         </div>
         
         {/* JSON-LD構造化データ */}
