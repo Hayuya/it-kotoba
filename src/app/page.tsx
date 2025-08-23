@@ -3,7 +3,7 @@ import IndexSidebar from '../components/IndexSidebar' // 変更：Sidebarから 
 import LatestArticles from '../components/LatestArticles'
 import { getCategories, getStats } from '../lib/microcms'
 
-
+export const dynamic = 'force-dynamic'
 
 export default async function Home() {
   // microCMSからデータを取得
