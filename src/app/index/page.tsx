@@ -4,6 +4,9 @@ import Header from '../../components/Header'
 import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories, getAllTermSlugs } from '../../lib/microcms'
 
+export const dynamic = 'force-dynamic';
+
+
 export const metadata: Metadata = {
   title: '用語索引 - IT合言葉',
   description: 'アルファベット順・数字順でIT用語を検索できます。効率的に目的の用語を見つけられます。',
