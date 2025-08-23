@@ -4,9 +4,6 @@ import Header from '../../components/Header'
 import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories } from '../../lib/microcms'
 
-// 動的レンダリングを強制
-export const dynamic = 'force-dynamic'
-
 export const metadata: Metadata = {
   title: '用語索引 - IT合言葉',
   description: 'アルファベット順・数字順でIT用語を検索できます。効率的に目的の用語を見つけられます。',
@@ -17,8 +14,7 @@ export const metadata: Metadata = {
 }
 
 export default async function IndexPage() {
-  // FIX: Explicitly define the type for 'categories'
-  // This infers the type from the return value of the `getCategories` function.
+  // カテゴリーの取得をtry-catchで囲む
   let categories: Awaited<ReturnType<typeof getCategories>> = []
   
   try {

@@ -1,27 +1,50 @@
 import { createClient } from 'microcms-js-sdk'
 
-
 // 環境変数の確認（サーバーサイドのみ使用）
 const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN
 const apiKey = process.env.MICROCMS_API_KEY
 
-// デバッグ情報をログ出力
-console.log('microCMS設定確認:')
-console.log('- Service Domain:', serviceDomain || 'NOT SET')
-console.log('- API Key:', apiKey ? `${apiKey.substring(0, 8)}...` : 'NOT SET')
+// デバッグ情報をログ出力（開発環境のみ）
+if (process.env.NODE_ENV !== 'production') {
+  console.log('microCMS設定確認:')
+  console.log('- Service Domain:', serviceDomain || 'NOT SET')
+  console.log('- API Key:', apiKey ? `${apiKey.substring(0, 8)}...` : 'NOT SET')
+}
 
 if (!serviceDomain || !apiKey) {
-  console.warn('⚠️ microCMSの環境変数が設定されていません。開発環境では一部機能が制限されます。')
-  console.warn('必要な環境変数:')
-  console.warn('- MICROCMS_SERVICE_DOMAIN')
-  console.warn('- MICROCMS_API_KEY')
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn('⚠️ microCMSの環境変数が設定されていません。開発環境では一部機能が制限されます。')
+    console.warn('必要な環境変数:')
+    console.warn('- MICROCMS_SERVICE_DOMAIN')
+    console.warn('- MICROCMS_API_KEY')
+  }
 }
 
 // microCMSクライアントの設定（サーバーサイド専用）
-export const client = createClient({
-  serviceDomain: serviceDomain || 'MICROCMS_SERVICE_DOMAIN',
-  apiKey: apiKey || 'MICROCMS_API_KEY',
-})
+// 環境変数が設定されていない場合はダミー値を使用
+let client: any = null
+
+try {
+  if (serviceDomain && apiKey) {
+    client = createClient({
+      serviceDomain,
+      apiKey,
+    })
+  } else {
+    // ダミークライアント（開発時用）
+    client = {
+      get: () => Promise.resolve({ contents: [], totalCount: 0, offset: 0, limit: 0 })
+    }
+  }
+} catch (error) {
+  console.error('microCMSクライアントの初期化に失敗しました:', error)
+  // ダミークライアント
+  client = {
+    get: () => Promise.resolve({ contents: [], totalCount: 0, offset: 0, limit: 0 })
+  }
+}
+
+export { client }
 
 // API関連の型定義
 export interface Category {
@@ -88,8 +111,17 @@ export const getTerms = async (queries?: {
   filters?: string
   fields?: string[]
 }): Promise<MicroCMSListResponse<Term>> => {
+  if (!client) {
+    return {
+      contents: [],
+      totalCount: 0,
+      offset: 0,
+      limit: 0,
+    }
+  }
+
   try {
-    const { contents, totalCount, offset, limit } = await client.get({
+    const result = await client.get({
       endpoint: 'terms',
       queries: {
         limit: queries?.limit || 10,
@@ -101,11 +133,13 @@ export const getTerms = async (queries?: {
       },
     })
 
+    const { contents, totalCount, offset, limit } = result
+
     return {
-      contents,
-      totalCount,
-      offset,
-      limit,
+      contents: contents || [],
+      totalCount: totalCount || 0,
+      offset: offset || 0,
+      limit: limit || 0,
     }
   } catch (error) {
     console.error('Error fetching terms:', error)
@@ -160,8 +194,12 @@ export const getTermsClient = async (queries?: {
 }
 
 export const getTermBySlug = async (slug: string): Promise<Term | null> => {
+  if (!client) {
+    return null
+  }
+
   try {
-    const { contents } = await client.get({
+    const result = await client.get({
       endpoint: 'terms',
       queries: {
         filters: `slug[equals]${slug}`,
@@ -169,7 +207,9 @@ export const getTermBySlug = async (slug: string): Promise<Term | null> => {
       },
     })
 
-    if (contents.length === 0) {
+    const { contents } = result
+
+    if (!contents || contents.length === 0) {
       return null
     }
 
@@ -188,8 +228,12 @@ export const getTermBySlug = async (slug: string): Promise<Term | null> => {
 }
 
 export const getRecommendedTerms = async (limit: number = 6): Promise<Term[]> => {
+  if (!client) {
+    return []
+  }
+
   try {
-    const { contents } = await client.get({
+    const result = await client.get({
       endpoint: 'terms',
       queries: {
         filters: 'isRecommended[equals]true',
@@ -197,6 +241,12 @@ export const getRecommendedTerms = async (limit: number = 6): Promise<Term[]> =>
         orders: 'order',
       },
     })
+
+    const { contents } = result
+
+    if (!contents) {
+      return []
+    }
 
     // 各termのtagsとrelatedTermsを安全に処理
     return contents.map((term: any) => ({
@@ -235,6 +285,15 @@ export const getTermsByCategory = async (
     orders?: string
   }
 ): Promise<MicroCMSListResponse<Term>> => {
+  if (!client) {
+    return {
+      contents: [],
+      totalCount: 0,
+      offset: 0,
+      limit: 0,
+    }
+  }
+
   try {
     // まずカテゴリーIDを取得
     const category = await getCategoryBySlug(categorySlug)
@@ -247,7 +306,7 @@ export const getTermsByCategory = async (
       }
     }
 
-    const { contents, totalCount, offset, limit } = await client.get({
+    const result = await client.get({
       endpoint: 'terms',
       queries: {
         filters: `category[equals]${category.id}`,
@@ -257,8 +316,10 @@ export const getTermsByCategory = async (
       },
     })
 
+    const { contents, totalCount, offset, limit } = result
+
     // 各termのtagsとrelatedTermsを安全に処理
-    const safeContents = contents.map((term: any) => ({
+    const safeContents = (contents || []).map((term: any) => ({
       ...term,
       tags: term.tags || [],
       relatedTerms: term.relatedTerms || [],
@@ -266,9 +327,9 @@ export const getTermsByCategory = async (
 
     return {
       contents: safeContents,
-      totalCount,
-      offset,
-      limit,
+      totalCount: totalCount || 0,
+      offset: offset || 0,
+      limit: limit || 0,
     }
   } catch (error) {
     console.error('Error fetching terms by category:', error)
@@ -288,8 +349,17 @@ export const getTermsByTag = async (
     offset?: number
   }
 ): Promise<MicroCMSListResponse<Term>> => {
+  if (!client) {
+    return {
+      contents: [],
+      totalCount: 0,
+      offset: 0,
+      limit: 0,
+    }
+  }
+
   try {
-    const { contents, totalCount, offset, limit } = await client.get({
+    const result = await client.get({
       endpoint: 'terms',
       queries: {
         filters: `tags[contains]${tagId}`,
@@ -299,8 +369,10 @@ export const getTermsByTag = async (
       },
     })
 
+    const { contents, totalCount, offset, limit } = result
+
     // 各termのtagsとrelatedTermsを安全に処理
-    const safeContents = contents.map((term: any) => ({
+    const safeContents = (contents || []).map((term: any) => ({
       ...term,
       tags: term.tags || [],
       relatedTerms: term.relatedTerms || [],
@@ -308,9 +380,9 @@ export const getTermsByTag = async (
 
     return {
       contents: safeContents,
-      totalCount,
-      offset,
-      limit,
+      totalCount: totalCount || 0,
+      offset: offset || 0,
+      limit: limit || 0,
     }
   } catch (error) {
     console.error('Error fetching terms by tag:', error)
@@ -330,8 +402,17 @@ export const searchTerms = async (
     offset?: number
   }
 ): Promise<MicroCMSListResponse<Term>> => {
+  if (!client) {
+    return {
+      contents: [],
+      totalCount: 0,
+      offset: 0,
+      limit: 0,
+    }
+  }
+
   try {
-    const { contents, totalCount, offset, limit } = await client.get({
+    const result = await client.get({
       endpoint: 'terms',
       queries: {
         q: keyword,
@@ -341,8 +422,10 @@ export const searchTerms = async (
       },
     })
 
+    const { contents, totalCount, offset, limit } = result
+
     // 各termのtagsとrelatedTermsを安全に処理
-    const safeContents = contents.map((term: any) => ({
+    const safeContents = (contents || []).map((term: any) => ({
       ...term,
       tags: term.tags || [],
       relatedTerms: term.relatedTerms || [],
@@ -350,9 +433,9 @@ export const searchTerms = async (
 
     return {
       contents: safeContents,
-      totalCount,
-      offset,
-      limit,
+      totalCount: totalCount || 0,
+      offset: offset || 0,
+      limit: limit || 0,
     }
   } catch (error) {
     console.error('Error searching terms:', error)
@@ -367,14 +450,24 @@ export const searchTerms = async (
 
 // カテゴリー関連のAPI関数
 export const getCategories = async (): Promise<Category[]> => {
+  if (!client) {
+    return []
+  }
+
   try {
-    const { contents } = await client.get({
+    const result = await client.get({
       endpoint: 'categories',
       queries: {
         limit: 100,
         orders: 'order',
       },
     })
+
+    const { contents } = result
+
+    if (!contents) {
+      return []
+    }
 
     // 親カテゴリーのみを返す（階層構造の最上位のみ）
     return contents.filter((category: Category) => !category.parent)
@@ -386,8 +479,12 @@ export const getCategories = async (): Promise<Category[]> => {
 
 // 全カテゴリー（階層構造含む）を取得
 export const getAllCategories = async (): Promise<Category[]> => {
+  if (!client) {
+    return []
+  }
+
   try {
-    const { contents } = await client.get({
+    const result = await client.get({
       endpoint: 'categories',
       queries: {
         limit: 100,
@@ -395,7 +492,9 @@ export const getAllCategories = async (): Promise<Category[]> => {
       },
     })
 
-    return contents
+    const { contents } = result
+
+    return contents || []
   } catch (error) {
     console.error('Error fetching all categories:', error)
     return []
@@ -403,8 +502,12 @@ export const getAllCategories = async (): Promise<Category[]> => {
 }
 
 export const getCategoryBySlug = async (slug: string): Promise<Category | null> => {
+  if (!client) {
+    return null
+  }
+
   try {
-    const { contents } = await client.get({
+    const result = await client.get({
       endpoint: 'categories',
       queries: {
         filters: `slug[equals]${slug}`,
@@ -412,7 +515,9 @@ export const getCategoryBySlug = async (slug: string): Promise<Category | null> 
       },
     })
 
-    return contents.length > 0 ? contents[0] : null
+    const { contents } = result
+
+    return contents && contents.length > 0 ? contents[0] : null
   } catch (error) {
     console.error('Error fetching category by slug:', error)
     return null
@@ -421,8 +526,12 @@ export const getCategoryBySlug = async (slug: string): Promise<Category | null> 
 
 // タグ関連のAPI関数
 export const getTags = async (): Promise<Tag[]> => {
+  if (!client) {
+    return []
+  }
+
   try {
-    const { contents } = await client.get({
+    const result = await client.get({
       endpoint: 'tags',
       queries: {
         limit: 100,
@@ -430,7 +539,9 @@ export const getTags = async (): Promise<Tag[]> => {
       },
     })
 
-    return contents
+    const { contents } = result
+
+    return contents || []
   } catch (error) {
     console.error('Error fetching tags:', error)
     return []
@@ -438,8 +549,12 @@ export const getTags = async (): Promise<Tag[]> => {
 }
 
 export const getTagBySlug = async (slug: string): Promise<Tag | null> => {
+  if (!client) {
+    return null
+  }
+
   try {
-    const { contents } = await client.get({
+    const result = await client.get({
       endpoint: 'tags',
       queries: {
         filters: `slug[equals]${slug}`,
@@ -447,7 +562,9 @@ export const getTagBySlug = async (slug: string): Promise<Tag | null> => {
       },
     })
 
-    return contents.length > 0 ? contents[0] : null
+    const { contents } = result
+
+    return contents && contents.length > 0 ? contents[0] : null
   } catch (error) {
     console.error('Error fetching tag by slug:', error)
     return null
@@ -497,8 +614,12 @@ export const getDifficultyColor = (difficulty: string | string[]): string => {
 
 // プレビュー機能用
 export const getTermPreview = async (slug: string, draftKey: string): Promise<Term | null> => {
+  if (!client) {
+    return null
+  }
+
   try {
-    const { contents } = await client.get({
+    const result = await client.get({
       endpoint: 'terms',
       queries: {
         filters: `slug[equals]${slug}`,
@@ -507,7 +628,9 @@ export const getTermPreview = async (slug: string, draftKey: string): Promise<Te
       },
     })
 
-    if (contents.length === 0) {
+    const { contents } = result
+
+    if (!contents || contents.length === 0) {
       return null
     }
 
@@ -526,8 +649,12 @@ export const getTermPreview = async (slug: string, draftKey: string): Promise<Te
 
 // サイトマップ生成用
 export const getAllTermSlugs = async (): Promise<string[]> => {
+  if (!client) {
+    return []
+  }
+
   try {
-    const { contents } = await client.get({
+    const result = await client.get({
       endpoint: 'terms',
       queries: {
         fields: 'slug',
@@ -535,7 +662,9 @@ export const getAllTermSlugs = async (): Promise<string[]> => {
       },
     })
 
-    return contents.map((term: { slug: string }) => term.slug)
+    const { contents } = result
+
+    return (contents || []).map((term: { slug: string }) => term.slug)
   } catch (error) {
     console.error('Error fetching all term slugs:', error)
     return []
@@ -543,8 +672,12 @@ export const getAllTermSlugs = async (): Promise<string[]> => {
 }
 
 export const getAllCategorySlugs = async (): Promise<string[]> => {
+  if (!client) {
+    return []
+  }
+
   try {
-    const { contents } = await client.get({
+    const result = await client.get({
       endpoint: 'categories',
       queries: {
         fields: 'slug',
@@ -552,7 +685,9 @@ export const getAllCategorySlugs = async (): Promise<string[]> => {
       },
     })
 
-    return contents.map((category: { slug: string }) => category.slug)
+    const { contents } = result
+
+    return (contents || []).map((category: { slug: string }) => category.slug)
   } catch (error) {
     console.error('Error fetching all category slugs:', error)
     return []
@@ -561,6 +696,13 @@ export const getAllCategorySlugs = async (): Promise<string[]> => {
 
 // 統計情報取得用
 export const getStats = async () => {
+  if (!client) {
+    return {
+      totalTerms: 0,
+      totalCategories: 0,
+    }
+  }
+
   try {
     const [termsResponse, categoriesResponse] = await Promise.all([
       client.get({ endpoint: 'terms', queries: { limit: 0 } }),
@@ -568,8 +710,8 @@ export const getStats = async () => {
     ])
 
     return {
-      totalTerms: termsResponse.totalCount,
-      totalCategories: categoriesResponse.totalCount,
+      totalTerms: termsResponse.totalCount || 0,
+      totalCategories: categoriesResponse.totalCount || 0,
     }
   } catch (error) {
     console.error('Error fetching stats:', error)
