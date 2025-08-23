@@ -128,7 +128,18 @@ export const getTermBySlug = async (slug: string): Promise<Term | null> => {
       },
     })
 
-    return contents.length > 0 ? contents[0] : null
+    if (contents.length === 0) {
+      return null
+    }
+
+    const term = contents[0]
+    
+    // tagsとrelatedTermsがundefinedの場合は空配列に設定
+    return {
+      ...term,
+      tags: term.tags || [],
+      relatedTerms: term.relatedTerms || [],
+    }
   } catch (error) {
     console.error('Error fetching term by slug:', error)
     return null
@@ -146,7 +157,12 @@ export const getRecommendedTerms = async (limit: number = 6): Promise<Term[]> =>
       },
     })
 
-    return contents
+    // 各termのtagsとrelatedTermsを安全に処理
+    return contents.map((term: any) => ({
+      ...term,
+      tags: term.tags || [],
+      relatedTerms: term.relatedTerms || [],
+    }))
   } catch (error) {
     console.error('Error fetching recommended terms:', error)
     return []
@@ -183,8 +199,15 @@ export const getTermsByCategory = async (
       },
     })
 
+    // 各termのtagsとrelatedTermsを安全に処理
+    const safeContents = contents.map((term: any) => ({
+      ...term,
+      tags: term.tags || [],
+      relatedTerms: term.relatedTerms || [],
+    }))
+
     return {
-      contents,
+      contents: safeContents,
       totalCount,
       offset,
       limit,
@@ -218,8 +241,15 @@ export const getTermsByTag = async (
       },
     })
 
+    // 各termのtagsとrelatedTermsを安全に処理
+    const safeContents = contents.map((term: any) => ({
+      ...term,
+      tags: term.tags || [],
+      relatedTerms: term.relatedTerms || [],
+    }))
+
     return {
-      contents,
+      contents: safeContents,
       totalCount,
       offset,
       limit,
@@ -253,8 +283,15 @@ export const searchTerms = async (
       },
     })
 
+    // 各termのtagsとrelatedTermsを安全に処理
+    const safeContents = contents.map((term: any) => ({
+      ...term,
+      tags: term.tags || [],
+      relatedTerms: term.relatedTerms || [],
+    }))
+
     return {
-      contents,
+      contents: safeContents,
       totalCount,
       offset,
       limit,
@@ -412,7 +449,17 @@ export const getTermPreview = async (slug: string, draftKey: string): Promise<Te
       },
     })
 
-    return contents.length > 0 ? contents[0] : null
+    if (contents.length === 0) {
+      return null
+    }
+
+    const term = contents[0]
+    
+    return {
+      ...term,
+      tags: term.tags || [],
+      relatedTerms: term.relatedTerms || [],
+    }
   } catch (error) {
     console.error('Error fetching term preview:', error)
     return null

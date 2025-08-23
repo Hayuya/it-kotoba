@@ -27,17 +27,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
+  // tagsが存在しない場合の安全な処理
+  const tags = term.tags || []
+  const keywords = [term.title, ...tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', ')
+
   return {
     title: `${term.title} - IT合言葉`,
     description: term.description,
-    keywords: [term.title, ...term.tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', '),
+    keywords: keywords,
     openGraph: {
       title: `${term.title} - IT合言葉`,
       description: term.description,
       type: 'article',
       publishedTime: term.publishedAt,
       modifiedTime: term.updatedAt,
-      tags: term.tags.map(tag => tag.name),
+      tags: tags.map(tag => tag.name),
     },
     twitter: {
       card: 'summary',
@@ -59,6 +63,10 @@ export default async function TermPage({ params }: Props) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const currentUrl = `${siteUrl}/terms/${term.slug}`
+
+  // tagsとrelatedTermsの安全な処理
+  const tags = term.tags || []
+  const relatedTerms = term.relatedTerms || []
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -118,9 +126,9 @@ export default async function TermPage({ params }: Props) {
                 <p className="text-lg text-gray-600 leading-relaxed mb-6">{term.description}</p>
                 
                 {/* タグ */}
-                {term.tags && term.tags.length > 0 && (
+                {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {term.tags.map((tag) => (
+                    {tags.map((tag) => (
                       <span
                         key={tag.id}
                         className="bg-gray-100 text-gray-700 text-sm px-2 py-1 rounded"
@@ -149,11 +157,11 @@ export default async function TermPage({ params }: Props) {
               {/* フッター */}
               <footer className="p-8 bg-gray-50 border-t border-gray-200">
                 {/* 関連用語 */}
-                {term.relatedTerms && term.relatedTerms.length > 0 && (
+                {relatedTerms.length > 0 && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold mb-4 text-gray-800">関連用語</h3>
                     <div className="grid sm:grid-cols-2 gap-3">
-                      {term.relatedTerms.map((relatedTerm) => (
+                      {relatedTerms.map((relatedTerm) => (
                         <Link
                           key={relatedTerm.id}
                           href={`/terms/${relatedTerm.slug}`}
@@ -229,7 +237,7 @@ export default async function TermPage({ params }: Props) {
               "@type": "WebPage",
               "@id": currentUrl
             },
-            "keywords": term.tags.map(tag => tag.name).join(", "),
+            "keywords": tags.map(tag => tag.name).join(", "),
             "articleSection": term.category.name
           })
         }}
