@@ -15,11 +15,11 @@ export default function Footer() {
               </div>
               <div>
                 <h3 className="text-xl font-bold">IT合言葉</h3>
-                <p className="text-gray-400 text-sm">情報セキュリティ関連用語まとめサイト</p>
+                <p className="text-gray-400 text-sm">情報処理安全確保支援士試験対策</p>
               </div>
             </div>
             <p className="text-gray-300 mb-4 leading-relaxed">
-              情報処理安全確保支援士試験など情報セキュリティに関する試験の合格を目指す皆様を応援するIT用語解説サイトです。
+              情報処理安全確保支援士試験の合格を目指す皆様を応援するIT用語解説サイトです。
               試験範囲を完全網羅した分かりやすい解説で、効率的な学習をサポートします。
             </p>
             <div className="flex space-x-4">
@@ -49,13 +49,13 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-4">サイトマップ</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/terms" className="text-gray-300 hover:text-white transition-colors">
-                  用語一覧
+                <Link href="/" className="text-gray-300 hover:text-white transition-colors">
+                  ホーム
                 </Link>
               </li>
               <li>
-                <Link href="/study-guide" className="text-gray-300 hover:text-white transition-colors">
-                  学習ガイド
+                <Link href="/terms" className="text-gray-300 hover:text-white transition-colors">
+                  用語一覧
                 </Link>
               </li>
               <li>
@@ -110,7 +110,7 @@ export default function Footer() {
             <div className="text-gray-400 text-sm mb-4 md:mb-0">
               <p>© {currentYear} IT合言葉. All rights reserved.</p>
               <p className="mt-1">
-                このサイトは情報セキュリティに関する学習支援を目的としています。
+                このサイトは情報処理安全確保支援士試験の学習支援を目的としています。
               </p>
             </div>
             <div className="flex space-x-6 text-sm">

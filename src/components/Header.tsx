@@ -17,12 +17,18 @@ export default function Header() {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold text-gray-800">IT合言葉</h1>
-              <p className="text-xs text-gray-500">情報セキュリティ関連用語まとめサイト</p>
+              <p className="text-xs text-gray-500">情報処理安全確保支援士試験対策</p>
             </div>
           </Link>
 
           {/* デスクトップナビゲーション */}
           <nav className="hidden md:flex items-center space-x-8">
+            <Link 
+              href="/" 
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            >
+              ホーム
+            </Link>
             <Link 
               href="/terms" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
@@ -85,6 +91,13 @@ export default function Header() {
           <div className="md:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-3">
               <Link 
+                href="/" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                ホーム
+              </Link>
+              <Link 
                 href="/terms" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
@@ -100,13 +113,6 @@ export default function Header() {
               </Link>
               <Link 
                 href="/study-guide" 
-                className="text-gray-700 hover:text-blue-600 font-medium py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                学習ガイド
-              </Link>
-              <Link 
-                href="/about" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
