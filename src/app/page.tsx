@@ -1,9 +1,7 @@
 import Header from '../components/Header'
-import IndexSidebar from '../components/IndexSidebar' // 変更：Sidebarから IndexSidebar に
+import IndexSidebar from '../components/IndexSidebar'
 import LatestArticles from '../components/LatestArticles'
 import { getCategories, getStats } from '../lib/microcms'
-
-
 
 export default async function Home() {
   // microCMSからデータを取得
@@ -19,7 +17,7 @@ export default async function Home() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* サイドバー */}
-          <aside className="lg:w-1/4 self-start">
+          <aside className="lg:w-1/4"> {/* self-startを削除 */}
             <IndexSidebar categories={categories} />
           </aside>
 
@@ -58,8 +56,6 @@ export default async function Home() {
               </div>
               <LatestArticles />
             </section>
-
-
 
             {/* 統計情報 */}
             <section className="bg-white rounded-lg shadow-md p-8">
