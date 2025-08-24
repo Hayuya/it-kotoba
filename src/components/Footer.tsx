@@ -120,7 +120,7 @@ export default function Footer() {
               <Link href="/terms-of-service" className="text-gray-400 hover:text-white transition-colors">
                 利用規約
               </Link>
-              <Link href="/sitemap" className="text-gray-400 hover:text-white transition-colors">
+              <Link href="/sitemap.xml" className="text-gray-400 hover:text-white transition-colors">
                 サイトマップ
               </Link>
             </div>
