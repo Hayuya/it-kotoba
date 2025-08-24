@@ -43,7 +43,7 @@ export default function Header() {
               カテゴリー
             </Link>
             <Link 
-              href="/study-guide" 
+              href="/about" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
               このサイトについて
@@ -106,7 +106,7 @@ export default function Header() {
                 カテゴリー
               </Link>
               <Link 
-                href="/study-guide" 
+                href="/about" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
