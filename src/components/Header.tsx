@@ -24,6 +24,12 @@ export default function Header() {
 
           {/* デスクトップナビゲーション */}
           <nav className="hidden md:flex items-center space-x-8">
+                        <Link 
+              href="/" 
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            >
+              ホーム
+            </Link>
             <Link 
               href="/terms" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
