@@ -17,7 +17,7 @@ export default function Header() {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold text-gray-800">IT合言葉</h1>
-              <p className="text-xs text-gray-500">情報処理安全確保支援士試験対策</p>
+              <p className="text-xs text-gray-500">情報セキュリティ関連用語まとめサイト</p>
             </div>
           </Link>
 
@@ -37,12 +37,6 @@ export default function Header() {
             </Link>
             <Link 
               href="/study-guide" 
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              学習ガイド
-            </Link>
-            <Link 
-              href="/about" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
               このサイトについて

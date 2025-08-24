@@ -48,7 +48,7 @@ export default function RootLayout({
   return (
     <html lang="ja" className="scroll-smooth">
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        {/* ★ この行を削除しました <link rel="icon" href="/favicon.ico" /> */}
         <link rel="canonical" href="https://it-aikotoba.vercel.app" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
