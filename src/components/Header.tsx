@@ -92,6 +92,13 @@ export default function Header() {
           <div className="md:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-3">
               <Link 
+                href="/" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                ホーム
+              </Link>
+              <Link 
                 href="/terms" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
