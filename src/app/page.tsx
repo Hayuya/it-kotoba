@@ -1,58 +1,16 @@
-import { Metadata } from 'next'
-import Link from 'next/link'
 import Header from '../components/Header'
-import IndexSidebar from '../components/IndexSidebar'
+import IndexSidebar from '../components/IndexSidebar' // 変更：Sidebarから IndexSidebar に
 import LatestArticles from '../components/LatestArticles'
-import { getCategories, getStats, getAllTermSlugs } from '../lib/microcms'
+import { getCategories, getStats } from '../lib/microcms'
 
-// メタデータをindexページのものに更新
-export const metadata: Metadata = {
-  title: 'IT合言葉 - 情報処理安全確保支援士試験対策',
-  description: '情報処理安全確保支援士試験対策のためのIT用語解説サイト。試験範囲を完全網羅した分かりやすい解説で合格をサポートします。',
-}
-
-// 索引の統計情報を取得する関数を追加
-async function getIndexStats() {
-  try {
-    const allSlugs = await getAllTermSlugs();
-    const alphabetStats = new Map<string, number>();
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(letter => {
-      alphabetStats.set(letter, 0);
-    });
-    let numberCount = 0;
-
-    allSlugs.forEach(slug => {
-      if (slug.match(/^[a-zA-Z]/)) {
-        const firstLetter = slug.charAt(0).toUpperCase();
-        alphabetStats.set(firstLetter, (alphabetStats.get(firstLetter) || 0) + 1);
-      } else if (slug.match(/^[0-9]/)) {
-        numberCount++;
-      }
-    });
-
-    return {
-      alphabet: alphabetStats,
-      number: numberCount,
-      total: allSlugs.length
-    };
-  } catch (error) {
-    console.error('Error getting index stats:', error);
-    return {
-      alphabet: new Map(),
-      number: 0,
-      total: 0
-    };
-  }
-}
 
 
 export default async function Home() {
-  // データを取得
-  const [categories, stats, indexStats] = await Promise.all([
+  // microCMSからデータを取得
+  const [categories, stats] = await Promise.all([
     getCategories(),
-    getStats(),
-    getIndexStats()
-  ]);
+    getStats()
+  ])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -61,7 +19,7 @@ export default async function Home() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* サイドバー */}
-          <aside className="lg:w-1/4">
+          <aside className="lg:w-1/4 self-start">
             <IndexSidebar categories={categories} />
           </aside>
 
@@ -76,10 +34,13 @@ export default async function Home() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <div className="bg-white/20 rounded-lg px-4 py-2">
-                  <span className="text-sm">⚪️ ABC索引からかんたん検索</span>
+                  <span className="text-sm">⚪️ 最新シラバスに準拠</span>
                 </div>
                 <div className="bg-white/20 rounded-lg px-4 py-2">
-                  <span className="text-sm">⚪️ 一度読んだら忘れない解説</span>
+                  <span className="text-sm">⚪️ 現実主義</span>
+                </div>
+                <div className="bg-white/20 rounded-lg px-4 py-2">
+                  <span className="text-sm">⚪️ わかりやすさ重視</span>
                 </div>
               </div>
             </section>
@@ -88,16 +49,18 @@ export default async function Home() {
             <section className="mb-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">📰 新着記事</h2>
-                <Link 
+                <a 
                   href="/terms" 
                   className="text-blue-600 hover:text-blue-800 font-medium text-sm"
                 >
                   すべての記事を見る →
-                </Link>
+                </a>
               </div>
               <LatestArticles />
             </section>
-            
+
+
+
             {/* 統計情報 */}
             <section className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">📊 サイト統計</h2>
@@ -121,6 +84,42 @@ export default async function Home() {
               </div>
             </section>
 
+            {/* 学習のヒント */}
+            <section className="mt-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">💡 効率的な学習のコツ</h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <span className="mr-2">🎯</span>
+                    基礎固めから始める
+                  </h3>
+                  <ul className="text-gray-600 space-y-2 text-sm">
+                    <li>• セキュリティの基本概念を理解</li>
+                    <li>• 頻出用語から優先的に学習</li>
+                    <li>• 実際の事例と関連付けて記憶</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <span className="mr-2">🔄</span>
+                    継続的な復習
+                  </h3>
+                  <ul className="text-gray-600 space-y-2 text-sm">
+                    <li>• 定期的な見直しで定着させる</li>
+                    <li>• 関連用語をセットで覚える</li>
+                    <li>• 過去問題で実践力を向上</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="mt-6 text-center">
+                <a 
+                  href="/study-guide"
+                  className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  詳しい学習ガイドを見る
+                </a>
+              </div>
+            </section>
           </main>
         </div>
       </div>

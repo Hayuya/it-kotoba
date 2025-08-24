@@ -20,17 +20,8 @@ const NUMBER_GROUP = '0-9'
 export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
   const [selectedIndex, setSelectedIndex] = useState<string>('')
   const [indexType, setIndexType] = useState<'alphabet' | 'number'>('alphabet')
-  const [expandedCategories, setExpandedCategories] = useState<string[]>([])
   const [indexTerms, setIndexTerms] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-
-  const toggleCategory = (categoryId: string) => {
-    setExpandedCategories(prev =>
-      prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
-    )
-  }
 
   // 索引で用語を取得
   const fetchIndexTerms = async (index: string, type: 'alphabet' | 'number') => {
@@ -91,7 +82,8 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
   }
 
   return (
-    <div className="space-y-6">
+    // 追従するように変更
+    <div className="sticky top-24 space-y-6">
       {/* ABC・数字索引 */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold mb-4 text-gray-800">📚 用語索引</h3>
@@ -193,44 +185,6 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
             )}
           </div>
         )}
-      </div>
-
-
-
-      {/* 解説者プロフィール */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800">解説者プロフィール</h3>
-        <div className="flex items-start space-x-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
-            🐟〜
-          </div>
-          <div>
-            <h4 className="font-semibold text-gray-800 mb-2">匿名200</h4>
-            <p className="text-sm text-gray-600 mb-3">
-              データ解析とWebアプリケーションの専門家。
-              企業のセキュリティ対策に従事。
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                システムエンジニア
-              </span>
-              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                CISSP
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 学習のヒント */}
-      <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-6 border border-orange-200">
-        <h3 className="text-lg font-semibold mb-3 text-orange-800">📝 学習のヒント</h3>
-        <ul className="text-sm text-orange-700 space-y-2">
-          <li>• まずは基本用語から学習しましょう</li>
-          <li>• 関連用語を合わせて覚えると効果的</li>
-          <li>• 実際の事例と結び付けて理解しましょう</li>
-          <li>• 定期的な復習で記憶を定着させましょう</li>
-        </ul>
       </div>
     </div>
   )
