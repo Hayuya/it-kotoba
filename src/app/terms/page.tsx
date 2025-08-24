@@ -36,7 +36,8 @@ export default async function TermsPage({ searchParams }: Props) {
     filters.push(`category[equals]${selectedCategory}`)
   }
   if (selectedDifficulty) {
-    filters.push(`difficulty[equals]${selectedDifficulty}`)
+    // 難易度フィルターを[contains]に変更
+    filters.push(`difficulty[contains]${selectedDifficulty}`)
   }
 
   const [termsResponse, categories] = await Promise.all([
