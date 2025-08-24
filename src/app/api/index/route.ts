@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getTerms } from '../../../lib/microcms'
+import { getTerms, Term } from '../../../lib/microcms'
 
 // この関数を動的にする設定
 export const dynamic = 'force-dynamic'
@@ -21,8 +21,10 @@ export async function GET(request: NextRequest) {
 
     switch (indexType) {
       case 'alphabet':
-        // アルファベット索引の場合
-        filters = [`title[begins_with]${indexChar.toUpperCase()}`]
+        // アルファベット索引の場合（大文字と小文字を両方対象にする）
+        const lowerChar = indexChar.toLowerCase()
+        const upperChar = indexChar.toUpperCase()
+        filters = [`title[begins_with]${upperChar}[or]title[begins_with]${lowerChar}`]
         break
 
       case 'number':
@@ -40,11 +42,20 @@ export async function GET(request: NextRequest) {
     }
 
     const termsResponse = await getTerms({
-      limit: 50,
+      limit: 100, // 取得件数を増やしてソートに備える
       offset: 0,
-      orders: 'title',
       filters: filters.join('[and]')
     })
+
+    // 2文字目以降でソート
+    const sortedContents = termsResponse.contents.sort((a: Term, b: Term) => {
+      const titleA = a.title.substring(1)
+      const titleB = b.title.substring(1)
+      return titleA.localeCompare(titleB, 'ja')
+    })
+    
+    // ソート後の結果をセット
+    termsResponse.contents = sortedContents
 
     return NextResponse.json({
       success: true,

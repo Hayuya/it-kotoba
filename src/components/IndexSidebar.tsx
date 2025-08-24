@@ -32,19 +32,8 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
 
     setLoading(true)
     try {
-      let filter = ''
-      
-      if (type === 'alphabet') {
-        // アルファベット索引の場合
-        filter = `title[begins_with]${index}`
-      } else if (type === 'number') {
-        // 数字索引の場合
-        const numberConditions = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-          .map(num => `title[begins_with]${num}`).join('[or]')
-        filter = numberConditions
-      }
-
-      const response = await fetch(`/api/terms?filters=${encodeURIComponent(filter)}&limit=50&orders=title`)
+      // 呼び出すAPIを修正
+      const response = await fetch(`/api/index?type=${type}&char=${encodeURIComponent(index)}`)
       
       if (response.ok) {
         const data = await response.json()
