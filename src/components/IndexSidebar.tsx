@@ -83,7 +83,7 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
 
   return (
     // 追従するように変更
-    <div className="sticky top-24 space-y-6">
+    <div className="sticky top-24 space-y-6 max-h-[calc(100vh-7.5rem)] overflow-y-auto">
       {/* ABC・数字索引 */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold mb-4 text-gray-800">🔍 索引</h3>
