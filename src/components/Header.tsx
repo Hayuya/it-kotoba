@@ -40,12 +40,6 @@ export default function Header() {
               href="/study-guide" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
-              学習ガイド
-            </Link>
-            <Link 
-              href="/about" 
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
               このサイトについて
             </Link>
             <Link 
@@ -107,13 +101,6 @@ export default function Header() {
               </Link>
               <Link 
                 href="/study-guide" 
-                className="text-gray-700 hover:text-blue-600 font-medium py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                学習ガイド
-              </Link>
-              <Link 
-                href="/about" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
