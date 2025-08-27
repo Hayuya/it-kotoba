@@ -15,11 +15,11 @@ interface Props {
 }
 
 export const metadata: Metadata = {
-  title: 'IT用語一覧 - IT合言葉',
+  title: 'IT用語一覧 - IT言葉',
   // ▼▼▼ 変更箇所 ▼▼▼
   description: 'IT用語の一覧です。情報処理安全確保支援士試験レベルから基礎用語まで、カテゴリーや難易度で絞り込んで効率的に学習できます。',
   openGraph: {
-    title: 'IT用語一覧 - IT合言葉',
+    title: 'IT用語一覧 - IT言葉',
     description: '情報処理技術に関するIT用語を一覧表示',
   }
   // ▲▲▲ 変更箇所 ▲▲▲

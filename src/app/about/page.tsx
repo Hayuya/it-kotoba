@@ -5,12 +5,12 @@ import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories } from '../../lib/microcms'
 
 export const metadata: Metadata = {
-  title: 'このサイトについて - IT合言葉',
+  title: 'このサイトについて - IT言葉',
   // ▼▼▼ 変更箇所 ▼▼▼
-  description: '「IT合言葉」のコンセプトや索引機能の使い方について解説します。当サイトは情報処理安全確保支援士試験対策を主軸としつつ、より広い範囲のIT技術用語を網羅しています。',
+  description: '「IT言葉」のコンセプトや索引機能の使い方について解説します。当サイトは情報処理安全確保支援士試験対策を主軸としつつ、より広い範囲のIT技術用語を網羅しています。',
   openGraph: {
-    title: 'このサイトについて - IT合言葉',
-    description: '「IT合言葉」のコンセプト、機能、使い方について',
+    title: 'このサイトについて - IT言葉',
+    description: '「IT言葉」のコンセプト、機能、使い方について',
   },
   // ▲▲▲ 変更箇所 ▲▲▲
 }
@@ -48,7 +48,7 @@ export default async function AboutPage() {
             <header className="bg-white rounded-lg shadow-md p-8 mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">このサイトについて</h1>
               <p className="text-gray-600 leading-relaxed">
-                「IT合言葉」は、圧倒的な情報量と記憶に残る解説をコンセプトにした、あなたのための**情報処理技術用語索引サイト**です。
+                「IT言葉」は、圧倒的な情報量と記憶に残る解説をコンセプトにした、あなたのための**情報処理技術用語索引サイト**です。
                 複雑な専門用語を、単なる暗記ではなく「理解」へと導くことを目的としています。
               </p>
             </header>

@@ -25,7 +25,7 @@ export default async function Home() {
           <main className="lg:w-3/4">
             {/* ヒーローセクション */}
             <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8">
-              <h1 className="text-4xl font-bold mb-4">IT合言葉</h1>
+              <h1 className="text-4xl font-bold mb-4">IT言葉</h1>
               <p className="text-xl mb-6">
                 豊富な情報量と記憶に残る解説<br />
                 私のための情報処理技術用語索引サイト

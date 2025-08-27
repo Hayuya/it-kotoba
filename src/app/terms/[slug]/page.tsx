@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   
   if (!term) {
     return {
-      title: 'ページが見つかりません - IT合言葉'
+      title: 'ページが見つかりません - IT言葉'
     }
   }
 
@@ -31,11 +31,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const keywords = [term.title, ...tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', ')
 
   return {
-    title: `${term.title} - IT合言葉`,
+    title: `${term.title} - IT言葉`,
     description: term.description,
     keywords: keywords,
     openGraph: {
-      title: `${term.title} - IT合言葉`,
+      title: `${term.title} - IT言葉`,
       description: term.description,
       type: 'article',
       publishedTime: term.publishedAt,
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary',
-      title: `${term.title} - IT合言葉`,
+      title: `${term.title} - IT言葉`,
       description: term.description,
     }
   }
@@ -218,11 +218,11 @@ export default async function TermPage({ params }: Props) {
             "description": term.description,
             "author": {
               "@type": "Organization",
-              "name": "IT合言葉編集部"
+              "name": "IT言葉編集部"
             },
             "publisher": {
               "@type": "Organization",
-              "name": "IT合言葉",
+              "name": "IT言葉",
               "logo": {
                 "@type": "ImageObject",
                 "url": `${siteUrl}/logo.png`

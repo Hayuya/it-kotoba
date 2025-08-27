@@ -14,7 +14,7 @@ export default function Footer() {
                 <span className="text-xl font-bold">IT</span>
               </div>
               <div>
-                <h3 className="text-xl font-bold">IT合言葉</h3>
+                <h3 className="text-xl font-bold">IT言葉</h3>
                 {/* ▼▼▼ 変更箇所 ▼▼▼ */}
                 <p className="text-gray-400 text-sm">情報処理安全確保支援士から基礎IT用語まで</p>
                 {/* ▲▲▲ 変更箇所 ▲▲▲ */}
@@ -112,7 +112,7 @@ export default function Footer() {
         <div className="border-t border-gray-700 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm mb-4 md:mb-0">
-              <p>© {currentYear} IT合言葉. All rights reserved.</p>
+              <p>© {currentYear} IT言葉. All rights reserved.</p>
               {/* ▼▼▼ 変更箇所 ▼▼▼ */}
               <p className="mt-1">
                 このサイトはIT技術の学習支援を目的としています。

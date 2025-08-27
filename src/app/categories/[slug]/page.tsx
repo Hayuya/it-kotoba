@@ -21,15 +21,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   
   if (!category) {
     return {
-      title: 'カテゴリーが見つかりません - IT合言葉'
+      title: 'カテゴリーが見つかりません - IT言葉'
     }
   }
 
   return {
-    title: `${category.name}の用語一覧 - IT合言葉`,
+    title: `${category.name}の用語一覧 - IT言葉`,
     description: category.description || `${category.name}に関連するIT用語の解説一覧`,
     openGraph: {
-      title: `${category.name}の用語一覧 - IT合言葉`,
+      title: `${category.name}の用語一覧 - IT言葉`,
       description: category.description || `${category.name}に関連するIT用語の解説一覧`,
     }
   }

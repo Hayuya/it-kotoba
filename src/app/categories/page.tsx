@@ -5,10 +5,10 @@ import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories, getStats } from '../../lib/microcms'
 
 export const metadata: Metadata = {
-  title: 'カテゴリー一覧 - IT合言葉',
+  title: 'カテゴリー一覧 - IT言葉',
   description: '情報処理安全確保支援士試験対策のIT用語をカテゴリー別に分類。効率的な学習でスキルアップを目指しましょう。',
   openGraph: {
-    title: 'カテゴリー一覧 - IT合言葉',
+    title: 'カテゴリー一覧 - IT言葉',
     description: '情報処理安全確保支援士試験対策のIT用語をカテゴリー別に分類',
   }
 }
