@@ -16,14 +16,14 @@ export default function Footer() {
               <div>
                 <h3 className="text-xl font-bold">IT言葉</h3>
                 {/* ▼▼▼ 変更箇所 ▼▼▼ */}
-                <p className="text-gray-400 text-sm">情報処理安全確保支援士から基礎IT用語まで</p>
+                <p className="text-gray-400 text-sm">情報処理技術関連用語索引</p>
                 {/* ▲▲▲ 変更箇所 ▲▲▲ */}
               </div>
             </div>
             {/* ▼▼▼ 変更箇所 ▼▼▼ */}
             <p className="text-gray-300 mb-4 leading-relaxed">
-              情報処理安全確保支援士試験対策を中心に、幅広いIT技術用語を解説する索引サイトです。
-              試験範囲を網羅しつつ、基礎から応用まで分かりやすい解説であなたの学習をサポートします。
+              情報処理安全確保支援士試験の範囲を中心に、幅広いIT技術用語を解説する索引サイトです。
+              試験範囲を意識しつつ、基礎から応用まで分かりやすい解説であなたの学習をサポートします。
             </p>
             {/* ▲▲▲ 変更箇所 ▲▲▲ */}
             <div className="flex space-x-4">
