@@ -17,10 +17,8 @@ export default function Header() {
             </div>
             {/* hidden sm:block を削除 */}
             <div>
-              <h1 className="text-xl font-bold text-gray-800">IT言葉</h1>
-              {/* ▼▼▼ 変更箇所 ▼▼▼ */}
-              <p className="text-xs text-gray-500">情報処理安全確保支援士から基礎IT用語まで</p>
-              {/* ▲▲▲ 変更箇所 ▲▲▲ */}
+              <h1 className="text-xl font-bold text-gray-800">IT合言葉</h1>
+              <p className="text-xs text-gray-500">高度情報処理技術者用語索引</p>
             </div>
           </Link>
 
@@ -39,7 +37,7 @@ export default function Header() {
               用語一覧
             </Link>
             <Link 
-              href="/categories" 
+              href="/about" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
               このサイトについて
@@ -102,7 +100,7 @@ export default function Header() {
                 用語一覧
               </Link>
               <Link 
-                href="/categories" 
+                href="/about" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
               >

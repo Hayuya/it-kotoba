@@ -92,17 +92,6 @@ export default async function AboutPage() {
                     用語一覧を見る
                   </Link>
                 </div>
-
-                {/* カテゴリー別学習 */}
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-3">🗂️ カテゴリー別学習</h3>
-                  <p className="text-gray-600 mb-4">
-                    用語を関連分野ごとに分類しています。「ネットワークセキュリティ」「暗号技術」など、特定の分野を集中して学習したい場合に便利です。
-                  </p>
-                  <Link href="/categories" className="inline-block bg-green-100 text-green-800 px-4 py-2 rounded-lg hover:bg-green-200 transition-colors">
-                    カテゴリー一覧を見る
-                  </Link>
-                </div>
               </div>
             </section>
             
