@@ -15,13 +15,17 @@ export default function Footer() {
               </div>
               <div>
                 <h3 className="text-xl font-bold">IT合言葉</h3>
-                <p className="text-gray-400 text-sm">情報処理安全確保支援士試験対策</p>
+                {/* ▼▼▼ 変更箇所 ▼▼▼ */}
+                <p className="text-gray-400 text-sm">情報処理安全確保支援士から基礎IT用語まで</p>
+                {/* ▲▲▲ 変更箇所 ▲▲▲ */}
               </div>
             </div>
+            {/* ▼▼▼ 変更箇所 ▼▼▼ */}
             <p className="text-gray-300 mb-4 leading-relaxed">
-              情報処理安全確保支援士試験の合格を目指す皆様を応援するIT用語解説サイトです。
-              試験範囲を完全網羅した分かりやすい解説で、効率的な学習をサポートします。
+              情報処理安全確保支援士試験対策を中心に、幅広いIT技術用語を解説する索引サイトです。
+              試験範囲を網羅しつつ、基礎から応用まで分かりやすい解説であなたの学習をサポートします。
             </p>
+            {/* ▲▲▲ 変更箇所 ▲▲▲ */}
             <div className="flex space-x-4">
               <a 
                 href="https://twitter.com/it-aikotoba" 
@@ -109,9 +113,11 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm mb-4 md:mb-0">
               <p>© {currentYear} IT合言葉. All rights reserved.</p>
+              {/* ▼▼▼ 変更箇所 ▼▼▼ */}
               <p className="mt-1">
-                このサイトは情報処理安全確保支援士試験の学習支援を目的としています。
+                このサイトはIT技術の学習支援を目的としています。
               </p>
+              {/* ▲▲▲ 変更箇所 ▲▲▲ */}
             </div>
             <div className="flex space-x-6 text-sm">
               <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">

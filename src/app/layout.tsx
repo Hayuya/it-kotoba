@@ -3,20 +3,19 @@
 import type { Metadata } from 'next'
 import { Inter, Noto_Sans_JP } from 'next/font/google'
 import './globals.css'
-import PageWrapper from '../components/PageWrapper' // ★ 新規作成した PageWrapper をインポート
+import PageWrapper from '../components/PageWrapper'
 
 const inter = Inter({ subsets: ['latin'] })
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'IT合言葉 - 情報処理安全確保支援士試験対策',
-  description: '情報処理安全確保支援士試験対策のためのIT用語解説サイト。試験範囲を完全網羅した分かりやすい解説で合格をサポートします。',
-  // ... その他のメタデータは変更なし
-  keywords: '情報処理安全確保支援士,RISS,IT用語,セキュリティ,試験対策',
+  title: 'IT合言葉 - 情報処理安全確保支援士試験対策＆IT用語学習',
+  description: '情報処理安全確保支援士試験の対策を主軸に、全てのIT技術者のための用語解説・索引サイト。ネットワークやセキュリティなど、試験範囲を超えた実用的な知識もわかりやすく解説します。',
+  keywords: '情報処理安全確保支援士, RISS, IT用語, 索引, セキュリティ, ネットワーク, データベース, 高度情報処理, 試験対策, 解説',
   authors: [{ name: 'IT合言葉編集部' }],
   openGraph: {
-    title: 'IT合言葉 - 情報処理安全確保支援士試験対策',
-    description: '情報処理安全確保支援士試験対策のためのIT用語解説サイト',
+    title: 'IT合言葉 - 情報処理安全確保支援士試験対策＆IT用語学習',
+    description: '試験対策から実務まで役立つ、IT専門用語の索引＆解説サイト',
     url: 'https://it-aikotoba.vercel.app',
     siteName: 'IT合言葉',
     locale: 'ja_JP',
@@ -24,8 +23,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'IT合言葉 - 情報処理安全確保支援士試験対策',
-    description: '情報処理安全確保支援士試験対策のためのIT用語解説サイト',
+    title: 'IT合言葉 - 情報処理安全確保支援士試験対策＆IT用語学習',
+    description: '試験対策から実務まで役立つ、IT専門用語の索引＆解説サイト',
   },
   robots: {
     index: true,
@@ -48,13 +47,11 @@ export default function RootLayout({
   return (
     <html lang="ja" className="scroll-smooth">
       <head>
-        {/* ★ この行を削除しました <link rel="icon" href="/favicon.ico" /> */}
         <link rel="canonical" href="https://it-aikotoba.vercel.app" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={`${notoSansJP.className} antialiased`}>
         <div id="root">
-          {/* ★ ここで PageWrapper を使い、子要素を渡す */}
           <PageWrapper>
             {children}
           </PageWrapper>
@@ -69,7 +66,7 @@ export default function RootLayout({
               "@type": "WebSite",
               "name": "IT合言葉",
               "url": "https://it-aikotoba.vercel.app",
-              "description": "情報処理安全確保支援士試験対策のためのIT用語解説サイト",
+              "description": "情報処理安全確保支援士試験対策を中心に、IT専門用語を索引形式で解説する学習サイト",
               "publisher": {
                 "@type": "Organization",
                 "name": "IT合言葉編集部"

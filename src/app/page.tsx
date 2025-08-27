@@ -27,8 +27,8 @@ export default async function Home() {
             <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8">
               <h1 className="text-4xl font-bold mb-4">IT合言葉</h1>
               <p className="text-xl mb-6">
-                情報処理安全確保支援士試験対策のための<br />
-                IT用語解説サイト
+                豊富な情報量と記憶に残る解説<br />
+                私のための情報処理技術用語索引サイト
               </p>
               <div className="flex flex-wrap gap-4">
                 <div className="bg-white/20 rounded-lg px-4 py-2">
@@ -71,7 +71,7 @@ export default async function Home() {
                   <div className="text-gray-600">カテゴリー数</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-purple-600 mb-2">毎日更新</div>
+                  <div className="text-3xl font-bold text-purple-600 mb-2">週３くらい</div>
                   <div className="text-gray-600">更新頻度</div>
                 </div>
               </div>
@@ -87,9 +87,9 @@ export default async function Home() {
                     基礎固めから始める
                   </h3>
                   <ul className="text-gray-600 space-y-2 text-sm">
-                    <li>• セキュリティの基本概念を理解</li>
-                    <li>• 頻出用語から優先的に学習</li>
-                    <li>• 実際の事例と関連付けて記憶</li>
+                    <li>ITの基本概念を理解</li>
+                    <li>理解の曖昧さを放置しない</li>
+                    <li>実際の事例と関連付ける</li>
                   </ul>
                 </div>
                 <div>
@@ -98,9 +98,9 @@ export default async function Home() {
                     継続的な復習
                   </h3>
                   <ul className="text-gray-600 space-y-2 text-sm">
-                    <li>• 定期的な見直しで定着させる</li>
-                    <li>• 関連用語をセットで覚える</li>
-                    <li>• 過去問題で実践力を向上</li>
+                    <li>定期的な見直しで定着させる</li>
+                    <li>関連用語をセットで覚える</li>
+                    <li>覚えた用語を実際に使ってみる</li>
                   </ul>
                 </div>
               </div>

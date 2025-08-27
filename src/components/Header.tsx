@@ -18,7 +18,9 @@ export default function Header() {
             {/* hidden sm:block を削除 */}
             <div>
               <h1 className="text-xl font-bold text-gray-800">IT合言葉</h1>
-              <p className="text-xs text-gray-500">情報処理安全確保支援士試験対策</p>
+              {/* ▼▼▼ 変更箇所 ▼▼▼ */}
+              <p className="text-xs text-gray-500">情報処理安全確保支援士から基礎IT用語まで</p>
+              {/* ▲▲▲ 変更箇所 ▲▲▲ */}
             </div>
           </Link>
 

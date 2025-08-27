@@ -16,11 +16,13 @@ interface Props {
 
 export const metadata: Metadata = {
   title: 'IT用語一覧 - IT合言葉',
-  description: '情報処理安全確保支援士試験対策のIT用語を一覧表示。カテゴリーや難易度で絞り込み検索が可能です。',
+  // ▼▼▼ 変更箇所 ▼▼▼
+  description: 'IT用語の一覧です。情報処理安全確保支援士試験レベルから基礎用語まで、カテゴリーや難易度で絞り込んで効率的に学習できます。',
   openGraph: {
     title: 'IT用語一覧 - IT合言葉',
-    description: '情報処理安全確保支援士試験対策のIT用語を一覧表示',
+    description: '情報処理技術に関するIT用語を一覧表示',
   }
+  // ▲▲▲ 変更箇所 ▲▲▲
 }
 
 export default async function TermsPage({ searchParams }: Props) {
@@ -82,8 +84,10 @@ export default async function TermsPage({ searchParams }: Props) {
             <header className="bg-white rounded-lg shadow-md p-8 mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">IT用語一覧</h1>
               <p className="text-gray-600 mb-6">
-                情報処理安全確保支援士試験に必要なIT用語を網羅的に学習できます。
+                {/* ▼▼▼ 変更箇所 ▼▼▼ */}
+                情報処理技術者試験で問われるIT用語を網羅的に学習できます。
                 難易度やカテゴリーで絞り込んで効率的に学習しましょう。
+                {/* ▲▲▲ 変更箇所 ▲▲▲ */}
               </p>
               
               {/* フィルター */}
