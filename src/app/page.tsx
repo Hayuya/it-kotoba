@@ -43,7 +43,7 @@ export default async function Home() {
             {/* 新着記事セクション */}
             <section className="mb-8">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">📰 新着記事</h2>
+                <h2 className="text-2xl font-bold text-gray-800">新着記事</h2>
                 <a 
                   href="/terms" 
                   className="text-blue-600 hover:text-blue-800 font-medium text-sm"
