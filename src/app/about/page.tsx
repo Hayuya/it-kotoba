@@ -48,7 +48,7 @@ export default async function AboutPage() {
             <header className="bg-white rounded-lg shadow-md p-8 mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">このサイトについて</h1>
               <p className="text-gray-600 leading-relaxed">
-                「IT言葉」は、圧倒的な情報量と記憶に残る解説をコンセプトにした、あなたのための**情報処理技術用語索引サイト**です。
+                「IT言葉」は、圧倒的な情報量と記憶に残る解説をコンセプトにした、情報処理技術向け索引サイトです。
                 複雑な専門用語を、単なる暗記ではなく「理解」へと導くことを目的としています。
               </p>
             </header>
