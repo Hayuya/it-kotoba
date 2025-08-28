@@ -28,7 +28,7 @@ export default async function Home() {
               <h1 className="text-4xl font-bold mb-4">IT言葉</h1>
               <p className="text-xl mb-6">
                 豊富な情報量と記憶に残る解説<br />
-                私のための情報処理技術用語索引サイト
+                現代社会の情報処理技術用語索引サイト
               </p>
               <div className="flex flex-wrap gap-4">
                 <div className="bg-white/20 rounded-lg px-4 py-2">
