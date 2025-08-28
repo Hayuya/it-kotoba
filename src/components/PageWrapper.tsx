@@ -19,7 +19,7 @@ export default function PageWrapper({
       {/* Recommended Slider - フッター直上に配置 */}
       <section className="bg-gray-50 py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">おすすめ用語</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">おすすめ記事</h2>
           <RecommendedSlider />
         </div>
       </section>

@@ -11,13 +11,13 @@ export default function RecommendedSlider() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // おすすめ用語を取得
+  // おすすめ記事を取得
   const fetchRecommendedTerms = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
       
-      console.log('おすすめ用語を取得中...')
+      console.log('おすすめ記事を取得中...')
       
       const response = await fetch('/api/recommended-terms?limit=6')
       
@@ -30,13 +30,13 @@ export default function RecommendedSlider() {
       
       if (data.success && data.data && data.data.contents) {
         setRecommendedTerms(data.data.contents)
-        console.log('おすすめ用語を設定しました:', data.data.contents.length, '件')
+        console.log('おすすめ記事を設定しました:', data.data.contents.length, '件')
       } else {
         throw new Error('APIレスポンスの形式が正しくありません')
       }
     } catch (error) {
       console.error('Error fetching recommended terms:', error)
-      setError('おすすめ用語の取得に失敗しました')
+      setError('おすすめ記事の取得に失敗しました')
       
       // エラー時はフォールバック用の最新記事を取得
       try {
@@ -94,7 +94,7 @@ export default function RecommendedSlider() {
       <div className="bg-white rounded-lg shadow-md p-8">
         <div className="flex items-center justify-center space-x-2 mb-4">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-          <p className="text-gray-600">おすすめ用語を読み込み中...</p>
+          <p className="text-gray-600">おすすめ記事を読み込み中...</p>
         </div>
         
         {/* スケルトンローダー */}
@@ -142,9 +142,9 @@ export default function RecommendedSlider() {
     return (
       <div className="bg-white rounded-lg shadow-md p-8 text-center">
         <div className="text-gray-400 text-6xl mb-4">📝</div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">用語がありません</h3>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">記事がありません</h3>
         <p className="text-gray-600 mb-6">
-          おすすめ用語がまだ登録されていません。
+          おすすめ記事がまだ登録されていません。
         </p>
         <Link 
           href="/terms" 
