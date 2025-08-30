@@ -91,7 +91,7 @@ export default async function TermsPage({ searchParams }: Props) {
               <p className="text-gray-600 mb-6">
                 情報処理技術者試験で問われるIT用語を網羅的に学習できます。
                 キーワード検索や、難易度・カテゴリーでの絞り込みで効率的に学習しましょう。
-                <span className="text-red-600 font-semibold">※キーワード入力後、検索結果が反映されるまで数秒間お待ちください。</span>
+                <span className="text-orange-600 font-semibold">※キーワード入力後、検索結果が反映されるまで数秒間お待ちください。</span>
               </p>
               <TermsFilter categories={categories} totalCount={termsResponse.totalCount} />
             </header>

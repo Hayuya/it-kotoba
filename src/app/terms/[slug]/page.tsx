@@ -6,11 +6,16 @@ import IndexSidebar from '../../../components/IndexSidebar'
 import CopyUrlButton from '../../../components/CopyUrlButton'
 import { 
   getTermBySlug, 
-  getCategories, 
+  getCategories,
   getDifficultyColor, 
   getDifficultyLabel, 
   formatDate 
 } from '../../../lib/microcms'
+import { BreadcrumbList } from 'schema-dts'
+
+// JSON-LDコンポーネントをインポート
+import JsonLd from '../../../components/JsonLd'
+
 
 interface Props {
   params: { slug: string }
@@ -26,9 +31,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  // tagsが存在しない場合の安全な処理
   const tags = term.tags || []
-  const keywords = [term.title, ...tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', ')
+  const keywords = [term.title, term.category.name, ...tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', ')
 
   return {
     title: `${term.title} - IT言葉`,
@@ -67,18 +71,34 @@ export default async function TermPage({ params }: Props) {
   const tags = term.tags || []
   const relatedTerms = term.relatedTerms || []
 
+  // パンくずリスト用の構造化データ
+  const breadcrumbJsonLd: BreadcrumbList = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: '用語一覧', item: `${siteUrl}/terms` },
+      // カテゴリーのitemプロパティを削除
+      { '@type': 'ListItem', position: 3, name: term.category.name }, 
+      { '@type': 'ListItem', position: 4, name: term.title },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <head>
+        {/* head内にJsonLdコンポーネントを配置 */}
+        <JsonLd schema={breadcrumbJsonLd} />
+      </head>
+      
       <Header />
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col-reverse lg:flex-row gap-8">
-          {/* サイドバー */}
           <aside className="lg:w-1/4">
             <IndexSidebar categories={categories} />
           </aside>
 
-          {/* メインコンテンツ */}
           <main className="lg:w-3/4">
             {/* パンくずリスト */}
             <nav className="mb-6 text-sm">
@@ -95,11 +115,8 @@ export default async function TermPage({ params }: Props) {
                   </Link>
                 </li>
                 <li>/</li>
-                <li>
-                  <Link href={`/category/${term.category.slug}`} className="hover:text-blue-600">
-                    {term.category.name}
-                  </Link>
-                </li>
+                {/* ▼▼▼【変更点】カテゴリーページへのリンクを削除し、テキスト表示のみにする ▼▼▼ */}
+                <li className="text-gray-500">{term.category.name}</li>
                 <li>/</li>
                 <li className="text-gray-800 font-medium">{term.title}</li>
               </ol>
@@ -107,7 +124,6 @@ export default async function TermPage({ params }: Props) {
 
             {/* メイン記事 */}
             <article className="bg-white rounded-lg shadow-md overflow-hidden">
-              {/* ヘッダー */}
               <header className="p-8 border-b border-gray-200">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
@@ -124,7 +140,6 @@ export default async function TermPage({ params }: Props) {
                 <h1 className="text-3xl font-bold text-gray-900 mb-4">{term.title}</h1>
                 <p className="text-lg text-gray-600 leading-relaxed mb-6">{term.description}</p>
                 
-                {/* タグ */}
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-4">
                     {tags.map((tag) => (
@@ -138,14 +153,12 @@ export default async function TermPage({ params }: Props) {
                   </div>
                 )}
 
-                {/* 更新日時 */}
                 <div className="text-sm text-gray-500 flex items-center space-x-4">
                   <span>公開: {formatDate(term.publishedAt)}</span>
                   <span>更新: {formatDate(term.updatedAt)}</span>
                 </div>
               </header>
 
-              {/* 本文 */}
               <div className="p-8">
                 <div 
                   className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900"
@@ -153,9 +166,7 @@ export default async function TermPage({ params }: Props) {
                 />
               </div>
 
-              {/* フッター */}
               <footer className="p-8 bg-gray-50 border-t border-gray-200">
-                {/* 関連用語 */}
                 {relatedTerms.length > 0 && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold mb-4 text-gray-800">関連用語</h3>
@@ -175,7 +186,6 @@ export default async function TermPage({ params }: Props) {
                   </div>
                 )}
 
-                {/* シェアボタン */}
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="text-sm font-semibold text-gray-700 mb-2">この記事をシェア</h4>
@@ -207,7 +217,6 @@ export default async function TermPage({ params }: Props) {
         </div>
       </div>
 
-      {/* JSON-LD構造化データ */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

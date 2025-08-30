@@ -9,12 +9,18 @@ const inter = Inter({ subsets: ['latin'] })
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'IT言葉 - 情報処理安全確保支援士試験対策＆IT用語学習',
-  description: '情報処理安全確保支援士試験の対策を主軸に、全てのIT技術者のための用語解説・索引サイト。ネットワークやセキュリティなど、試験範囲を超えた実用的な知識もわかりやすく解説します。',
+  title: {
+    default: 'IT言葉 | 情報処理安全確保支援士試験対策の用語集',
+    template: '%s - IT言葉',
+  },
+  description: '情報処理安全確保支援士試験の合格を支援するIT用語解説サイト。ネットワーク、セキュリティから最新技術まで、頻出用語を体系的に学べます。図解や関連用語で理解を深め、効率的な試験対策を実現します。',
   keywords: '情報処理安全確保支援士, RISS, IT用語, 索引, セキュリティ, ネットワーク, データベース, 高度情報処理, 試験対策, 解説',
   authors: [{ name: 'IT言葉編集部' }],
   openGraph: {
-    title: 'IT言葉 - 情報処理安全確保支援士試験対策＆IT用語学習',
+    title: {
+        default: 'IT言葉 | 情報処理安全確保支援士試験対策の用語集',
+        template: '%s - IT言葉',
+    },
     description: '試験対策から実務まで役立つ、IT専門用語の索引＆解説サイト',
     url: 'https://it-aikotoba.vercel.app',
     siteName: 'IT言葉',
@@ -23,7 +29,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'IT言葉 - 情報処理安全確保支援士試験対策＆IT用語学習',
+    title: {
+        default: 'IT言葉 | 情報処理安全確保支援士試験対策の用語集',
+        template: '%s - IT言葉',
+    },
     description: '試験対策から実務まで役立つ、IT専門用語の索引＆解説サイト',
   },
   robots: {
@@ -73,7 +82,7 @@ export default function RootLayout({
               },
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": "https://it-aikotoba.vercel.app/search?q={search_term_string}",
+                "target": "https://it-aikotoba.vercel.app/terms?q={search_term_string}",
                 "query-input": "required name=search_term_string"
               }
             })
