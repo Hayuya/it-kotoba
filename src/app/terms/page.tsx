@@ -39,9 +39,7 @@ export default async function TermsPage({ searchParams }: Props) {
   if (selectedDifficulty) {
     filters.push(`difficulty[contains]${selectedDifficulty}`)
   }
-  // ▼▼▼【変更点】検索対象フィールドを `search_title` に変更 ▼▼▼
   if (searchQuery) {
-    // LLMが生成したsearch_titleは既に多様な表記を含んでいるため、入力はそのまま使用
     filters.push(`search_title[contains]${searchQuery}`)
   }
 
@@ -54,7 +52,6 @@ export default async function TermsPage({ searchParams }: Props) {
     }),
     getCategories()
   ])
-  // ▲▲▲【変更点】▲▲▲
 
   const totalPages = Math.ceil(termsResponse.totalCount / limit)
 
@@ -72,7 +69,8 @@ export default async function TermsPage({ searchParams }: Props) {
       <Header />
       
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
+        {/* ▼▼▼【変更】flex-col を flex-col-reverse に変更 ▼▼▼ */}
+        <div className="flex flex-col-reverse lg:flex-row gap-8">
           <aside className="lg:w-1/4">
             <IndexSidebar categories={categories} />
           </aside>
