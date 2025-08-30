@@ -97,7 +97,7 @@ export default function Header() {
                 className="text-gray-700 hover:text-blue-600 font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                用語一覧
+                検索
               </Link>
               <Link 
                 href="/about" 
