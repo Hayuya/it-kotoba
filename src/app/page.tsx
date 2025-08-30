@@ -2,6 +2,7 @@ import Header from '../components/Header'
 import IndexSidebar from '../components/IndexSidebar'
 import LatestArticles from '../components/LatestArticles'
 import { getCategories, getStats } from '../lib/microcms'
+import HeroSearch from '../components/HeroSearch' // ★ HeroSearchコンポーネントをインポート
 
 export default async function Home() {
   // microCMSからデータを取得
@@ -17,7 +18,7 @@ export default async function Home() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* サイドバー */}
-          <aside className="lg:w-1/4"> {/* self-startを削除 */}
+          <aside className="lg:w-1/4">
             <IndexSidebar categories={categories} />
           </aside>
 
@@ -30,14 +31,9 @@ export default async function Home() {
                 豊富な情報量と記憶に残る解説<br />
                 現代社会の情報処理技術用語索引サイト
               </p>
-              <div className="flex flex-wrap gap-4">
-                <div className="bg-white/20 rounded-lg px-4 py-2">
-                  <span className="text-sm">⚪️ 索引でかんたん検索</span>
-                </div>
-                <div className="bg-white/20 rounded-lg px-4 py-2">
-                  <span className="text-sm">⚪️ 一度読んだら忘れない解説</span>
-                </div>
-              </div>
+              {/* ▼▼▼ 変更箇所 ▼▼▼ */}
+              <HeroSearch />
+              {/* ▲▲▲ 変更箇所 ▲▲▲ */}
             </section>
 
             {/* 新着記事セクション */}
