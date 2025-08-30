@@ -11,7 +11,8 @@ import {
   getDifficultyLabel, 
   formatDate 
 } from '../../../lib/microcms'
-import { BreadcrumbList } from 'schema-dts'
+// ▼▼▼【変更点】WithContext をインポート ▼▼▼
+import { BreadcrumbList, WithContext } from 'schema-dts'
 
 // JSON-LDコンポーネントをインポート
 import JsonLd from '../../../components/JsonLd'
@@ -71,14 +72,13 @@ export default async function TermPage({ params }: Props) {
   const tags = term.tags || []
   const relatedTerms = term.relatedTerms || []
 
-  // パンくずリスト用の構造化データ
-  const breadcrumbJsonLd: BreadcrumbList = {
+  // ▼▼▼【変更点】パンくずリストの型を WithContext<BreadcrumbList> に修正 ▼▼▼
+  const breadcrumbJsonLd: WithContext<BreadcrumbList> = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
       { '@type': 'ListItem', position: 2, name: '用語一覧', item: `${siteUrl}/terms` },
-      // カテゴリーのitemプロパティを削除
       { '@type': 'ListItem', position: 3, name: term.category.name }, 
       { '@type': 'ListItem', position: 4, name: term.title },
     ],
@@ -87,7 +87,6 @@ export default async function TermPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-gray-50">
       <head>
-        {/* head内にJsonLdコンポーネントを配置 */}
         <JsonLd schema={breadcrumbJsonLd} />
       </head>
       
@@ -100,7 +99,6 @@ export default async function TermPage({ params }: Props) {
           </aside>
 
           <main className="lg:w-3/4">
-            {/* パンくずリスト */}
             <nav className="mb-6 text-sm">
               <ol className="flex items-center space-x-2 text-gray-500">
                 <li>
@@ -115,14 +113,12 @@ export default async function TermPage({ params }: Props) {
                   </Link>
                 </li>
                 <li>/</li>
-                {/* ▼▼▼【変更点】カテゴリーページへのリンクを削除し、テキスト表示のみにする ▼▼▼ */}
                 <li className="text-gray-500">{term.category.name}</li>
                 <li>/</li>
                 <li className="text-gray-800 font-medium">{term.title}</li>
               </ol>
             </nav>
 
-            {/* メイン記事 */}
             <article className="bg-white rounded-lg shadow-md overflow-hidden">
               <header className="p-8 border-b border-gray-200">
                 <div className="flex items-start justify-between mb-4">
