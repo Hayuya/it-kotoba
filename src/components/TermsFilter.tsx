@@ -19,15 +19,17 @@ export default function TermsFilter({ categories, totalCount }: TermsFilterProps
   const initialKeyword = searchParams.get('q') || ''
 
   const [keyword, setKeyword] = useState(initialKeyword)
+  const [isSearching, setIsSearching] = useState(false) // ★ ローディング状態のstateを追加
   const debouncedKeyword = useDebounce(keyword, 500)
 
-  // ▼▼▼【変更点】useEffectのロジックを最終版に更新 ▼▼▼
   useEffect(() => {
     // 最初のレンダリング時や、URLのキーワードと入力が同じ場合は実行しない
     if (debouncedKeyword === initialKeyword) {
+      setIsSearching(false) // ★ 検索が不要な場合はローディングを解除
       return
     }
 
+    setIsSearching(true) // ★ 検索が実行される直前にローディング状態にする
     const params = new URLSearchParams(searchParams.toString())
     
     if (debouncedKeyword) {
@@ -37,12 +39,12 @@ export default function TermsFilter({ categories, totalCount }: TermsFilterProps
     }
     params.delete('page') // 検索時は1ページ目に戻す
     
-    // 依存配列を修正し、意図しない再実行を防ぐ
     router.push(`/terms?${params.toString()}`)
+    // コンポーネントがアンマウントされるため、ここでsetIsSearching(false)する必要はありません
   }, [debouncedKeyword, initialKeyword, router, searchParams])
-  // ▲▲▲【変更点】▲▲▲
 
   const handleCategoryChange = (categoryId: string) => {
+    setIsSearching(true) // ★ カテゴリ変更時もローディング表示
     const params = new URLSearchParams(searchParams.toString())
     if (categoryId) {
       params.set('category', categoryId)
@@ -54,6 +56,7 @@ export default function TermsFilter({ categories, totalCount }: TermsFilterProps
   }
 
   const handleDifficultyChange = (difficulty: string) => {
+    setIsSearching(true) // ★ 難易度変更時もローディング表示
     const params = new URLSearchParams(searchParams.toString())
     if (difficulty) {
       params.set('difficulty', difficulty)
@@ -66,18 +69,29 @@ export default function TermsFilter({ categories, totalCount }: TermsFilterProps
 
   return (
     <div>
+      {/* ▼▼▼【変更点】キーワード検索部分にスピナーを追加 ▼▼▼ */}
       <div className="mb-6">
         <label htmlFor="search-keyword" className="block text-sm font-medium text-gray-700 mb-2">キーワード検索</label>
-        <input
-          type="text"
-          id="search-keyword"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-          placeholder="IT用語を入力..."
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-        />
-        {/* ▼▼▼【変更点】注釈を削除 ▼▼▼ */}
+        <div className="relative">
+          <input
+            type="text"
+            id="search-keyword"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            placeholder="IT用語を入力..."
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+          {isSearching && (
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <svg className="animate-spin h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+          )}
+        </div>
       </div>
+      {/* ▲▲▲【変更点】▲▲▲ */}
 
       <div className="flex flex-wrap gap-4 mb-6">
         <div>
