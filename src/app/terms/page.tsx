@@ -85,11 +85,11 @@ export default async function TermsPage({ searchParams }: Props) {
                   </Link>
                 </li>
                 <li>/</li>
-                <li className="text-gray-800 font-medium">用語一覧</li>
+                <li className="text-gray-800 font-medium">検索</li>
               </ol>
             </nav>
             <header className="bg-white rounded-lg shadow-md p-8 mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">IT用語一覧</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">IT用語検索</h1>
               <p className="text-gray-600 mb-6">
                 情報処理技術者試験で問われるIT用語を網羅的に学習できます。
                 キーワード検索や、難易度・カテゴリーでの絞り込みで効率的に学習しましょう。

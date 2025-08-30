@@ -198,7 +198,7 @@ export default async function TermPage({ params }: Props) {
                     href="/terms"
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    用語一覧に戻る
+                    IT用語検索画面に戻る
                   </Link>
                 </div>
               </footer>

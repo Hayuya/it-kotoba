@@ -49,8 +49,8 @@ export default function Footer() {
           </div>
 
           {/* ナビゲーション */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">サイトマップ</h4>
+          <div className="md:col-start-4">
+            <h4 className="text-lg font-semibold mb-4">ナビゲーション</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/" className="text-gray-300 hover:text-white transition-colors">
@@ -59,7 +59,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/terms" className="text-gray-300 hover:text-white transition-colors">
-                  用語一覧
+                  検索
                 </Link>
               </li>
               <li>
@@ -70,38 +70,6 @@ export default function Footer() {
               <li>
                 <Link href="/contact" className="text-gray-300 hover:text-white transition-colors">
                   お問い合わせ
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* リソース */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">学習リソース</h4>
-            <ul className="space-y-2">
-              <li>
-                <a 
-                  href="https://www.jitec.ipa.go.jp/1_11seido/sc.html" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  IPA公式サイト
-                </a>
-              </li>
-              <li>
-                <Link href="/exam-info" className="text-gray-300 hover:text-white transition-colors">
-                  試験情報
-                </Link>
-              </li>
-              <li>
-                <Link href="/past-questions" className="text-gray-300 hover:text-white transition-colors">
-                  過去問題
-                </Link>
-              </li>
-              <li>
-                <Link href="/glossary" className="text-gray-300 hover:text-white transition-colors">
-                  用語集
                 </Link>
               </li>
             </ul>
