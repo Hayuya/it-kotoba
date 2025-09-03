@@ -4,6 +4,8 @@ import type { Metadata } from 'next'
 import { Inter, Noto_Sans_JP } from 'next/font/google'
 import './globals.css'
 import PageWrapper from '../components/PageWrapper'
+import { Analytics } from '@vercel/analytics/next'; 
+
 
 const inter = Inter({ subsets: ['latin'] })
 const notoSansJP = Noto_Sans_JP({ subsets: ['latin'] })
@@ -88,6 +90,7 @@ export default function RootLayout({
             })
           }}
         />
+        <Analytics />
       </body>
     </html>
   )
