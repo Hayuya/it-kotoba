@@ -1,9 +1,8 @@
 'use client'
 
-// ▼▼▼【変更点】useMemo をインポート ▼▼▼
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { Category } from '../lib/microcms'
+import { Category, Term } from '../lib/microcms'
 
 interface IndexSidebarProps {
   categories?: Category[]
@@ -16,72 +15,87 @@ const ALPHABET_GROUPS = [
 
 const NUMBER_GROUP = '0-9'
 
+// 索引で使う用語の型を定義
+type IndexTerm = Pick<Term, 'id' | 'title' | 'slug'> & {
+  category: { name: string }
+}
+
 export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
   const [selectedIndex, setSelectedIndex] = useState<string>('')
   const [indexType, setIndexType] = useState<'alphabet' | 'number'>('alphabet')
-  const [indexTerms, setIndexTerms] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  // ▼▼▼【変更点】絞り込み検索用のstateを追加 ▼▼▼
   const [filterQuery, setFilterQuery] = useState('')
+  const [loading, setLoading] = useState(true)
+  
+  // 全用語データを保持するためのState
+  const [allTerms, setAllTerms] = useState<IndexTerm[]>([])
 
-  // 索引で用語を取得
-  const fetchIndexTerms = async (index: string, type: 'alphabet' | 'number') => {
-    if (!index) {
-      setIndexTerms([])
-      return
-    }
-
-    setLoading(true)
-    try {
-      const response = await fetch(`/api/index?type=${type}&char=${encodeURIComponent(index)}`)
-      
-      if (response.ok) {
-        const data = await response.json()
-        setIndexTerms(data.success ? data.data.contents : [])
-      } else {
-        setIndexTerms([])
-      }
-    } catch (error) {
-      console.error('Error fetching index terms:', error)
-      setIndexTerms([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
+  // 初回レンダリング時に一度だけ全用語データを取得する
   useEffect(() => {
-    fetchIndexTerms(selectedIndex, indexType)
-  }, [selectedIndex, indexType])
+    const fetchAllTerms = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/all-terms-for-index')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success) {
+            setAllTerms(data.data)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching all terms for index:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchAllTerms()
+  }, [])
 
-  // 索引タイプ切り替え
+  // 取得した全用語をアルファベットと数字で事前にグループ分けしておく
+  const groupedTerms = useMemo(() => {
+    if (allTerms.length === 0) return {}
+
+    const groups: { [key: string]: IndexTerm[] } = {}
+    
+    // アルファベット
+    for (const letter of ALPHABET_GROUPS) {
+      groups[letter] = allTerms.filter(term => 
+        term.title.trim().toUpperCase().startsWith(letter)
+      )
+    }
+    // 数字
+    groups[NUMBER_GROUP] = allTerms.filter(term => 
+      /^[0-9]/.test(term.title.trim())
+    )
+
+    return groups
+  }, [allTerms])
+
+
+  // 索引タイプ（ABC/数字）を切り替える
   const handleIndexTypeChange = (type: 'alphabet' | 'number') => {
     setIndexType(type)
     setSelectedIndex('')
-    setIndexTerms([])
-    // ▼▼▼【変更点】検索キーワードをリセット ▼▼▼
     setFilterQuery('')
   }
 
-  // 索引項目をクリック
+  // 索引の項目（A, B, C...）をクリックしたときの処理
   const handleIndexClick = (index: string) => {
-    // ▼▼▼【変更点】検索キーワードをリセット ▼▼▼
     setFilterQuery('')
-    if (selectedIndex === index) {
-      setSelectedIndex('')
-    } else {
-      setSelectedIndex(index)
-    }
+    setSelectedIndex(prev => prev === index ? '' : index)
   }
   
-  // ▼▼▼【変更点】絞り込み後の用語リストをメモ化して作成 ▼▼▼
+  // 表示する用語リストを、Stateから瞬時に取り出す
+  const indexTerms = selectedIndex ? groupedTerms[selectedIndex] || [] : []
+  
+  // リスト内検索のフィルタリング処理
   const filteredTerms = useMemo(() => {
     if (!filterQuery) {
-      return indexTerms;
+      return indexTerms
     }
     return indexTerms.filter(term =>
       term.title.toLowerCase().includes(filterQuery.toLowerCase())
-    );
-  }, [indexTerms, filterQuery]);
+    )
+  }, [indexTerms, filterQuery])
 
 
   return (
@@ -154,7 +168,6 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
               {indexTerms.length > 0 && `(${indexTerms.length}件)`}
             </h4>
             
-            {/* ▼▼▼【変更点】検索ボックスを追加 ▼▼▼ */}
             {indexTerms.length > 0 && (
               <div className="mb-3">
                 <input
@@ -170,9 +183,8 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
             {loading ? (
               <div className="text-center py-4">
                 <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                <p className="text-sm text-gray-600 mt-2">読み込み中...</p>
+                <p className="text-sm text-gray-600 mt-2">索引データを準備中...</p>
               </div>
-            // ▼▼▼【変更点】filteredTerms を使用して描画 ▼▼▼
             ) : filteredTerms.length > 0 ? (
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {filteredTerms.map((term) => (
@@ -192,7 +204,6 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
               </div>
             ) : (
               <p className="text-sm text-gray-500 py-4 text-center">
-                {/* 絞り込み結果がない場合と、元々用語がない場合でメッセージを分岐 */}
                 {indexTerms.length > 0 ? '該当する用語がありません' : '該当する用語が見つかりませんでした'}
               </p>
             )}

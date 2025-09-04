@@ -542,6 +542,59 @@ export const getAllTermSlugs = async (): Promise<string[]> => {
   }
 }
 
+// ▼▼▼【ここから修正】▼▼▼
+/**
+ * 索引機能専用：軽量な全用語データをページネーションで全件取得する
+ */
+export const getAllTermsForIndex = async (): Promise<Pick<Term, 'id' | 'title' | 'slug' | 'category'>[]> => {
+  try {
+    const allContents: Term[] = [];
+    const limit = 100; // APIの上限である100件ずつ取得
+    let offset = 0;
+    let totalCount = 0;
+
+    // 最初に一度取得して全体の件数を把握する
+    const firstResponse = await client.get({
+      endpoint: 'terms',
+      queries: {
+        limit,
+        offset,
+        fields: 'id,title,slug,category.id,category.name', // 必要なフィールドのみに絞る
+      },
+    });
+
+    allContents.push(...firstResponse.contents);
+    totalCount = firstResponse.totalCount;
+    offset += limit;
+
+    // 残りのデータを並行して取得する
+    const promises = [];
+    while (offset < totalCount) {
+      promises.push(
+        client.get({
+          endpoint: 'terms',
+          queries: {
+            limit,
+            offset,
+            fields: 'id,title,slug,category.id,category.name',
+          },
+        })
+      );
+      offset += limit;
+    }
+
+    const responses = await Promise.all(promises);
+    responses.forEach(res => allContents.push(...res.contents));
+
+    return allContents;
+    
+  } catch (error) {
+    console.error('Error fetching all terms for index:', error);
+    return [];
+  }
+}
+// ▲▲▲【ここまで修正】▲▲▲
+
 export const getAllCategorySlugs = async (): Promise<string[]> => {
   try {
     const { contents } = await client.get({
