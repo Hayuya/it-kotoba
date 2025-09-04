@@ -164,13 +164,6 @@ export default function RecommendedSlider() {
       onMouseEnter={() => setIsAutoPlay(false)}
       onMouseLeave={() => setIsAutoPlay(true)}
     >
-      {/* デバッグ情報（開発時のみ表示） */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="mb-4 p-2 bg-gray-100 rounded text-sm text-gray-600">
-          用語数: {recommendedTerms.length}, スライド数: {totalSlides}, 現在: {currentSlide + 1}
-          {error && <div className="text-orange-600">警告: {error}</div>}
-        </div>
-      )}
 
       {/* スライダーコンテナ */}
       <div className="overflow-hidden rounded-lg">
@@ -269,8 +262,6 @@ export default function RecommendedSlider() {
               onClick={() => setIsAutoPlay(!isAutoPlay)}
               className="text-xs text-gray-500 hover:text-gray-700 transition-colors flex items-center space-x-1"
             >
-              <span>{isAutoPlay ? '⏸️' : '▶️'}</span>
-              <span>{isAutoPlay ? '自動再生を停止' : '自動再生を開始'}</span>
             </button>
           </div>
         </>
