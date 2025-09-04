@@ -25,7 +25,7 @@ export default function HeroSearch() {
         type="text"
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
-        placeholder="例: API, データベース..."
+        placeholder="例: API, 暗号スイート..."
         className="w-full sm:flex-1 px-5 py-3 text-gray-800 rounded-md border-2 border-transparent focus:outline-none focus:border-white focus:ring-2 focus:ring-white transition-all"
         aria-label="検索キーワード"
       />

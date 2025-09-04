@@ -94,7 +94,7 @@ export default function RecommendedSlider() {
       <div className="bg-white rounded-lg shadow-md p-8">
         <div className="flex items-center justify-center space-x-2 mb-4">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-          <p className="text-gray-600">おすすめ記事を読み込み中...</p>
+          <p className="text-gray-600">記事を読み込み中...</p>
         </div>
         
         {/* スケルトンローダー */}
