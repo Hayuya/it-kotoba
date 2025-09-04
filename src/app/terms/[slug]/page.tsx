@@ -10,12 +10,9 @@ import {
   getDifficultyColor, 
   getDifficultyLabel, 
   formatDate,
-  getAllTermSlugs // ★ インポートを追加
+  getAllTermSlugs
 } from '../../../lib/microcms'
-// ▼▼▼【変更点】WithContext をインポート ▼▼▼
-import { BreadcrumbList, WithContext } from 'schema-dts'
-
-// JSON-LDコンポーネントをインポート
+import { BreadcrumbList, TechArticle, WithContext } from 'schema-dts'
 import JsonLd from '../../../components/JsonLd'
 
 
@@ -23,22 +20,13 @@ interface Props {
   params: { slug: string }
 }
 
-// ▼▼▼【ここから追加】▼▼▼
-/**
- * ビルド時に静的に生成するページのパス（slug）の一覧をNext.jsに提供します。
- * この関数で返されたslugに基づいて、各用語ページが事前にHTMLとして生成されます。
- */
 export async function generateStaticParams() {
   const slugs = await getAllTermSlugs();
-  
-  // Next.jsが要求する形式（[{ slug: '...' }, { slug: '...' }]）に変換して返す
   return slugs.map((slug) => ({
     slug: slug,
   }));
 }
-// ▲▲▲【ここまで追加】▲▲▲
 
-// メタデータ生成
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const term = await getTermBySlug(params.slug)
   
@@ -48,6 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const tags = term.tags || []
   const keywords = [term.title, term.category.name, ...tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', ')
 
@@ -55,16 +44,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${term.title} - IT言葉`,
     description: term.description,
     keywords: keywords,
+    // Canonical URLを動的に設定
+    alternates: {
+      canonical: `/terms/${term.slug}`,
+    },
     openGraph: {
       title: `${term.title} - IT言葉`,
       description: term.description,
+      url: `${siteUrl}/terms/${term.slug}`,
       type: 'article',
       publishedTime: term.publishedAt,
       modifiedTime: term.updatedAt,
       tags: tags.map(tag => tag.name),
     },
     twitter: {
-      card: 'summary',
+      card: 'summary_large_image',
       title: `${term.title} - IT言葉`,
       description: term.description,
     }
@@ -83,27 +77,56 @@ export default async function TermPage({ params }: Props) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const currentUrl = `${siteUrl}/terms/${term.slug}`
-
-  // tagsとrelatedTermsの安全な処理
   const tags = term.tags || []
   const relatedTerms = term.relatedTerms || []
 
-  // ▼▼▼【変更点】パンくずリストの型を WithContext<BreadcrumbList> に修正 ▼▼▼
+  // パンくずリスト用のJSON-LD
   const breadcrumbJsonLd: WithContext<BreadcrumbList> = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
       { '@type': 'ListItem', position: 2, name: '用語一覧', item: `${siteUrl}/terms` },
-      { '@type': 'ListItem', position: 3, name: term.category.name }, 
-      { '@type': 'ListItem', position: 4, name: term.title },
+      { '@type': 'ListItem', position: 3, name: term.category.name, item: `${siteUrl}/categories/${term.category.slug}` }, // カテゴリページへのリンクを追加
+      { '@type': 'ListItem', position: 4, name: term.title, item: currentUrl },
     ],
+  };
+
+  // 記事用のJSON-LD (TechArticleを使用)
+  const articleJsonLd: WithContext<TechArticle> = {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": currentUrl
+    },
+    "headline": term.title,
+    "description": term.description,
+    "image": `${siteUrl}/ogp.png`, // 記事の代表画像
+    "author": {
+      "@type": "Organization",
+      "name": "IT言葉編集部"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "IT言葉",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${siteUrl}/icon.png`
+      }
+    },
+    "datePublished": term.publishedAt,
+    "dateModified": term.updatedAt,
+    "articleSection": term.category.name,
+    "keywords": tags.map(tag => tag.name).join(", "),
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* 複数のJSON-LDをまとめてheadに出力 */}
       <head>
         <JsonLd schema={breadcrumbJsonLd} />
+        <JsonLd schema={articleJsonLd} />
       </head>
       
       <Header />
@@ -115,21 +138,15 @@ export default async function TermPage({ params }: Props) {
           </aside>
 
           <main className="lg:w-3/4">
+            {/* パンくずリスト */}
             <nav className="mb-6 text-sm">
               <ol className="flex items-center space-x-2 text-gray-500">
-                <li>
-                  <Link href="/" className="hover:text-blue-600">
-                    ホーム
-                  </Link>
-                </li>
+                <li><Link href="/" className="hover:text-blue-600">ホーム</Link></li>
                 <li>/</li>
-                <li>
-                  <Link href="/terms" className="hover:text-blue-600">
-                    用語一覧
-                  </Link>
-                </li>
+                <li><Link href="/terms" className="hover:text-blue-600">用語一覧</Link></li>
                 <li>/</li>
-                <li className="text-gray-500">{term.category.name}</li>
+                {/* カテゴリページへのリンクを有効化 */}
+                <li><Link href={`/categories/${term.category.slug}`} className="hover:text-blue-600">{term.category.name}</Link></li>
                 <li>/</li>
                 <li className="text-gray-800 font-medium">{term.title}</li>
               </ol>
@@ -228,38 +245,6 @@ export default async function TermPage({ params }: Props) {
           </main>
         </div>
       </div>
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": term.title,
-            "description": term.description,
-            "author": {
-              "@type": "Organization",
-              "name": "IT言葉編集部"
-            },
-            "publisher": {
-              "@type": "Organization",
-              "name": "IT言葉",
-              "logo": {
-                "@type": "ImageObject",
-                "url": `${siteUrl}/logo.png`
-              }
-            },
-            "datePublished": term.publishedAt,
-            "dateModified": term.updatedAt,
-            "mainEntityOfPage": {
-              "@type": "WebPage",
-              "@id": currentUrl
-            },
-            "keywords": tags.map(tag => tag.name).join(", "),
-            "articleSection": term.category.name
-          })
-        }}
-      />
     </div>
   )
 }
