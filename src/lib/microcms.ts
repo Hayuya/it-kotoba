@@ -70,6 +70,7 @@ export interface Term {
   updatedAt: string
   publishedAt: string
   revisedAt: string
+  search_title?: string; // ▼▼▼【変更点】search_titleの型定義を追加 ▼▼▼
 }
 
 export interface MicroCMSListResponse<T> {
@@ -542,24 +543,26 @@ export const getAllTermSlugs = async (): Promise<string[]> => {
   }
 }
 
-// ▼▼▼【ここから修正】▼▼▼
+// ▼▼▼【変更点】戻り値の型をより正確なものに修正 ▼▼▼
+type SearchableTerm = Pick<Term, 'id' | 'title' | 'slug' | 'category' | 'difficulty' | 'description' | 'publishedAt' | 'search_title'>;
+
 /**
- * 索引機能専用：軽量な全用語データをページネーションで全件取得する
+ * 索引・検索機能専用：軽量な全用語データをページネーションで全件取得する
  */
-export const getAllTermsForIndex = async (): Promise<Pick<Term, 'id' | 'title' | 'slug' | 'category'>[]> => {
+export const getAllSearchableTerms = async (): Promise<SearchableTerm[]> => {
   try {
-    const allContents: Term[] = [];
+    const allContents: SearchableTerm[] = [];
     const limit = 100; // APIの上限である100件ずつ取得
     let offset = 0;
     let totalCount = 0;
 
     // 最初に一度取得して全体の件数を把握する
-    const firstResponse = await client.get({
+    const firstResponse = await client.get<MicroCMSListResponse<SearchableTerm>>({
       endpoint: 'terms',
       queries: {
         limit,
         offset,
-        fields: 'id,title,slug,category.id,category.name', // 必要なフィールドのみに絞る
+        fields: 'id,title,slug,category,difficulty,description,publishedAt,search_title', // 必要なフィールドをすべて指定
       },
     });
 
@@ -571,12 +574,12 @@ export const getAllTermsForIndex = async (): Promise<Pick<Term, 'id' | 'title' |
     const promises = [];
     while (offset < totalCount) {
       promises.push(
-        client.get({
+        client.get<MicroCMSListResponse<SearchableTerm>>({
           endpoint: 'terms',
           queries: {
             limit,
             offset,
-            fields: 'id,title,slug,category.id,category.name',
+            fields: 'id,title,slug,category,difficulty,description,publishedAt,search_title',
           },
         })
       );
@@ -589,11 +592,10 @@ export const getAllTermsForIndex = async (): Promise<Pick<Term, 'id' | 'title' |
     return allContents;
     
   } catch (error) {
-    console.error('Error fetching all terms for index:', error);
+    console.error('Error fetching all searchable terms:', error);
     return [];
   }
 }
-// ▲▲▲【ここまで修正】▲▲▲
 
 export const getAllCategorySlugs = async (): Promise<string[]> => {
   try {

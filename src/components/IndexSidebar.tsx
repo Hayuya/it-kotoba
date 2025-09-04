@@ -34,6 +34,7 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
     const fetchAllTerms = async () => {
       try {
         setLoading(true)
+        // ▼▼▼【変更点】APIのエンドポイントを修正 ▼▼▼
         const response = await fetch('/api/all-terms-for-index')
         if (response.ok) {
           const data = await response.json()
@@ -204,7 +205,7 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
               </div>
             ) : (
               <p className="text-sm text-gray-500 py-4 text-center">
-                {indexTerms.length > 0 ? '該当する用語がありません' : '該当する用語が見つかりませんでした'}
+                {indexTerms.length > 0 ? '該当する用語がありません' : '元々用語がありません'}
               </p>
             )}
           </div>
