@@ -9,7 +9,8 @@ import {
   getCategories,
   getDifficultyColor, 
   getDifficultyLabel, 
-  formatDate 
+  formatDate,
+  getAllTermSlugs // ★ インポートを追加
 } from '../../../lib/microcms'
 // ▼▼▼【変更点】WithContext をインポート ▼▼▼
 import { BreadcrumbList, WithContext } from 'schema-dts'
@@ -21,6 +22,21 @@ import JsonLd from '../../../components/JsonLd'
 interface Props {
   params: { slug: string }
 }
+
+// ▼▼▼【ここから追加】▼▼▼
+/**
+ * ビルド時に静的に生成するページのパス（slug）の一覧をNext.jsに提供します。
+ * この関数で返されたslugに基づいて、各用語ページが事前にHTMLとして生成されます。
+ */
+export async function generateStaticParams() {
+  const slugs = await getAllTermSlugs();
+  
+  // Next.jsが要求する形式（[{ slug: '...' }, { slug: '...' }]）に変換して返す
+  return slugs.map((slug) => ({
+    slug: slug,
+  }));
+}
+// ▲▲▲【ここまで追加】▲▲▲
 
 // メタデータ生成
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
