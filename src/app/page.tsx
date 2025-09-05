@@ -1,14 +1,18 @@
+// src/app/page.tsx
+
 import Header from '../components/Header'
 import IndexSidebar from '../components/IndexSidebar'
-import LatestArticles from '../components/LatestArticles'
-import { getCategories, getStats } from '../lib/microcms'
+// import LatestArticles from '../components/LatestArticles' // ★ 不要になるので削除
+import { getCategories, getStats, getAllSearchableTerms } from '../lib/microcms' // ★ getAllSearchableTerms をインポート
 import HeroSearch from '../components/HeroSearch'
+import SuperIndexClient from '../components/SuperIndexClient' // ★ SuperIndexClient をインポート
 
 export default async function Home() {
   // microCMSからデータを取得
-  const [categories, stats] = await Promise.all([
+  const [categories, stats, allTerms] = await Promise.all([ // ★ allTerms を追加
     getCategories(),
-    getStats()
+    getStats(),
+    getAllSearchableTerms(), // ★ 全用語データを取得
   ])
 
   return (
@@ -28,25 +32,27 @@ export default async function Home() {
             <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8">
               <h1 className="text-4xl font-bold mb-4">IT言葉辞典</h1>
               <p className="text-xl mb-6">
-                参考書の横に、学びのそばに。<br />
-                IT学習の「分からない」を瞬時に解決する高速用語辞典。
+                豊富な情報量と記憶に残る解説<br />
+                現代社会の情報処理技術用語索引サイト
               </p>
               <HeroSearch />
             </section>
 
-            {/* 新着記事セクション */}
+            {/* ▼▼▼ ここから変更 ▼▼▼ */}
+            {/* 高性能索引セクション */}
             <section className="mb-8">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">新着</h2>
+                <h2 className="text-2xl font-bold text-gray-800">スーパー索引</h2>
                 <a 
-                  href="/terms" 
+                  href="/super-index" 
                   className="text-blue-600 hover:text-blue-800 font-medium text-sm"
                 >
-                  すべての用語を見る →
+                  専用ページで見る →
                 </a>
               </div>
-              <LatestArticles />
+              <SuperIndexClient allTerms={allTerms} />
             </section>
+            {/* ▲▲▲ ここまで変更 ▲▲▲ */}
 
             {/* 統計情報 */}
             <section className="bg-white rounded-lg shadow-md p-8">
@@ -78,23 +84,23 @@ export default async function Home() {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
                     <span className="mr-2">🎯</span>
-                    辞書として活用する
+                    基礎固めから始める
                   </h3>
                   <ul className="text-gray-600 space-y-2 text-sm">
-                    <li>学習中の不明点を即座に解決</li>
-                    <li>知識の穴をなくし、理解を深める</li>
-                    <li>書籍や動画と併用して学習効果アップ</li>
+                    <li>ITの基本概念を理解</li>
+                    <li>理解の曖昧さを放置しない</li>
+                    <li>実際の事例と関連付ける</li>
                   </ul>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
                     <span className="mr-2">🔄</span>
-                    関連知識を繋げる
+                    継続的な復習
                   </h3>
                   <ul className="text-gray-600 space-y-2 text-sm">
-                    <li>関連用語を辿って知識を広げる</li>
-                    <li>カテゴリやタグで体系的に学ぶ</li>
-                    <li>全体像を掴み、記憶に定着させる</li>
+                    <li>定期的な見直しで定着させる</li>
+                    <li>関連用語をセットで覚える</li>
+                    <li>覚えた用語を実際に使ってみる</li>
                   </ul>
                 </div>
               </div>
