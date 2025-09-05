@@ -74,7 +74,7 @@ export const metadata: Metadata = {
   },
   // アイコン設定
   icons: {
-    icon: '/favicon.ico',
+    icon: '/icon.png',
     apple: '/apple-icon.png',
   },
   // マニフェストファイル
