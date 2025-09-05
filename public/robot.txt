@@ -1,4 +1,12 @@
+# 全てのクローラーに対して適用
 User-agent: *
+
+# クロールを許可するルート
 Allow: /
 
-Sitemap: https://itkotoba.com/sitemap.xml
+# クロールを許可しないディレクトリ
+Disallow: /api/
+Disallow: /_next/
+
+# サイトマップの場所を明記
+Sitemap: https://it-aikotoba.vercel.app/sitemap.xml
