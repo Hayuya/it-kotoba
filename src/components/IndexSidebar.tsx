@@ -1,8 +1,10 @@
+// src/components/IndexSidebar.tsx
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { Category, Term } from '../lib/microcms'
+import SidebarSearch from './SidebarSearch' // ★ SidebarSearchをインポート
 
 interface IndexSidebarProps {
   categories?: Category[]
@@ -101,6 +103,9 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
 
   return (
     <div className="sticky top-24 space-y-6 max-h-[calc(100vh-7.5rem)] overflow-y-auto">
+      {/* ★ ここから変更 */}
+      <SidebarSearch />
+      {/* ★ ここまで変更 */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold mb-4 text-gray-800">🔍 索引</h3>
         
