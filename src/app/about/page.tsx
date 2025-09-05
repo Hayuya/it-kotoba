@@ -5,11 +5,11 @@ import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories } from '../../lib/microcms'
 
 export const metadata: Metadata = {
-  title: 'このサイトについて - IT言葉',
-  description: '「IT言葉」のコンセプトや、キーワード検索・索引機能の使い方について解説します。当サイトは情報処理安全確保支援士試験対策を主軸としつつ、より広い範囲のIT技術用語を網羅しています。',
+  title: 'このサイトについて - IT言葉辞典',
+  description: '「IT言葉辞典」は、IT資格の学習や実務で出会う専門用語を「瞬時に解決」するために生まれた、高速・高機能なIT用語辞典です。あなたの学習効果を最大化する「最高のお供」となることを目指しています。',
   openGraph: {
-    title: 'このサイトについて - IT言葉',
-    description: '「IT言葉」のコンセプト、機能、使い方について',
+    title: 'このサイトについて - IT言葉辞典',
+    description: '「IT言葉辞典」のコンセプト、機能、使い方について',
   },
 }
 
@@ -46,80 +46,75 @@ export default async function AboutPage() {
             <header className="bg-white rounded-lg shadow-md p-8 mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">このサイトについて</h1>
               <p className="text-gray-600 leading-relaxed">
-                「IT言葉」は、圧倒的な情報量と記憶に残る解説をコンセプトにした、情報処理技術者向けの用語学習サイトです。
-                複雑な専門用語を、単なる暗記ではなく「理解」へと導くことを目的としています。
+                「IT言葉辞典」は、IT資格の学習や実務で出会う専門用語の「分からない」を瞬時に解決するために生まれた、高速・高機能なIT用語辞典です。
+                参考書や動画教材と併用することで、あなたの学習効果を最大化する「最高のお供」となることを目指しています。
               </p>
             </header>
-
-            {/* ▼▼▼【変更箇所】機能説明のセクションを全面的に刷新 ▼▼▼ */}
+            
             <section className="bg-white rounded-lg shadow-md p-8 mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">主な機能と使い方</h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">サイトの３つの強み</h2>
               <div className="space-y-8">
 
-                {/* キーワード検索 */}
                 <div>
                   <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                    <Link href="/terms" className="hover:text-blue-600 transition-colors">
-                      📚 キーワード検索と絞り込み
-                    </Link>
+                    🚀 圧倒的な高速表示と検索性
                   </h3>
                   <p className="text-gray-600 mb-4">
-                    目的の用語が明確な場合に最も効率的な検索方法です。「用語一覧」ページの上部にある検索ボックスから利用できます。
+                    学習中の思考を止めさせない、ストレスフリーな体験を提供します。気になった用語は瞬時に検索・表示。豊富な絞り込み機能で、膨大な情報の中から目的の用語へ一直線にたどり着けます。
                   </p>
-                  <ul className="list-disc list-inside text-gray-600 space-y-2 text-sm">
-                    <li>
-                      <strong>半リアルタイム検索:</strong>
-                      <p className="ml-4 mt-1">
-                        入力が止まってから少し待つと、自動で検索が実行されます。ボタンを押す必要はありません。
-                      </p>
-                    </li>
-                    <li>
-                      <strong>高度な検索仕様:</strong>
-                      <p className="ml-4 mt-1">
-                        単なる文字の一致だけでなく、アルファベットの<strong>大文字・小文字</strong>、日本語の<strong>ひらがな・カタカナ</strong>を区別しない柔軟な検索が可能です。（例：「DNS」と入力しても「でぃーえぬえす」の用語がヒットします）
-                      </p>
-                    </li>
-                     <li>
-                      <strong>絞り込み機能:</strong>
-                      <p className="ml-4 mt-1">
-                        キーワード検索と合わせて、「カテゴリー」や「難易度」で結果をさらに絞り込むことができ、特定の分野やレベルに合わせた学習が可能です。
-                      </p>
-                    </li>
-                  </ul>
-                   <Link href="/terms" className="inline-block mt-4 bg-blue-100 text-blue-800 px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors">
-                    用語一覧ページで検索を使ってみる
-                  </Link>
                 </div>
 
-                {/* 索引機能 */}
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-3">🔍 索引（ABC・数字）</h3>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                    🤝 分かりやすさを追求した解説
+                  </h3>
                   <p className="text-gray-600 mb-4">
-                    サイドバーにある索引機能は、辞書のようにIT用語を探したい場合に便利です。アルファベットや数字のボタンをクリックすることで、該当する文字から始まる用語を素早く見つけ出せます。
+                    単なる言葉の定義だけでなく、なぜそれが必要なのか、どのような場面で使われるのか、といった背景まで含めて解説。初学者でもイメージが掴めるよう、平易な言葉で説明することを心がけています。
                   </p>
-                  <ul className="list-disc list-inside text-gray-600 space-y-2 text-sm">
-                    <li>
-                      <strong>使い方:</strong>
-                      <ol className="list-decimal list-inside ml-4 mt-1">
-                        <li>サイドバーの「ABC」または「数字」ボタンで索引タイプを切り替えます。</li>
-                        <li>表示されたアルファベットまたは「0-9」のボタンをクリックします。</li>
-                        <li>クリックした文字で始まる用語の一覧が下に表示されます。</li>
-                        <li>もう一度同じボタンをクリックすると、一覧は非表示になります。</li>
-                      </ol>
-                    </li>
-                    <li>
-                      <strong>リスト内検索:</strong>
-                      <p className="ml-4 mt-1">
-                        索引で表示された用語リストが長い場合は、リストの上部にある検索ボックスでさらに絞り込むことができます。
-                      </p>
-                    </li>
-                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                    🌐 知識が広がる回遊性
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    一つの用語を調べたら、所属カテゴリを辿って知識をどんどん広げていけます。点だった知識が線となり、やがて面となって体系的な理解へと繋がります。<br />
+                    <strong className="text-sm">※ 用語同士を直接結びつける「関連用語」機能は、現在実装準備中です。</strong>
+                  </p>
                 </div>
 
               </div>
             </section>
-            {/* ▲▲▲【変更箇所】▲▲▲ */}
             
+            <section className="bg-white rounded-lg shadow-md p-8 mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">🛠️ 使用技術スタック</h2>
+              <p className="text-gray-600 mb-6">
+                当サイトは、以下のWeb技術によって支えられています。
+              </p>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-800">Next.js (React)</h4>
+                  <p className="text-sm text-gray-600 mt-1">高速な静的サイト生成(SSG)とサーバーサイドレンダリング(SSR)を組み合わせ、最高のパフォーマンスを実現しています。</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-800">TypeScript</h4>
+                  <p className="text-sm text-gray-600 mt-1">静的型付けにより、コードの品質と保守性を高め、安定したサービス提供を可能にしています。</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-800">Tailwind CSS</h4>
+                  <p className="text-sm text-gray-600 mt-1">効率的でモダンなUIデザインをutility-firstのアプローチで構築し、直感的で使いやすいインターフェースを提供しています。</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-800">microCMS</h4>
+                  <p className="text-sm text-gray-600 mt-1">ヘッドレスCMSを利用することで、コンテンツ管理の柔軟性を高め、迅速な情報更新を可能にしています。</p>
+                </div>
+                 <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-800">Vercel</h4>
+                  <p className="text-sm text-gray-600 mt-1">Next.jsに最適化されたホスティングプラットフォームにより、グローバルに高速なコンテンツ配信を実現しています。</p>
+                </div>
+              </div>
+            </section>
+
             {/* 利用上の注意点 */}
             <section className="bg-yellow-50 border border-yellow-200 rounded-lg p-8">
               <h2 className="text-2xl font-bold text-yellow-900 mb-4">⚠️ ご利用上の注意</h2>
@@ -130,7 +125,7 @@ export default async function AboutPage() {
                 </li>
                 <li>
                   <strong>学習の補助として:</strong><br />
-                  当サイトはあくまで学習の補助としてご利用ください。試験の合格を保証するものではありません。
+                  当サイトはあくまで学習の補助（副読本）としてご利用ください。試験の合格を保証するものではありません。
                 </li>
                 <li>
                   <strong>免責事項:</strong><br />

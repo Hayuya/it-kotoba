@@ -5,8 +5,8 @@ import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories } from '../../lib/microcms'
 
 export const metadata: Metadata = {
-  title: '利用規約 - IT言葉',
-  description: 'IT言葉（以下、「当サイト」といいます。）の利用規約を掲載しています。',
+  title: '利用規約 - IT言葉辞典',
+  description: 'IT言葉辞典（以下、「当サイト」といいます。）の利用規約を掲載しています。',
   robots: {
     index: false, // 検索エンジンにインデックスさせない
     follow: false,
@@ -49,7 +49,7 @@ export default async function TermsOfServicePage() {
               </header>
 
               <div className="prose max-w-none">
-                <p>この利用規約（以下、「本規約」といいます。）は、IT言葉（以下、「当サイト」といいます。）がこのウェブサイト上で提供するサービスの利用条件を定めるものです。ユーザーの皆さま（以下、「ユーザー」といいます。）には、本規約に従って、本サービスをご利用いただきます。</p>
+                <p>この利用規約（以下、「本規約」といいます。）は、IT言葉辞典（以下、「当サイト」といいます。）がこのウェブサイト上で提供するサービスの利用条件を定めるものです。ユーザーの皆さま（以下、「ユーザー」といいます。）には、本規約に従って、本サービスをご利用いただきます。</p>
                 
                 <h2 id="article-1">第1条（適用）</h2>
                 <p>本規約は、ユーザーと当サイトとの間の本サービスの利用に関わる一切の関係に適用されるものとします。</p>

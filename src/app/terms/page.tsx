@@ -3,18 +3,17 @@ import Header from '../../components/Header'
 import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories } from '../../lib/microcms'
 import { getAllSearchableTerms } from '../../lib/microcms'
-import TermSearchClient from '../../components/TermSearchClient' // ★ 新しいクライアントコンポーネントをインポート
+import TermSearchClient from '../../components/TermSearchClient'
 
 export const metadata: Metadata = {
-  title: 'IT用語一覧 - IT言葉',
-  description: 'IT用語の一覧です。情報処理安全確保支援士試験レベルから基礎用語まで、キーワード検索やカテゴリー、難易度で絞り込んで効率的に学習できます。',
+  title: 'IT用語一覧 - IT言葉辞典',
+  description: 'IT用語の一覧です。キーワード検索やカテゴリー、難易度での絞り込みで、学習中や実務で気になった用語を瞬時に見つけられます。あなたのIT学習を強力にサポートします。',
 }
 
 // このページは静的生成（SSG）され、初回アクセスが高速になります
 export const dynamic = 'force-static';
 
 export default async function TermsPage() {
-  // ▼▼▼【変更点】ビルド時に全カテゴリーと全用語データを取得する ▼▼▼
   const [categories, allTerms] = await Promise.all([
     getCategories(),
     getAllSearchableTerms() 
@@ -30,7 +29,6 @@ export default async function TermsPage() {
             <IndexSidebar categories={categories} />
           </aside>
           <main className="lg:w-3/4">
-            {/* ▼▼▼【変更点】実際の検索処理はすべてクライアントコンポーネントに任せる ▼▼▼ */}
             <TermSearchClient 
               initialTerms={allTerms} 
               categories={categories} 

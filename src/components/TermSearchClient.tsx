@@ -51,8 +51,9 @@ export default function TermSearchClient({ initialTerms, categories }: TermSearc
       <header className="bg-white rounded-lg shadow-md p-8 mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">IT用語検索</h1>
         <p className="text-gray-600 mb-6">
-          情報処理技術者試験で問われるIT用語を網羅的に学習できます。
-          キーワード検索や、難易度・カテゴリーでの絞り込みで効率的に学習しましょう。
+          IT資格の学習や実務で出会う、あらゆるIT用語を網羅的に検索できます。
+          キーワード検索や、難易度・カテゴリーでの絞り込みを駆使して、あなたの「知りたい」を瞬時に解決しましょう。<br />
+          <strong className="text-sm">※ 掲載用語は順次拡充中です。あなたの学習をサポートできるよう、日々コンテンツを追加していきます。</strong>
         </p>
         <TermsFilter categories={categories} totalCount={filteredTerms.length} />
       </header>

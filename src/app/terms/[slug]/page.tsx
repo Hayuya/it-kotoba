@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   
   if (!term) {
     return {
-      title: 'ページが見つかりません - IT言葉'
+      title: 'ページが見つかりません - IT言葉辞典'
     }
   }
 
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const keywords = [term.title, term.category.name, ...tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', ')
 
   return {
-    title: `${term.title} - IT言葉`,
+    title: `${term.title} - IT言葉辞典`,
     description: term.description,
     keywords: keywords,
     // Canonical URLを動的に設定
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `/terms/${term.slug}`,
     },
     openGraph: {
-      title: `${term.title} - IT言葉`,
+      title: `${term.title} - IT言葉辞典`,
       description: term.description,
       url: `${siteUrl}/terms/${term.slug}`,
       type: 'article',
@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${term.title} - IT言葉`,
+      title: `${term.title} - IT言葉辞典`,
       description: term.description,
     }
   }
@@ -105,11 +105,11 @@ export default async function TermPage({ params }: Props) {
     "image": `${siteUrl}/ogp.png`, // 記事の代表画像
     "author": {
       "@type": "Organization",
-      "name": "IT言葉編集部"
+      "name": "IT言葉辞典編集部"
     },
     "publisher": {
       "@type": "Organization",
-      "name": "IT言葉",
+      "name": "IT言葉辞典",
       "logo": {
         "@type": "ImageObject",
         "url": `${siteUrl}/icon.png`

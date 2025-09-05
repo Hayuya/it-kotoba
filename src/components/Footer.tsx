@@ -14,18 +14,14 @@ export default function Footer() {
                 <span className="text-xl font-bold">IT</span>
               </div>
               <div>
-                <h3 className="text-xl font-bold">IT言葉</h3>
-                {/* ▼▼▼ 変更箇所 ▼▼▼ */}
-                <p className="text-gray-400 text-sm">情報処理技術関連用語索引</p>
-                {/* ▲▲▲ 変更箇所 ▲▲▲ */}
+                <h3 className="text-xl font-bold">IT言葉辞典</h3>
+                <p className="text-gray-400 text-sm">高速IT用語辞典</p>
               </div>
             </div>
-            {/* ▼▼▼ 変更箇所 ▼▼▼ */}
             <p className="text-gray-300 mb-4 leading-relaxed">
-              情報処理安全確保支援士試験の範囲を中心に、幅広いIT技術用語を解説する索引サイトです。
-              試験範囲を意識しつつ、基礎から応用まで分かりやすい解説であなたの学習をサポートします。
+              IT資格の学習から日常業務の疑問まで、あらゆるシーンでIT用語を素早く調べられる高速用語辞典です。
+              書籍やオンライン講座と組み合わせて使うことで、あなたの知識をより深く、確かなものにします。
             </p>
-            {/* ▲▲▲ 変更箇所 ▲▲▲ */}
             <div className="flex space-x-4">
               <a 
                 href="https://twitter.com/it-aikotoba" 
@@ -80,12 +76,10 @@ export default function Footer() {
         <div className="border-t border-gray-700 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm mb-4 md:mb-0">
-              <p>© {currentYear} IT言葉. All rights reserved.</p>
-              {/* ▼▼▼ 変更箇所 ▼▼▼ */}
+              <p>© {currentYear} IT言葉辞典. All rights reserved.</p>
               <p className="mt-1">
-                このサイトはIT技術の学習支援を目的としています。
+                このサイトは、すべてのIT学習者の「知りたい」に応えるためのお供です。
               </p>
-              {/* ▲▲▲ 変更箇所 ▲▲▲ */}
             </div>
             <div className="flex space-x-6 text-sm">
               <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
@@ -104,9 +98,9 @@ export default function Footer() {
         {/* 免責事項 */}
         <div className="mt-6 text-xs text-gray-500 text-center">
           <p>
-            ※ 本サイトの情報は学習支援を目的としており、試験の合格を保証するものではありません。
+            ※ 本サイトの情報は学習の補助を目的としており、情報の正確性を保証するものではありません。
             <br />
-            最新の試験情報については、必ずIPA（情報処理推進機構）の公式サイトをご確認ください。
+            最新の試験情報や正確な情報については、必ずIPA（情報処理推進機構）等の公式サイトをご確認ください。
           </p>
         </div>
       </div>
