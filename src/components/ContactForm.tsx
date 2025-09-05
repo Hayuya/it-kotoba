@@ -11,20 +11,22 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setStatus('submitting') // 「送信中...」の表示は一瞬だけ行います
+    setStatus('submitting'); // まず「送信中」状態にする
 
     const formData = { name, email, message };
 
     // --- ここからが変更点 ---
-    // ユーザーには即座に成功したように見せます
-    setStatus('success')
-    setFeedbackMessage('お問い合わせいただきありがとうございます。メッセージは正常に送信されました。')
-    setName('')
-    setEmail('')
-    setMessage('')
-    
-    // 実際の送信処理はバックグラウンドで試みます
-    // この処理の結果（成功・失敗）はユーザーの画面には影響しません
+    // 1.5秒間のローディング風の遅延を発生させる
+    setTimeout(() => {
+      // 1.5秒後に、ユーザーには成功したように見せる
+      setStatus('success');
+      setFeedbackMessage('お問い合わせいただきありがとうございます。メッセージは正常に送信されました。');
+      setName('');
+      setEmail('');
+      setMessage('');
+    }, 1500); // 1500ミリ秒 = 1.5秒
+
+    // 実際の送信処理は遅延とは関係なくバックグラウンドで実行
     try {
       await fetch('/api/contact', {
         method: 'POST',
@@ -32,11 +34,10 @@ export default function ContactForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
-      })
-      // バックエンドでのエラーはVercelのサーバーログで確認できます
+      });
+      // バックエンドでのエラーはVercelのサーバーログで確認
     } catch (error) {
-      // ネットワークエラーなどでリクエスト自体が失敗した場合
-      // 開発者向けにコンソールにエラーを出力しますが、ユーザーには見せません
+      // ネットワークエラーもユーザーには見せず、コンソールにのみ記録
       console.error('Contact form submission failed silently:', error);
     }
     // --- ここまでが変更点 ---
@@ -112,7 +113,6 @@ export default function ContactForm() {
           {feedbackMessage}
         </div>
       )}
-      {/* エラーメッセージの表示ロジックは不要になりました */}
     </form>
   )
 }
