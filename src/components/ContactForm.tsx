@@ -79,7 +79,7 @@ export default function ContactForm() {
           maxLength={50}
           className="input" 
           autoComplete="name"
-          placeholder="小野 妹子"
+          placeholder="岸田 文雄"
         />
       </div>
       <div>
