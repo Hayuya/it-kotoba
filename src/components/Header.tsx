@@ -35,7 +35,7 @@ export default function Header() {
               href="/super-index" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
-              スーパー索引
+              索引
             </Link>
             {/* ▲▲▲ ここまで追加 ▲▲▲ */}
             <Link 
@@ -105,7 +105,7 @@ export default function Header() {
                 className="text-gray-700 hover:text-blue-600 font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                スーパー索引
+                索引
               </Link>
               <Link 
                 href="/terms" 

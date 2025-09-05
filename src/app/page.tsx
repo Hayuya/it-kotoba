@@ -41,7 +41,7 @@ export default async function Home() {
             {/* 高性能索引セクション */}
             <section className="mb-8">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">高性能索引</h2>
+                <h2 className="text-2xl font-bold text-gray-800">スーパー索引</h2>
                 <a 
                   href="/super-index" 
                   className="text-blue-600 hover:text-blue-800 font-medium text-sm"
