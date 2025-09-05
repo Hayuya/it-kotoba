@@ -2,17 +2,15 @@
 
 import Header from '../components/Header'
 import IndexSidebar from '../components/IndexSidebar'
-// import LatestArticles from '../components/LatestArticles' // ★ 不要になるので削除
-import { getCategories, getStats, getAllSearchableTerms } from '../lib/microcms' // ★ getAllSearchableTerms をインポート
+import { getCategories, getStats, getAllSearchableTerms } from '../lib/microcms'
 import HeroSearch from '../components/HeroSearch'
-import SuperIndexClient from '../components/SuperIndexClient' // ★ SuperIndexClient をインポート
+import SuperIndexClient from '../components/SuperIndexClient'
 
 export default async function Home() {
-  // microCMSからデータを取得
-  const [categories, stats, allTerms] = await Promise.all([ // ★ allTerms を追加
+  const [categories, stats, allTerms] = await Promise.all([
     getCategories(),
     getStats(),
-    getAllSearchableTerms(), // ★ 全用語データを取得
+    getAllSearchableTerms(),
   ])
 
   return (
@@ -21,16 +19,18 @@ export default async function Home() {
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* サイドバー */}
-          <aside className="lg:w-1/4">
+          {/* ▼▼▼ ここから変更 ▼▼▼ */}
+          {/* サイドバー：lgスクリーン以上で表示 */}
+          <aside className="hidden lg:block lg:w-1/4">
             <IndexSidebar categories={categories} />
           </aside>
 
-          {/* メインコンテンツ */}
-          <main className="lg:w-3/4">
+          {/* メインコンテンツ：lgスクリーンで幅を調整 */}
+          <main className="w-full lg:w-3/4">
+          {/* ▲▲▲ ここまで変更 ▲▲▲ */}
             {/* ヒーローセクション */}
             <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8">
-              <h1 className="text-4xl font-bold mb-4">IT言葉辞典</h1>
+              <h1 className="text-4xl font-bold mb-4">IT言葉</h1>
               <p className="text-xl mb-6">
                 豊富な情報量と記憶に残る解説<br />
                 現代社会の情報処理技術用語索引サイト
@@ -38,11 +38,10 @@ export default async function Home() {
               <HeroSearch />
             </section>
 
-            {/* ▼▼▼ ここから変更 ▼▼▼ */}
             {/* 高性能索引セクション */}
             <section className="mb-8">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">スーパー索引</h2>
+                <h2 className="text-2xl font-bold text-gray-800">高性能索引</h2>
                 <a 
                   href="/super-index" 
                   className="text-blue-600 hover:text-blue-800 font-medium text-sm"
@@ -52,7 +51,6 @@ export default async function Home() {
               </div>
               <SuperIndexClient allTerms={allTerms} />
             </section>
-            {/* ▲▲▲ ここまで変更 ▲▲▲ */}
 
             {/* 統計情報 */}
             <section className="bg-white rounded-lg shadow-md p-8">
