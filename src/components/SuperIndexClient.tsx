@@ -16,9 +16,7 @@ const NUMBERS = '0-9';
 
 export default function SuperIndexClient({ allTerms }: SuperIndexClientProps) {
   const [openSection, setOpenSection] = useState<string | null>(null);
-  // ▼▼▼ ここから追加 ▼▼▼
-  const [openInNewTab, setOpenInNewTab] = useState(false); // 新しいタブで開くかの状態
-  // ▲▲▲ ここまで追加 ▲▲▲
+  const [openInNewTab, setOpenInNewTab] = useState(false);
 
   const groupedAndSortedTerms = useMemo(() => {
     const groups: { [key: string]: IndexTerm[] } = {};
@@ -51,7 +49,6 @@ export default function SuperIndexClient({ allTerms }: SuperIndexClientProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-md">
-      {/* ▼▼▼ ここから追加 ▼▼▼ */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-end">
           <label htmlFor="open-in-new-tab" className="mr-3 text-sm font-medium text-gray-700">
@@ -75,7 +72,6 @@ export default function SuperIndexClient({ allTerms }: SuperIndexClientProps) {
           </button>
         </div>
       </div>
-      {/* ▲▲▲ ここまで追加 ▲▲▲ */}
 
       <div className="space-y-1">
         {[...ALPHABET, NUMBERS].map(key => {
@@ -103,15 +99,14 @@ export default function SuperIndexClient({ allTerms }: SuperIndexClientProps) {
               </button>
               {isOpen && (
                 <div className="bg-gray-50 py-4 px-6 border-t border-gray-200">
-                  <ul className="columns-1 sm:columns-2 lg:columns-3 gap-x-8">
+                  {/* ▼▼▼ ここから変更 ▼▼▼ */}
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:divide-x sm:divide-gray-200">
                     {terms.map(term => (
-                      <li key={term.id} className="mb-2 break-inside-avoid">
+                      <li key={term.id} className="px-4 py-1">
                         <Link
                           href={`/terms/${term.slug}`}
-                          // ▼▼▼ ここから変更 ▼▼▼
                           target={openInNewTab ? '_blank' : '_self'}
                           rel={openInNewTab ? 'noopener noreferrer' : ''}
-                          // ▲▲▲ ここまで変更 ▲▲▲
                           className="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
                         >
                           {term.title}
@@ -119,6 +114,7 @@ export default function SuperIndexClient({ allTerms }: SuperIndexClientProps) {
                       </li>
                     ))}
                   </ul>
+                  {/* ▲▲▲ ここまで変更 ▲▲▲ */}
                 </div>
               )}
             </div>
