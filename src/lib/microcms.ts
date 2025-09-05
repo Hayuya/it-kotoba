@@ -1,3 +1,5 @@
+// src/lib/microcms.ts
+
 import { createClient } from 'microcms-js-sdk'
 
 
@@ -60,8 +62,8 @@ export interface Term {
   slug: string
   description: string
   content: string
-  category: Category
-  difficulty: string[] // 配列形式に変更
+  category: Category[] // 配列形式であることを明示
+  difficulty: string[]
   tags: Tag[]
   relatedTerms: Term[]
   isRecommended: boolean
@@ -70,7 +72,7 @@ export interface Term {
   updatedAt: string
   publishedAt: string
   revisedAt: string
-  search_title?: string; // ▼▼▼【変更点】search_titleの型定義を追加 ▼▼▼
+  search_title?: string;
 }
 
 export interface MicroCMSListResponse<T> {
@@ -251,7 +253,7 @@ export const getTermsByCategory = async (
     const { contents, totalCount, offset, limit } = await client.get({
       endpoint: 'terms',
       queries: {
-        filters: `category[equals]${category.id}`,
+        filters: `category[contains]${category.id}`, // [equals] から [contains] へ変更
         limit: queries?.limit || 10,
         offset: queries?.offset || 0,
         orders: queries?.orders || 'order',
@@ -543,8 +545,7 @@ export const getAllTermSlugs = async (): Promise<string[]> => {
   }
 }
 
-// ▼▼▼【変更点】戻り値の型をより正確なものに修正 ▼▼▼
-type SearchableTerm = Pick<Term, 'id' | 'title' | 'slug' | 'category' | 'difficulty' | 'description' | 'publishedAt' | 'search_title'>;
+export type SearchableTerm = Pick<Term, 'id' | 'title' | 'slug' | 'category' | 'difficulty' | 'description' | 'publishedAt' | 'search_title'>;
 
 /**
  * 索引・検索機能専用：軽量な全用語データをページネーションで全件取得する
@@ -562,7 +563,7 @@ export const getAllSearchableTerms = async (): Promise<SearchableTerm[]> => {
       queries: {
         limit,
         offset,
-        fields: 'id,title,slug,category,difficulty,description,publishedAt,search_title', // 必要なフィールドをすべて指定
+        fields: 'id,title,slug,category,difficulty,description,publishedAt,search_title',
       },
     });
 
@@ -634,3 +635,65 @@ export const getStats = async () => {
     }
   }
 }
+
+// --- ▼▼▼ ここから追記 ▼▼▼ ---
+
+// 索引リストで表示するための、軽量化された用語の型
+export type IndexTerm = Pick<Term, 'id' | 'title' | 'slug' | 'description'>;
+
+// 階層化されたカテゴリーの型（childrenプロパティを持つ）
+export interface HierarchicalCategory extends Category {
+  children: HierarchicalCategory[];
+}
+
+// 用語リストが紐付けられた、階層化カテゴリーの最終的なデータ構造の型
+export interface HierarchicalCategoryWithTerms extends HierarchicalCategory {
+  children: HierarchicalCategoryWithTerms[];
+  terms?: IndexTerm[]; // 孫カテゴリーに用語リストが紐づく
+}
+
+/**
+ * フラットなカテゴリーリストを階層構造に変換する
+ * @param categories - microCMSから取得した全カテゴリーのリスト
+ * @returns 階層化されたカテゴリーの配列
+ */
+export const buildHierarchy = (categories: Category[]): HierarchicalCategory[] => {
+  const categoryMap = new Map<string, HierarchicalCategory>();
+  const rootCategories: HierarchicalCategory[] = [];
+
+  // 1. 全てのカテゴリーをマップに登録し、childrenプロパティを初期化
+  categories.forEach(category => {
+    categoryMap.set(category.id, { ...category, children: [] });
+  });
+
+  // 2. 親子関係を構築
+  categories.forEach(category => {
+    if (category.parent) {
+      const parent = categoryMap.get(category.parent.id);
+      const child = categoryMap.get(category.id);
+      if (parent && child) {
+        parent.children.push(child);
+      }
+    } else {
+      const root = categoryMap.get(category.id);
+      if (root) {
+        rootCategories.push(root);
+      }
+    }
+  });
+
+  // orderプロパティでソートする関数
+  const sortByOrder = (a: HierarchicalCategory, b: HierarchicalCategory) => (a.order || 0) - (b.order || 0);
+
+  // 3. 各階層をorderでソート
+  rootCategories.sort(sortByOrder);
+  rootCategories.forEach(parent => {
+    parent.children.sort(sortByOrder);
+    parent.children.forEach(child => {
+      child.children.sort(sortByOrder);
+    });
+  });
+
+  return rootCategories;
+};
+// --- ▲▲▲ ここまで追記 ▲▲▲ ---
