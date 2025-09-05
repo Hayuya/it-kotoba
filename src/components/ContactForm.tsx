@@ -11,36 +11,57 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setStatus('submitting'); // まず「送信中」状態にする
+    setStatus('submitting');
+    setFeedbackMessage('');
 
     const formData = { name, email, message };
 
-    // --- ここからが変更点 ---
-    // 1.5秒間のローディング風の遅延を発生させる
-    setTimeout(() => {
-      // 1.5秒後に、ユーザーには成功したように見せる
+    // 1.5秒の遅延タイマーを設定（リアリティのため）
+    const loadingTimeout = new Promise(resolve => setTimeout(resolve, 1500));
+
+    // APIへのリクエストを送信
+    const apiRequest = fetch('/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    try {
+      // ローディングとAPIリクエストの両方が完了するのを待つ
+      const [response] = await Promise.all([apiRequest, loadingTimeout]);
+      const data = await response.json();
+
+      // --- ここからが変更点 ---
+      // レートリミットエラー(429)の場合のみ、ユーザーにエラーを表示
+      if (response.status === 429) {
+        setStatus('error');
+        setFeedbackMessage(data.error || 'メッセージの送信頻度が高すぎます。しばらくしてから再度お試しください。');
+      } else {
+        // それ以外のエラーや成功の場合は、すべて成功したように見せる
+        setStatus('success');
+        setFeedbackMessage('お問い合わせいただきありがとうございます。メッセージは正常に送信されました。');
+        setName('');
+        setEmail('');
+        setMessage('');
+        
+        // サーバー側で実際にエラーが起きていた場合は、開発者コンソールに記録
+        if (!response.ok) {
+          console.error('Contact form submission failed silently on the server:', data.error);
+        }
+      }
+      // --- ここまでが変更点 ---
+
+    } catch (error) {
+      // ネットワークエラーなど、リクエスト自体が失敗した場合も成功を偽装
+      console.error('Contact form submission failed due to a network error:', error);
       setStatus('success');
       setFeedbackMessage('お問い合わせいただきありがとうございます。メッセージは正常に送信されました。');
       setName('');
       setEmail('');
       setMessage('');
-    }, 1500); // 1500ミリ秒 = 1.5秒
-
-    // 実際の送信処理は遅延とは関係なくバックグラウンドで実行
-    try {
-      await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      // バックエンドでのエラーはVercelのサーバーログで確認
-    } catch (error) {
-      // ネットワークエラーもユーザーには見せず、コンソールにのみ記録
-      console.error('Contact form submission failed silently:', error);
     }
-    // --- ここまでが変更点 ---
   }
   
   return (
@@ -110,6 +131,11 @@ export default function ContactForm() {
 
       {status === 'success' && (
         <div className="p-4 bg-green-50 text-green-800 border border-green-200 rounded-lg text-center">
+          {feedbackMessage}
+        </div>
+      )}
+      {status === 'error' && (
+        <div className="p-4 bg-red-50 text-red-800 border border-red-200 rounded-lg text-center">
           {feedbackMessage}
         </div>
       )}
