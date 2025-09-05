@@ -183,7 +183,7 @@ export default function RecommendedSlider() {
                       className="block bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 group"
                     >
                       <div className="flex items-start space-x-4">
-                        <div className="text-3xl flex-shrink-0">{term.category.icon}</div>
+                        <div className="text-3xl flex-shrink-0">{term.category?.[0]?.icon}</div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-2">
                             <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">
@@ -198,7 +198,7 @@ export default function RecommendedSlider() {
                           </p>
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                              {term.category.name}
+                              {term.category?.[0]?.name}
                             </span>
                             <span className="text-blue-600 text-sm font-medium group-hover:text-blue-800">
                               詳細を見る →

@@ -45,6 +45,12 @@ export default function Header() {
               検索
             </Link>
             <Link 
+              href="/categories" 
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            >
+              カテゴリー
+            </Link>
+            <Link 
               href="/about" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
@@ -113,6 +119,13 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 検索
+              </Link>
+              <Link 
+                href="/categories" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                カテゴリー
               </Link>
               <Link 
                 href="/about" 

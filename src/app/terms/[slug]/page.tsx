@@ -38,13 +38,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const tags = term.tags || []
-  const keywords = [term.title, term.category.name, ...tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', ')
+  
+  const keywords = [
+    term.title, 
+    ...(term.category?.map(cat => cat.name) || []),
+    ...tags.map(tag => tag.name), 
+    '情報処理安全確保支援士', 
+    'IT用語'
+  ].join(', ')
 
   return {
     title: `${term.title} - IT言葉`,
     description: term.description,
     keywords: keywords,
-    // Canonical URLを動的に設定
     alternates: {
       canonical: `/terms/${term.slug}`,
     },
@@ -75,6 +81,7 @@ export default async function TermPage({ params }: Props) {
     notFound()
   }
 
+  const primaryCategory = term.category?.[0];
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const currentUrl = `${siteUrl}/terms/${term.slug}`
   const tags = term.tags || []
@@ -85,13 +92,15 @@ export default async function TermPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
-      { '@type': 'ListItem', position: 2, name: '用語一覧', item: `${siteUrl}/terms` },
-      { '@type': 'ListItem', position: 3, name: term.category.name, item: `${siteUrl}/categories/${term.category.slug}` }, // カテゴリページへのリンクを追加
-      { '@type': 'ListItem', position: 4, name: term.title, item: currentUrl },
+      { '@type': 'ListItem' as const, position: 1, name: 'ホーム', item: siteUrl },
+      { '@type': 'ListItem' as const, position: 2, name: '用語一覧', item: `${siteUrl}/terms` },
+      ...(primaryCategory ? 
+        [{ '@type': 'ListItem' as const, position: 3, name: primaryCategory.name, item: `${siteUrl}/categories/${primaryCategory.slug}` }] 
+        : []),
+      { '@type': 'ListItem' as const, position: primaryCategory ? 4 : 3, name: term.title, item: currentUrl },
     ],
   };
-
+  
   // 記事用のJSON-LD (TechArticleを使用)
   const articleJsonLd: WithContext<TechArticle> = {
     '@context': 'https://schema.org',
@@ -117,13 +126,12 @@ export default async function TermPage({ params }: Props) {
     },
     "datePublished": term.publishedAt,
     "dateModified": term.updatedAt,
-    "articleSection": term.category.name,
+    "articleSection": primaryCategory?.name,
     "keywords": tags.map(tag => tag.name).join(", "),
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 複数のJSON-LDをまとめてheadに出力 */}
       <head>
         <JsonLd schema={breadcrumbJsonLd} />
         <JsonLd schema={articleJsonLd} />
@@ -144,9 +152,12 @@ export default async function TermPage({ params }: Props) {
                 <li><Link href="/" className="hover:text-blue-600">ホーム</Link></li>
                 <li>/</li>
                 <li><Link href="/terms" className="hover:text-blue-600">用語一覧</Link></li>
-                <li>/</li>
-                {/* カテゴリページへのリンクを有効化 */}
-                <li><Link href={`/categories/${term.category.slug}`} className="hover:text-blue-600">{term.category.name}</Link></li>
+                {primaryCategory && (
+                  <>
+                    <li>/</li>
+                    <li><Link href={`/categories/${primaryCategory.slug}`} className="hover:text-blue-600">{primaryCategory.name}</Link></li>
+                  </>
+                )}
                 <li>/</li>
                 <li className="text-gray-800 font-medium">{term.title}</li>
               </ol>
@@ -155,12 +166,14 @@ export default async function TermPage({ params }: Props) {
             <article className="bg-white rounded-lg shadow-md overflow-hidden">
               <header className="p-8 border-b border-gray-200">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-2xl">{term.category.icon}</span>
-                    <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                      {term.category.name}
-                    </span>
-                  </div>
+                  {primaryCategory && (
+                    <div className="flex items-center space-x-3">
+                      <span className="text-2xl">{primaryCategory.icon}</span>
+                      <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                        {primaryCategory.name}
+                      </span>
+                    </div>
+                  )}
                   <span className={`text-sm px-3 py-1 rounded-full ${getDifficultyColor(term.difficulty)}`}>
                     {getDifficultyLabel(term.difficulty)}
                   </span>
@@ -233,7 +246,6 @@ export default async function TermPage({ params }: Props) {
                     </div>
                   </div>
                   
-                  {/* ▼▼▼ ここから変更 ▼▼▼ */}
                   <div className="flex items-center space-x-4">
                     <Link
                       href="/super-index"
@@ -248,7 +260,6 @@ export default async function TermPage({ params }: Props) {
                       検索へ
                     </Link>
                   </div>
-                  {/* ▲▲▲ ここまで変更 ▲▲▲ */}
                 </div>
               </footer>
             </article>

@@ -42,7 +42,7 @@ export default function TermSearchClient({ initialTerms, categories }: TermSearc
 
     // カテゴリーで絞り込み
     if (selectedCategory) {
-      terms = terms.filter(term => term.category?.id === selectedCategory);
+      terms = terms.filter(term => term.category?.some(cat => cat.id === selectedCategory));
     }
     // 難易度で絞り込み
     if (selectedDifficulty) {
@@ -103,11 +103,13 @@ export default function TermSearchClient({ initialTerms, categories }: TermSearc
                   </div>
                   <div className="flex items-center ml-4 flex-shrink-0">
                       <div className="flex items-center space-x-2 mr-4">
-                        <span className="text-lg">{term.category.icon}</span>
-                        <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                          {term.category.name}
-                        </span>
-                      </div>
+  {/* Add ?.[0] to safely access the first category's icon */}
+  <span className="text-lg">{term.category?.[0]?.icon}</span>
+  <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+    {/* Also add ?.[0] to safely access the first category's name */}
+    {term.category?.[0]?.name}
+  </span>
+</div>
                     <span className="text-blue-600 text-sm font-medium group-hover:text-blue-800 hidden sm:inline">
                       詳細を見る →
                     </span>

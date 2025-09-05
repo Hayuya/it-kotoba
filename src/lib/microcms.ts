@@ -636,37 +636,47 @@ export const getStats = async () => {
   }
 }
 
-// --- ▼▼▼ ここから追記 ▼▼▼ ---
+// --- ▼▼▼ ここから変更 ▼▼▼ ---
 
 // 索引リストで表示するための、軽量化された用語の型
 export type IndexTerm = Pick<Term, 'id' | 'title' | 'slug' | 'description'>;
 
 // 階層化されたカテゴリーの型（childrenプロパティを持つ）
 export interface HierarchicalCategory extends Category {
-  children: HierarchicalCategory[];
+  children: HierarchicalCategoryWithTerms[]; // 自身の型を参照するよう修正
+  terms?: IndexTerm[];
 }
 
 // 用語リストが紐付けられた、階層化カテゴリーの最終的なデータ構造の型
-export interface HierarchicalCategoryWithTerms extends HierarchicalCategory {
-  children: HierarchicalCategoryWithTerms[];
-  terms?: IndexTerm[]; // 孫カテゴリーに用語リストが紐づく
-}
+export interface HierarchicalCategoryWithTerms extends HierarchicalCategory {}
 
 /**
- * フラットなカテゴリーリストを階層構造に変換する
+ * フラットなカテゴリーリストを階層構造に変換し、用語を紐付ける
  * @param categories - microCMSから取得した全カテゴリーのリスト
- * @returns 階層化されたカテゴリーの配列
+ * @param terms - microCMSから取得した全用語のリスト
+ * @returns 階層化され、用語が紐付けられたカテゴリーの配列
  */
-export const buildHierarchy = (categories: Category[]): HierarchicalCategory[] => {
-  const categoryMap = new Map<string, HierarchicalCategory>();
-  const rootCategories: HierarchicalCategory[] = [];
+export const buildHierarchy = (categories: Category[], terms: IndexTerm[]): HierarchicalCategoryWithTerms[] => {
+  const categoryMap = new Map<string, HierarchicalCategoryWithTerms>();
+  const rootCategories: HierarchicalCategoryWithTerms[] = [];
 
-  // 1. 全てのカテゴリーをマップに登録し、childrenプロパティを初期化
+  // 1. 全てのカテゴリーをマップに登録し、プロパティを初期化
   categories.forEach(category => {
-    categoryMap.set(category.id, { ...category, children: [] });
+    categoryMap.set(category.id, { ...category, children: [], terms: [] });
   });
 
-  // 2. 親子関係を構築
+  // 2. 用語を対応する（孫）カテゴリーに紐付ける
+  terms.forEach(term => {
+    // term.category は配列なので、それぞれ処理
+    (term as any).category?.forEach((cat: Category) => {
+        const category = categoryMap.get(cat.id);
+        if (category) {
+            category.terms?.push(term);
+        }
+    });
+  });
+
+  // 3. 親子関係を構築
   categories.forEach(category => {
     if (category.parent) {
       const parent = categoryMap.get(category.parent.id);
@@ -682,10 +692,9 @@ export const buildHierarchy = (categories: Category[]): HierarchicalCategory[] =
     }
   });
 
-  // orderプロパティでソートする関数
   const sortByOrder = (a: HierarchicalCategory, b: HierarchicalCategory) => (a.order || 0) - (b.order || 0);
-
-  // 3. 各階層をorderでソート
+  
+  // 4. 各階層をorderでソート
   rootCategories.sort(sortByOrder);
   rootCategories.forEach(parent => {
     parent.children.sort(sortByOrder);
@@ -696,4 +705,25 @@ export const buildHierarchy = (categories: Category[]): HierarchicalCategory[] =
 
   return rootCategories;
 };
-// --- ▲▲▲ ここまで追記 ▲▲▲ ---
+
+/**
+ * カテゴリー索引ページ専用のデータ取得関数
+ */
+export const getHierarchicalCategoriesWithTerms = async (): Promise<HierarchicalCategoryWithTerms[]> => {
+  try {
+    // 全カテゴリーと全用語を並行して取得
+    const [allCategories, allTerms] = await Promise.all([
+      getAllCategories(),
+      getAllSearchableTerms() as Promise<IndexTerm[]> // 型アサーション
+    ]);
+
+    // 階層構造を構築し、用語を紐付ける
+    const hierarchicalData = buildHierarchy(allCategories, allTerms);
+
+    return hierarchicalData;
+  } catch (error) {
+    console.error('Error fetching hierarchical categories with terms:', error);
+    return [];
+  }
+};
+// --- ▲▲▲ ここまで変更 ▲▲▲ ---
