@@ -239,13 +239,13 @@ export default async function TermPage({ params }: Props) {
                       href="/super-index"
                       className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors font-medium"
                     >
-                      スーパー索引に戻る
+                      🔍 索引へ
                     </Link>
                     <Link
                       href="/terms"
                       className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
                     >
-                      IT用語検索に戻る
+                      検索へ
                     </Link>
                   </div>
                   {/* ▲▲▲ ここまで変更 ▲▲▲ */}

@@ -105,7 +105,7 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
       <div className="bg-white rounded-lg shadow-md p-6">
         {/* ▼▼▼ ここから変更 ▼▼▼ */}
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">🔍 簡易索引</h3>
+          <h3 className="text-lg font-semibold text-gray-800">簡易索引</h3>
           <Link href="/super-index" className="text-xs font-medium text-blue-600 hover:underline">
             拡大版へ →
           </Link>

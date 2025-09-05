@@ -40,7 +40,8 @@ export default async function SuperIndexPage() {
               </div>
               {/* ▲▲▲ ここまで変更 ▲▲▲ */}
               <p className="text-gray-600 leading-relaxed">
-                すべてのIT用語をアルファベット順にリストアップしています。セクションを開いて目的の用語を素早く見つけましょう。
+                すべてのIT用語をアルファベット順にリストアップしています。<br />
+                セクションを開いて目的の用語を素早く見つけましょう。
               </p>
             </header>
             <SuperIndexClient allTerms={allTerms} />
