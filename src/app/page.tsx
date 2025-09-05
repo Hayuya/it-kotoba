@@ -30,10 +30,10 @@ export default async function Home() {
           {/* ▲▲▲ ここまで変更 ▲▲▲ */}
             {/* ヒーローセクション */}
             <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8">
-              <h1 className="text-4xl font-bold mb-4">IT言葉</h1>
+              <h1 className="text-4xl font-bold mb-4">IT言葉辞典</h1>
               <p className="text-xl mb-6">
-                豊富な情報量と記憶に残る解説<br />
-                現代社会の情報処理技術用語索引サイト
+                参考書の横に、学びのそばに。<br />
+                IT学習の「分からない」を瞬時に解決する高速用語辞典。
               </p>
               <HeroSearch />
             </section>
@@ -82,23 +82,23 @@ export default async function Home() {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
                     <span className="mr-2">🎯</span>
-                    基礎固めから始める
+                    辞書として活用する
                   </h3>
                   <ul className="text-gray-600 space-y-2 text-sm">
-                    <li>ITの基本概念を理解</li>
-                    <li>理解の曖昧さを放置しない</li>
-                    <li>実際の事例と関連付ける</li>
+                    <li>学習中の不明点を即座に解決</li>
+                    <li>知識の穴をなくし、理解を深める</li>
+                    <li>書籍や動画と併用して学習効果アップ</li>
                   </ul>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
                     <span className="mr-2">🔄</span>
-                    継続的な復習
+                    関連知識を繋げる
                   </h3>
                   <ul className="text-gray-600 space-y-2 text-sm">
-                    <li>定期的な見直しで定着させる</li>
-                    <li>関連用語をセットで覚える</li>
-                    <li>覚えた用語を実際に使ってみる</li>
+                    <li>関連用語を辿って知識を広げる</li>
+                    <li>カテゴリやタグで体系的に学ぶ</li>
+                    <li>全体像を掴み、記憶に定着させる</li>
                   </ul>
                 </div>
               </div>
