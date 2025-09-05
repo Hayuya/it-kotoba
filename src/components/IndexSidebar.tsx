@@ -1,10 +1,9 @@
-// src/components/IndexSidebar.tsx
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { Category, Term } from '../lib/microcms'
-import SidebarSearch from './SidebarSearch' // ★ SidebarSearchをインポート
+import SidebarSearch from './SidebarSearch'
 
 interface IndexSidebarProps {
   categories?: Category[]
@@ -36,7 +35,6 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
     const fetchAllTerms = async () => {
       try {
         setLoading(true)
-        // ▼▼▼【変更点】APIのエンドポイントを修正 ▼▼▼
         const response = await fetch('/api/all-terms-for-index')
         if (response.ok) {
           const data = await response.json()
@@ -103,11 +101,16 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
 
   return (
     <div className="sticky top-24 space-y-6 max-h-[calc(100vh-7.5rem)] overflow-y-auto">
-      {/* ★ ここから変更 */}
       <SidebarSearch />
-      {/* ★ ここまで変更 */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800">🔍 索引</h3>
+        {/* ▼▼▼ ここから変更 ▼▼▼ */}
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-800">🔍 簡易索引</h3>
+          <Link href="/super-index" className="text-xs font-medium text-blue-600 hover:underline">
+            拡大版へ →
+          </Link>
+        </div>
+        {/* ▲▲▲ ここまで変更 ▲▲▲ */}
         
         <div className="flex space-x-2 mb-4">
           <button

@@ -19,7 +19,7 @@ export default function SidebarSearch() {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800">用語検索</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-800">検索</h3>
         <form
         onSubmit={handleSubmit}
         className="flex w-full items-center gap-2"

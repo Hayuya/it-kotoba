@@ -1,3 +1,4 @@
+// src/components/TermSearchClient.tsx
 'use client'
 
 import { useMemo } from 'react'
@@ -6,7 +7,6 @@ import { useSearchParams } from 'next/navigation'
 import TermsFilter from './TermsFilter'
 import { Category, Term, getDifficultyColor, getDifficultyLabel } from '../lib/microcms'
 
-// 親コンポーネントから渡されるプロパティの型定義
 type SearchableTerm = Pick<Term, 'id' | 'title' | 'slug' | 'category' | 'difficulty' | 'description' | 'publishedAt'> & { search_title?: string };
 
 interface TermSearchClientProps {
@@ -17,7 +17,6 @@ interface TermSearchClientProps {
 export default function TermSearchClient({ initialTerms, categories }: TermSearchClientProps) {
   const searchParams = useSearchParams();
 
-  // URLのクエリパラメータに基づいて、全用語リストをクライアントサイドでフィルタリングする
   const filteredTerms = useMemo(() => {
     const selectedCategory = searchParams.get('category');
     const selectedDifficulty = searchParams.get('difficulty');
@@ -25,15 +24,12 @@ export default function TermSearchClient({ initialTerms, categories }: TermSearc
 
     let terms = initialTerms;
 
-    // カテゴリーで絞り込み
     if (selectedCategory) {
       terms = terms.filter(term => term.category?.id === selectedCategory);
     }
-    // 難易度で絞り込み
     if (selectedDifficulty) {
       terms = terms.filter(term => term.difficulty.includes(selectedDifficulty));
     }
-    // キーワードで絞り込み
     if (searchQuery) {
       const lowerCaseQuery = searchQuery.toLowerCase();
       terms = terms.filter(term => 
@@ -43,17 +39,21 @@ export default function TermSearchClient({ initialTerms, categories }: TermSearc
 
     return terms;
   }, [initialTerms, searchParams]);
-  
-  // ページネーションは今回省略（必要であれば追加実装可能）
 
   return (
     <>
       <header className="bg-white rounded-lg shadow-md p-8 mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">IT用語検索</h1>
+        {/* ▼▼▼ ここから変更 ▼▼▼ */}
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold text-gray-900">IT用語検索</h1>
+          <Link href="/super-index" className="text-sm font-medium text-blue-600 hover:underline">
+            スーパー索引へ →
+          </Link>
+        </div>
+        {/* ▲▲▲ ここまで変更 ▲▲▲ */}
         <p className="text-gray-600 mb-6">
-          IT資格の学習や実務で出会う、あらゆるIT用語を網羅的に検索できます。
-          キーワード検索や、難易度・カテゴリーでの絞り込みを駆使して、あなたの「知りたい」を瞬時に解決しましょう。<br />
-          <strong className="text-sm">※ 掲載用語は順次拡充中です。あなたの学習をサポートできるよう、日々コンテンツを追加していきます。</strong>
+          情報処理技術者試験で問われるIT用語を網羅的に学習できます。
+          キーワード検索や、難易度・カテゴリーでの絞り込みで効率的に学習しましょう。
         </p>
         <TermsFilter categories={categories} totalCount={filteredTerms.length} />
       </header>

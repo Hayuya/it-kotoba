@@ -18,18 +18,26 @@ export default function Header() {
             {/* hidden sm:block を削除 */}
             <div>
               <h1 className="text-xl font-bold text-gray-800">IT言葉辞典</h1>
-              <p className="text-xs text-gray-500">情報処理技術関連用語検索索引</p>
+              <p className="text-xs text-gray-500">情報処理技術関連用語索引</p>
             </div>
           </Link>
 
           {/* デスクトップナビゲーション */}
           <nav className="hidden md:flex items-center space-x-8">
-                        <Link 
+            <Link 
               href="/" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
               ホーム
             </Link>
+           {/* ▼▼▼ ここから追加 ▼▼▼ */}
+            <Link 
+              href="/super-index" 
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            >
+              スーパー索引
+            </Link>
+            {/* ▲▲▲ ここまで追加 ▲▲▲ */}
             <Link 
               href="/terms" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
@@ -91,6 +99,13 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 ホーム
+              </Link>
+              <Link 
+                href="/super-index" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                スーパー索引
               </Link>
               <Link 
                 href="/terms" 

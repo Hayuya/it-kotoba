@@ -1,4 +1,7 @@
+// src/app/terms/page.tsx
+
 import { Metadata } from 'next'
+import Link from 'next/link' // Linkコンポーネントをインポート
 import Header from '../../components/Header'
 import IndexSidebar from '../../components/IndexSidebar'
 import { getCategories } from '../../lib/microcms'
@@ -6,11 +9,10 @@ import { getAllSearchableTerms } from '../../lib/microcms'
 import TermSearchClient from '../../components/TermSearchClient'
 
 export const metadata: Metadata = {
-  title: 'IT用語一覧 - IT言葉辞典',
-  description: 'IT用語の一覧です。キーワード検索やカテゴリー、難易度での絞り込みで、学習中や実務で気になった用語を瞬時に見つけられます。あなたのIT学習を強力にサポートします。',
+  title: 'IT用語一覧 - IT言葉',
+  description: 'IT用語の一覧です。情報処理安全確保支援士試験レベルから基礎用語まで、キーワード検索やカテゴリー、難易度で絞り込んで効率的に学習できます。',
 }
 
-// このページは静的生成（SSG）され、初回アクセスが高速になります
 export const dynamic = 'force-static';
 
 export default async function TermsPage() {
@@ -29,6 +31,7 @@ export default async function TermsPage() {
             <IndexSidebar categories={categories} />
           </aside>
           <main className="lg:w-3/4">
+            {/* ▼▼▼ TermSearchClientに渡すPropsを修正 ▼▼▼ */}
             <TermSearchClient 
               initialTerms={allTerms} 
               categories={categories} 
