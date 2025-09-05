@@ -79,7 +79,7 @@ export default function ContactForm() {
           maxLength={50}
           className="input" 
           autoComplete="name"
-          placeholder="山田 太郎"
+          placeholder="小野 妹子"
         />
       </div>
       <div>
@@ -110,7 +110,7 @@ export default function ContactForm() {
           minLength={10}
           maxLength={1000}
           className="input"
-          placeholder="用語の誤りのご指摘、追加してほしい用語のリクエスト、その他ご意見など、お気軽にご記入ください。"
+          placeholder="例：解説の口調が上から目線で高圧的、おふざけ混じりでおまけに失礼！...などなど"
         ></textarea>
       </div>
       <div>
