@@ -17,7 +17,7 @@ const NUMBERS = '0-9';
 export default function SuperIndexClient({ allTerms }: SuperIndexClientProps) {
   const [openSection, setOpenSection] = useState<string | null>(null);
   // ▼▼▼ ここから追加 ▼▼▼
-  const [openInNewTab, setOpenInNewTab] = useState(true); // 新しいタブで開くかの状態
+  const [openInNewTab, setOpenInNewTab] = useState(false); // 新しいタブで開くかの状態
   // ▲▲▲ ここまで追加 ▲▲▲
 
   const groupedAndSortedTerms = useMemo(() => {
