@@ -32,7 +32,7 @@ export default function HeroSearch() {
           type="text"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          placeholder="知りたいIT用語を入力..."
+          placeholder="IT用語を入力..."
           // ▼▼▼【変更点】入力欄のスタイルを調整 ▼▼▼
           className="w-full rounded-lg border-2 border-transparent bg-transparent py-2.5 pl-11 pr-4 text-white placeholder-gray-300 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/70"
           aria-label="検索キーワード"
