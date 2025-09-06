@@ -1,0 +1,21 @@
+{
+  "name": "IT言葉辞典 | あなたの学びを加速する、高速IT用語辞典",
+  "short_name": "IT言葉辞典",
+  "description": "ITパスポートから高度試験まで、すべてのIT学習者を支える高速・高機能な用語辞典。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
