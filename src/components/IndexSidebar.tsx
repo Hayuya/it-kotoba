@@ -100,7 +100,7 @@ export default function IndexSidebar() {
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-800">簡易索引</h3>
           <Link href="/super-index" className="text-xs font-medium text-blue-600 hover:underline">
-            拡大版へ →
+            スーパー索引 →
           </Link>
         </div>
         
