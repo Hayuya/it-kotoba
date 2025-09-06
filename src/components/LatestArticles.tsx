@@ -84,10 +84,10 @@ export default function LatestArticles() {
           新しい記事が追加されるまでしばらくお待ちください。
         </p>
         <Link 
-          href="/categories"
+          href="/terms"
           className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
         >
-          カテゴリーを見る
+          用語一覧を見る
         </Link>
       </div>
     )
@@ -117,13 +117,7 @@ export default function LatestArticles() {
           </p>
 
           {/* フッター */}
-          <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center space-x-2">
-              <span className="text-lg">{term.category.icon}</span>
-              <span className="text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                {term.category.name}
-              </span>
-            </div>
+          <div className="flex items-center justify-end text-xs">
             <span className="text-gray-500">
               {formatDate(term.publishedAt)}
             </span>

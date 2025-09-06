@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '../../components/Header'
 import IndexSidebar from '../../components/IndexSidebar'
-import { getCategories } from '../../lib/microcms'
 
 export const metadata: Metadata = {
   title: 'このサイトについて - IT言葉辞典',
@@ -14,8 +13,6 @@ export const metadata: Metadata = {
 }
 
 export default async function AboutPage() {
-  const categories = await getCategories()
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -24,7 +21,7 @@ export default async function AboutPage() {
         <div className="flex flex-col-reverse lg:flex-row gap-8">
           {/* サイドバー */}
           <aside className="lg:w-1/4">
-            <IndexSidebar categories={categories} />
+            <IndexSidebar />
           </aside>
 
           {/* メインコンテンツ */}
@@ -78,7 +75,7 @@ export default async function AboutPage() {
                     🌐 知識が広がる回遊性
                   </h3>
                   <p className="text-gray-600 mb-4">
-                    一つの用語を調べたら、所属カテゴリを辿って知識をどんどん広げていけます。点だった知識が線となり、やがて面となって体系的な理解へと繋がります。<br />
+                    一つの用語を調べたら、関連用語を辿って知識をどんどん広げていけます。点だった知識が線となり、やがて面となって体系的な理解へと繋がります。<br />
                     <strong className="text-sm">※ 用語同士を直接結びつける「関連用語」機能は、現在実装準備中です。</strong>
                   </p>
                 </div>

@@ -2,13 +2,12 @@
 
 import Header from '../components/Header'
 import IndexSidebar from '../components/IndexSidebar'
-import { getCategories, getStats, getAllSearchableTerms } from '../lib/microcms'
+import { getStats, getAllSearchableTerms } from '../lib/microcms'
 import HeroSearch from '../components/HeroSearch'
 import SuperIndexClient from '../components/SuperIndexClient'
 
 export default async function Home() {
-  const [categories, stats, allTerms] = await Promise.all([
-    getCategories(),
+  const [stats, allTerms] = await Promise.all([
     getStats(),
     getAllSearchableTerms(),
   ])
@@ -19,15 +18,13 @@ export default async function Home() {
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* ▼▼▼ ここから変更 ▼▼▼ */}
           {/* サイドバー：lgスクリーン以上で表示 */}
           <aside className="hidden lg:block lg:w-1/4">
-            <IndexSidebar categories={categories} />
+            <IndexSidebar />
           </aside>
 
           {/* メインコンテンツ：lgスクリーンで幅を調整 */}
           <main className="w-full lg:w-3/4">
-          {/* ▲▲▲ ここまで変更 ▲▲▲ */}
             {/* ヒーローセクション */}
             <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8">
               <h1 className="text-4xl font-bold mb-4">IT言葉辞典</h1>
@@ -97,7 +94,7 @@ export default async function Home() {
                   </h3>
                   <ul className="text-gray-600 space-y-2 text-sm">
                     <li>関連用語を辿って知識を広げる</li>
-                    <li>カテゴリやタグで体系的に学ぶ</li>
+                    <li>タグで体系的に学ぶ</li>
                     <li>全体像を掴み、記憶に定着させる</li>
                   </ul>
                 </div>

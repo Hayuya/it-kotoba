@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '../../components/Header'
 import IndexSidebar from '../../components/IndexSidebar'
-import { getCategories } from '../../lib/microcms'
 import ContactForm from '../../components/ContactForm'
 
 export const metadata: Metadata = {
@@ -14,7 +13,6 @@ export const metadata: Metadata = {
 }
 
 export default async function ContactPage() {
-  const categories = await getCategories()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -22,7 +20,7 @@ export default async function ContactPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col-reverse lg:flex-row gap-8">
           <aside className="lg:w-1/4">
-            <IndexSidebar categories={categories} />
+            <IndexSidebar />
           </aside>
           <main className="lg:w-3/4">
             <nav className="mb-6 text-sm">

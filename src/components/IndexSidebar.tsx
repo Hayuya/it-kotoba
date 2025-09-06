@@ -2,12 +2,8 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { Category, Term } from '../lib/microcms'
+import { Term } from '../lib/microcms'
 import SidebarSearch from './SidebarSearch'
-
-interface IndexSidebarProps {
-  categories?: Category[]
-}
 
 const ALPHABET_GROUPS = [
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -17,11 +13,9 @@ const ALPHABET_GROUPS = [
 const NUMBER_GROUP = '0-9'
 
 // 索引で使う用語の型を定義
-type IndexTerm = Pick<Term, 'id' | 'title' | 'slug'> & {
-  category: { name: string }
-}
+type IndexTerm = Pick<Term, 'id' | 'title' | 'slug'>;
 
-export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
+export default function IndexSidebar() {
   const [selectedIndex, setSelectedIndex] = useState<string>('')
   const [indexType, setIndexType] = useState<'alphabet' | 'number'>('alphabet')
   const [filterQuery, setFilterQuery] = useState('')
@@ -103,14 +97,12 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
     <div className="sticky top-24 space-y-6 max-h-[calc(100vh-7.5rem)] overflow-y-auto">
       <SidebarSearch />
       <div className="bg-white rounded-lg shadow-md p-6">
-        {/* ▼▼▼ ここから変更 ▼▼▼ */}
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-800">簡易索引</h3>
           <Link href="/super-index" className="text-xs font-medium text-blue-600 hover:underline">
             拡大版へ →
           </Link>
         </div>
-        {/* ▲▲▲ ここまで変更 ▲▲▲ */}
         
         <div className="flex space-x-2 mb-4">
           <button
@@ -203,11 +195,6 @@ export default function IndexSidebar({ categories = [] }: IndexSidebarProps) {
                     className="block p-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                   >
                     <span className="font-medium">{term.title}</span>
-                    {term.category && (
-                      <span className="ml-2 text-xs text-gray-500">
-                        [{term.category.name}]
-                      </span>
-                    )}
                   </Link>
                 ))}
               </div>

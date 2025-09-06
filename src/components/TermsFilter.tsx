@@ -1,35 +1,31 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Category } from '../lib/microcms'
 import { useState, useEffect } from 'react'
 import { useDebounce } from '../hooks/useDebounce'
 
 interface TermsFilterProps {
-  categories: Category[]
   totalCount: number
 }
 
-export default function TermsFilter({ categories, totalCount }: TermsFilterProps) {
+export default function TermsFilter({ totalCount }: TermsFilterProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   
-  const selectedCategory = searchParams.get('category') || ''
   const selectedDifficulty = searchParams.get('difficulty') || ''
   const initialKeyword = searchParams.get('q') || ''
 
   const [keyword, setKeyword] = useState(initialKeyword)
-  const [isSearching, setIsSearching] = useState(false) // ★ ローディング状態のstateを追加
+  const [isSearching, setIsSearching] = useState(false)
   const debouncedKeyword = useDebounce(keyword, 500)
 
   useEffect(() => {
-    // 最初のレンダリング時や、URLのキーワードと入力が同じ場合は実行しない
     if (debouncedKeyword === initialKeyword) {
-      setIsSearching(false) // ★ 検索が不要な場合はローディングを解除
+      setIsSearching(false)
       return
     }
 
-    setIsSearching(true) // ★ 検索が実行される直前にローディング状態にする
+    setIsSearching(true)
     const params = new URLSearchParams(searchParams.toString())
     
     if (debouncedKeyword) {
@@ -37,26 +33,13 @@ export default function TermsFilter({ categories, totalCount }: TermsFilterProps
     } else {
       params.delete('q')
     }
-    params.delete('page') // 検索時は1ページ目に戻す
+    params.delete('page')
     
     router.push(`/terms?${params.toString()}`)
-    // コンポーネントがアンマウントされるため、ここでsetIsSearching(false)する必要はありません
   }, [debouncedKeyword, initialKeyword, router, searchParams])
 
-  const handleCategoryChange = (categoryId: string) => {
-    setIsSearching(true) // ★ カテゴリ変更時もローディング表示
-    const params = new URLSearchParams(searchParams.toString())
-    if (categoryId) {
-      params.set('category', categoryId)
-    } else {
-      params.delete('category')
-    }
-    params.delete('page')
-    router.push(`/terms?${params.toString()}`)
-  }
-
   const handleDifficultyChange = (difficulty: string) => {
-    setIsSearching(true) // ★ 難易度変更時もローディング表示
+    setIsSearching(true)
     const params = new URLSearchParams(searchParams.toString())
     if (difficulty) {
       params.set('difficulty', difficulty)
@@ -69,7 +52,6 @@ export default function TermsFilter({ categories, totalCount }: TermsFilterProps
 
   return (
     <div>
-      {/* ▼▼▼【変更点】キーワード検索部分にスピナーを追加 ▼▼▼ */}
       <div className="mb-6">
         <label htmlFor="search-keyword" className="block text-sm font-medium text-gray-700 mb-2">キーワード検索</label>
         <div className="relative">
@@ -91,25 +73,8 @@ export default function TermsFilter({ categories, totalCount }: TermsFilterProps
           )}
         </div>
       </div>
-      {/* ▲▲▲【変更点】▲▲▲ */}
 
       <div className="flex flex-wrap gap-4 mb-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">カテゴリー</label>
-          <select 
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
-            value={selectedCategory}
-            onChange={(e) => handleCategoryChange(e.target.value)}
-          >
-            <option value="">すべて</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">難易度</label>
           <select 

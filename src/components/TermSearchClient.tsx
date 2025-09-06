@@ -4,27 +4,24 @@ import { useMemo } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import TermsFilter from './TermsFilter'
-import { Category, Term, getDifficultyColor, getDifficultyLabel } from '../lib/microcms'
+import { Term, getDifficultyColor, getDifficultyLabel } from '../lib/microcms'
 
 // 親コンポーネントから渡されるプロパティの型定義
-type SearchableTerm = Pick<Term, 'id' | 'title' | 'slug' | 'category' | 'difficulty' | 'description' | 'publishedAt'> & { search_title?: string };
+type SearchableTerm = Pick<Term, 'id' | 'title' | 'slug' | 'difficulty' | 'description' | 'publishedAt'> & { search_title?: string };
 
 interface TermSearchClientProps {
   initialTerms: SearchableTerm[];
-  categories: Category[];
 }
 
-export default function TermSearchClient({ initialTerms, categories }: TermSearchClientProps) {
+export default function TermSearchClient({ initialTerms }: TermSearchClientProps) {
   const searchParams = useSearchParams();
 
-  // ▼▼▼ ここから変更 ▼▼▼
   // URLに検索パラメータが存在するかどうかを判定
   const isSearchActive = useMemo(() => {
     const q = searchParams.get('q');
-    const category = searchParams.get('category');
     const difficulty = searchParams.get('difficulty');
-    // キーワードが入力されているか、カテゴリーか難易度が選択されている場合にtrue
-    return (q && q.length > 0) || !!category || !!difficulty;
+    // キーワードが入力されているか、難易度が選択されている場合にtrue
+    return (q && q.length > 0) || !!difficulty;
   }, [searchParams]);
 
   // URLのクエリパラメータに基づいて、全用語リストをクライアントサイドでフィルタリングする
@@ -34,16 +31,11 @@ export default function TermSearchClient({ initialTerms, categories }: TermSearc
       return [];
     }
 
-    const selectedCategory = searchParams.get('category');
     const selectedDifficulty = searchParams.get('difficulty');
     const searchQuery = searchParams.get('q');
 
     let terms = initialTerms;
 
-    // カテゴリーで絞り込み
-    if (selectedCategory) {
-      terms = terms.filter(term => term.category?.id === selectedCategory);
-    }
     // 難易度で絞り込み
     if (selectedDifficulty) {
       terms = terms.filter(term => term.difficulty.includes(selectedDifficulty));
@@ -58,7 +50,6 @@ export default function TermSearchClient({ initialTerms, categories }: TermSearc
 
     return terms;
   }, [initialTerms, searchParams, isSearchActive]);
-  // ▲▲▲ ここまで変更 ▲▲▲
   
   return (
     <>
@@ -71,12 +62,11 @@ export default function TermSearchClient({ initialTerms, categories }: TermSearc
         </div>
         <p className="text-gray-600 mb-6">
           情報処理技術者試験で問われるIT用語を中心に収録しています。<br />
-          キーワード入力や、難易度・カテゴリーでの絞り込みで効率的に検索しましょう。
+          キーワード入力や、難易度での絞り込みで効率的に検索しましょう。
         </p>
-        <TermsFilter categories={categories} totalCount={filteredTerms.length} />
+        <TermsFilter totalCount={filteredTerms.length} />
       </header>
       
-      {/* ▼▼▼ ここから変更 ▼▼▼ */}
       {/* 検索がアクティブな時だけ結果を表示する */}
       {isSearchActive ? (
         filteredTerms.length > 0 ? (
@@ -102,12 +92,6 @@ export default function TermSearchClient({ initialTerms, categories }: TermSearc
                     </p>
                   </div>
                   <div className="flex items-center ml-4 flex-shrink-0">
-                      <div className="flex items-center space-x-2 mr-4">
-                        <span className="text-lg">{term.category.icon}</span>
-                        <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                          {term.category.name}
-                        </span>
-                      </div>
                     <span className="text-blue-600 text-sm font-medium group-hover:text-blue-800 hidden sm:inline">
                       詳細を見る →
                     </span>
@@ -142,7 +126,6 @@ export default function TermSearchClient({ initialTerms, categories }: TermSearc
           </p>
         </div>
       )}
-      {/* ▲▲▲ ここまで変更 ▲▲▲ */}
     </>
   )
 }

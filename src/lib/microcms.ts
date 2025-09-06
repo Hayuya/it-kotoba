@@ -24,26 +24,6 @@ export const client = createClient({
 })
 
 // API関連の型定義
-export interface Category {
-  id: string
-  name: string
-  slug: string
-  description?: string
-  icon: string
-  order: number
-  parent?: {
-    id: string
-    name: string
-    slug: string
-    icon: string
-    description?: string
-  } | null
-  createdAt: string
-  updatedAt: string
-  publishedAt: string
-  revisedAt: string
-}
-
 export interface Tag {
   id: string
   name: string
@@ -60,7 +40,6 @@ export interface Term {
   slug: string
   description: string
   content: string
-  category: Category
   difficulty: string[] // 配列形式に変更
   tags: Tag[]
   relatedTerms: Term[]
@@ -70,7 +49,7 @@ export interface Term {
   updatedAt: string
   publishedAt: string
   revisedAt: string
-  search_title?: string; // ▼▼▼【変更点】search_titleの型定義を追加 ▼▼▼
+  search_title?: string;
 }
 
 export interface MicroCMSListResponse<T> {
@@ -228,60 +207,6 @@ export const getRecommendedTermsClient = async (limit: number = 6): Promise<Term
   }
 }
 
-export const getTermsByCategory = async (
-  categorySlug: string,
-  queries?: {
-    limit?: number
-    offset?: number
-    orders?: string
-  }
-): Promise<MicroCMSListResponse<Term>> => {
-  try {
-    // まずカテゴリーIDを取得
-    const category = await getCategoryBySlug(categorySlug)
-    if (!category) {
-      return {
-        contents: [],
-        totalCount: 0,
-        offset: 0,
-        limit: 0,
-      }
-    }
-
-    const { contents, totalCount, offset, limit } = await client.get({
-      endpoint: 'terms',
-      queries: {
-        filters: `category[equals]${category.id}`,
-        limit: queries?.limit || 10,
-        offset: queries?.offset || 0,
-        orders: queries?.orders || 'order',
-      },
-    })
-
-    // 各termのtagsとrelatedTermsを安全に処理
-    const safeContents = contents.map((term: any) => ({
-      ...term,
-      tags: term.tags || [],
-      relatedTerms: term.relatedTerms || [],
-    }))
-
-    return {
-      contents: safeContents,
-      totalCount,
-      offset,
-      limit,
-    }
-  } catch (error) {
-    console.error('Error fetching terms by category:', error)
-    return {
-      contents: [],
-      totalCount: 0,
-      offset: 0,
-      limit: 0,
-    }
-  }
-}
-
 export const getTermsByTag = async (
   tagId: string,
   queries?: {
@@ -363,60 +288,6 @@ export const searchTerms = async (
       offset: 0,
       limit: 0,
     }
-  }
-}
-
-// カテゴリー関連のAPI関数
-export const getCategories = async (): Promise<Category[]> => {
-  try {
-    const { contents } = await client.get({
-      endpoint: 'categories',
-      queries: {
-        limit: 100,
-        orders: 'order',
-      },
-    })
-
-    // 親カテゴリーのみを返す（階層構造の最上位のみ）
-    return contents.filter((category: Category) => !category.parent)
-  } catch (error) {
-    console.error('Error fetching categories:', error)
-    return []
-  }
-}
-
-// 全カテゴリー（階層構造含む）を取得
-export const getAllCategories = async (): Promise<Category[]> => {
-  try {
-    const { contents } = await client.get({
-      endpoint: 'categories',
-      queries: {
-        limit: 100,
-        orders: 'order',
-      },
-    })
-
-    return contents
-  } catch (error) {
-    console.error('Error fetching all categories:', error)
-    return []
-  }
-}
-
-export const getCategoryBySlug = async (slug: string): Promise<Category | null> => {
-  try {
-    const { contents } = await client.get({
-      endpoint: 'categories',
-      queries: {
-        filters: `slug[equals]${slug}`,
-        limit: 1,
-      },
-    })
-
-    return contents.length > 0 ? contents[0] : null
-  } catch (error) {
-    console.error('Error fetching category by slug:', error)
-    return null
   }
 }
 
@@ -543,8 +414,7 @@ export const getAllTermSlugs = async (): Promise<string[]> => {
   }
 }
 
-// ▼▼▼【変更点】戻り値の型をより正確なものに修正 ▼▼▼
-type SearchableTerm = Pick<Term, 'id' | 'title' | 'slug' | 'category' | 'difficulty' | 'description' | 'publishedAt' | 'search_title'>;
+type SearchableTerm = Pick<Term, 'id' | 'title' | 'slug' | 'difficulty' | 'description' | 'publishedAt' | 'search_title'>;
 
 /**
  * 索引・検索機能専用：軽量な全用語データをページネーションで全件取得する
@@ -562,7 +432,7 @@ export const getAllSearchableTerms = async (): Promise<SearchableTerm[]> => {
       queries: {
         limit,
         offset,
-        fields: 'id,title,slug,category,difficulty,description,publishedAt,search_title', // 必要なフィールドをすべて指定
+        fields: 'id,title,slug,difficulty,description,publishedAt,search_title', // 必要なフィールドをすべて指定
       },
     });
 
@@ -579,7 +449,7 @@ export const getAllSearchableTerms = async (): Promise<SearchableTerm[]> => {
           queries: {
             limit,
             offset,
-            fields: 'id,title,slug,category,difficulty,description,publishedAt,search_title',
+            fields: 'id,title,slug,difficulty,description,publishedAt,search_title',
           },
         })
       );
@@ -594,23 +464,6 @@ export const getAllSearchableTerms = async (): Promise<SearchableTerm[]> => {
   } catch (error) {
     console.error('Error fetching all searchable terms:', error);
     return [];
-  }
-}
-
-export const getAllCategorySlugs = async (): Promise<string[]> => {
-  try {
-    const { contents } = await client.get({
-      endpoint: 'categories',
-      queries: {
-        fields: 'slug',
-        limit: 100,
-      },
-    })
-
-    return contents.map((category: { slug: string }) => category.slug)
-  } catch (error) {
-    console.error('Error fetching all category slugs:', error)
-    return []
   }
 }
 

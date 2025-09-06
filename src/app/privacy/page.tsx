@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '../../components/Header'
 import IndexSidebar from '../../components/IndexSidebar'
-import { getCategories } from '../../lib/microcms'
 
 export const metadata: Metadata = {
   title: 'プライバシーポリシー - IT言葉辞典',
@@ -14,7 +13,6 @@ export const metadata: Metadata = {
 }
 
 export default async function PrivacyPolicyPage() {
-  const categories = await getCategories()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -24,7 +22,7 @@ export default async function PrivacyPolicyPage() {
         <div className="flex flex-col-reverse lg:flex-row gap-8">
           {/* サイドバー */}
           <aside className="lg:w-1/4">
-            <IndexSidebar categories={categories} />
+            <IndexSidebar />
           </aside>
 
           {/* メインコンテンツ */}

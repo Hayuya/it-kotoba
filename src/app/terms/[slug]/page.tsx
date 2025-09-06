@@ -6,7 +6,6 @@ import IndexSidebar from '../../../components/IndexSidebar'
 import CopyUrlButton from '../../../components/CopyUrlButton'
 import { 
   getTermBySlug, 
-  getCategories,
   getDifficultyColor, 
   getDifficultyLabel, 
   formatDate,
@@ -38,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const tags = term.tags || []
-  const keywords = [term.title, term.category.name, ...tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', ')
+  const keywords = [term.title, ...tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', ')
 
   return {
     title: `${term.title} - IT言葉`,
@@ -66,10 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function TermPage({ params }: Props) {
-  const [term, categories] = await Promise.all([
-    getTermBySlug(params.slug),
-    getCategories()
-  ])
+  const term = await getTermBySlug(params.slug)
   
   if (!term) {
     notFound()
@@ -87,8 +83,7 @@ export default async function TermPage({ params }: Props) {
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
       { '@type': 'ListItem', position: 2, name: '用語一覧', item: `${siteUrl}/terms` },
-      { '@type': 'ListItem', position: 3, name: term.category.name, item: `${siteUrl}/categories/${term.category.slug}` }, // カテゴリページへのリンクを追加
-      { '@type': 'ListItem', position: 4, name: term.title, item: currentUrl },
+      { '@type': 'ListItem', position: 3, name: term.title, item: currentUrl },
     ],
   };
 
@@ -117,7 +112,6 @@ export default async function TermPage({ params }: Props) {
     },
     "datePublished": term.publishedAt,
     "dateModified": term.updatedAt,
-    "articleSection": term.category.name,
     "keywords": tags.map(tag => tag.name).join(", "),
   };
 
@@ -134,7 +128,7 @@ export default async function TermPage({ params }: Props) {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col-reverse lg:flex-row gap-8">
           <aside className="lg:w-1/4">
-            <IndexSidebar categories={categories} />
+            <IndexSidebar />
           </aside>
 
           <main className="lg:w-3/4">
@@ -145,22 +139,13 @@ export default async function TermPage({ params }: Props) {
                 <li>/</li>
                 <li><Link href="/terms" className="hover:text-blue-600">用語一覧</Link></li>
                 <li>/</li>
-                {/* カテゴリページへのリンクを有効化 */}
-                <li><Link href={`/categories/${term.category.slug}`} className="hover:text-blue-600">{term.category.name}</Link></li>
-                <li>/</li>
                 <li className="text-gray-800 font-medium">{term.title}</li>
               </ol>
             </nav>
 
             <article className="bg-white rounded-lg shadow-md overflow-hidden">
               <header className="p-8 border-b border-gray-200">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-2xl">{term.category.icon}</span>
-                    <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                      {term.category.name}
-                    </span>
-                  </div>
+                <div className="flex items-start justify-end mb-4">
                   <span className={`text-sm px-3 py-1 rounded-full ${getDifficultyColor(term.difficulty)}`}>
                     {getDifficultyLabel(term.difficulty)}
                   </span>
@@ -233,7 +218,6 @@ export default async function TermPage({ params }: Props) {
                     </div>
                   </div>
                   
-                  {/* ▼▼▼ ここから変更 ▼▼▼ */}
                   <div className="flex items-center space-x-4">
                     <Link
                       href="/super-index"
@@ -248,7 +232,6 @@ export default async function TermPage({ params }: Props) {
                       検索へ
                     </Link>
                   </div>
-                  {/* ▲▲▲ ここまで変更 ▲▲▲ */}
                 </div>
               </footer>
             </article>
