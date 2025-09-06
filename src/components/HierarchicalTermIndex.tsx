@@ -69,8 +69,7 @@ const CategoryNode = ({ category, level, openIds, onToggle, isLast }: {
   const isHighlighted = isSelfActive || isDescendantActive;
   
   const hasChildren = !!category.children?.length;
-  // 'hasTerms'はisExpandableのロジックで使われているので残しておきます
-  const hasTerms = category.terms != null; 
+  const hasTerms = category.terms != null;
   const isExpandable = hasChildren || (level === 2 && hasTerms);
   const isClickable = level > 0 && isExpandable;
 
@@ -90,6 +89,7 @@ const CategoryNode = ({ category, level, openIds, onToggle, isLast }: {
       >
         <div className={`flex-1 pl-8 py-1 rounded-md ${isClickable ? 'hover:bg-gray-100/80' : ''}`}>
           <span className={`font-medium ${textHighlightClass} transition-colors`}>
+            {/* 変更点：孫カテゴリーの場合、先頭にドットを追加 */}
             {level === 2 ? `・ ${category.name}` : category.name}
           </span>
         </div>
@@ -97,9 +97,7 @@ const CategoryNode = ({ category, level, openIds, onToggle, isLast }: {
 
       {shouldRenderChildren && (
         <div className="pl-3">
-          {/* ▼▼▼ 修正箇所 ▼▼▼ */}
-          {level === 2 && category.terms && <TermList terms={category.terms} />}
-          {/* ▲▲▲ 修正箇所 ▲▲▲ */}
+          {level === 2 && hasTerms && <TermList terms={category.terms} />}
           {hasChildren && (
             <div>
               {category.children.map((child, index, arr) => (
