@@ -24,6 +24,18 @@ export const client = createClient({
 })
 
 // API関連の型定義
+
+// ▼▼▼ Category型定義を追加 ▼▼▼
+export interface Category {
+  id: string
+  name: string
+  parent?: Category
+  createdAt: string
+  updatedAt: string
+  publishedAt: string
+  revisedAt: string
+}
+
 export interface Tag {
   id: string
   name: string
@@ -41,6 +53,8 @@ export interface Term {
   description: string
   content: string
   difficulty: string[] // 配列形式に変更
+  // ▼▼▼ categoryフィールドを追加 ▼▼▼
+  category?: Category
   tags: Tag[]
   relatedTerms: Term[]
   isRecommended: boolean
@@ -58,6 +72,45 @@ export interface MicroCMSListResponse<T> {
   offset: number
   limit: number
 }
+
+// ▼▼▼ 全カテゴリーを取得する関数を新規作成 ▼▼▼
+export const getAllCategories = async (): Promise<Category[]> => {
+  try {
+    const allContents: Category[] = [];
+    const limit = 100;
+    let offset = 0;
+    let totalCount = 0;
+
+    const firstResponse = await client.get<MicroCMSListResponse<Category>>({
+      endpoint: 'categories',
+      queries: { limit, offset, fields: 'id,name,parent' },
+    });
+
+    allContents.push(...firstResponse.contents);
+    totalCount = firstResponse.totalCount;
+    offset += limit;
+
+    const promises = [];
+    while (offset < totalCount) {
+      promises.push(
+        client.get<MicroCMSListResponse<Category>>({
+          endpoint: 'categories',
+          queries: { limit, offset, fields: 'id,name,parent' },
+        })
+      );
+      offset += limit;
+    }
+
+    const responses = await Promise.all(promises);
+    responses.forEach(res => allContents.push(...res.contents));
+
+    return allContents;
+  } catch (error) {
+    console.error('Error fetching all categories:', error);
+    return [];
+  }
+}
+
 
 // 用語関連のAPI関数
 export const getTerms = async (queries?: {
@@ -414,7 +467,9 @@ export const getAllTermSlugs = async (): Promise<string[]> => {
   }
 }
 
-type SearchableTerm = Pick<Term, 'id' | 'title' | 'slug' | 'difficulty' | 'description' | 'publishedAt' | 'search_title'>;
+// ▼▼▼ `SearchableTerm` 型定義に `category` を追加 ▼▼▼
+type SearchableTerm = Pick<Term, 'id' | 'title' | 'slug' | 'difficulty' | 'description' | 'publishedAt' | 'search_title' | 'category'>;
+
 
 /**
  * 索引・検索機能専用：軽量な全用語データをページネーションで全件取得する
@@ -426,13 +481,16 @@ export const getAllSearchableTerms = async (): Promise<SearchableTerm[]> => {
     let offset = 0;
     let totalCount = 0;
 
+    // ▼▼▼ fieldsに`category`を追加 ▼▼▼
+    const fields = 'id,title,slug,difficulty,description,publishedAt,search_title,category';
+
     // 最初に一度取得して全体の件数を把握する
     const firstResponse = await client.get<MicroCMSListResponse<SearchableTerm>>({
       endpoint: 'terms',
       queries: {
         limit,
         offset,
-        fields: 'id,title,slug,difficulty,description,publishedAt,search_title', // 必要なフィールドをすべて指定
+        fields,
       },
     });
 
@@ -449,7 +507,7 @@ export const getAllSearchableTerms = async (): Promise<SearchableTerm[]> => {
           queries: {
             limit,
             offset,
-            fields: 'id,title,slug,difficulty,description,publishedAt,search_title',
+            fields,
           },
         })
       );

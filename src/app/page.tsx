@@ -2,15 +2,40 @@
 
 import Header from '../components/Header'
 import IndexSidebar from '../components/IndexSidebar'
-import { getStats, getAllSearchableTerms } from '../lib/microcms'
+import { getStats, getAllSearchableTerms, getAllCategories } from '../lib/microcms' 
 import HeroSearch from '../components/HeroSearch'
 import SuperIndexClient from '../components/SuperIndexClient'
+import CategoryTree from '../components/CategoryTree'
 
 export default async function Home() {
-  const [stats, allTerms] = await Promise.all([
+  const [stats, allTerms, allCategories] = await Promise.all([
     getStats(),
     getAllSearchableTerms(),
-  ])
+    getAllCategories()
+  ]);
+
+  // ▼▼▼ 【修正点】用語データをカテゴリーIDごとにグループ化するロジックを修正 ▼▼▼
+  const termsByCategoryId = allTerms.reduce((acc, term) => {
+    // 'category'フィールドが配列であることを考慮し、forEachでループ処理する
+    if (term.category && Array.isArray(term.category)) {
+      term.category.forEach(cat => {
+        const categoryId = cat.id;
+        if (categoryId) {
+          if (!acc[categoryId]) {
+            acc[categoryId] = [];
+          }
+          // 必要な情報だけを格納する
+          acc[categoryId].push({
+            id: term.id,
+            title: term.title,
+            slug: term.slug
+          });
+        }
+      });
+    }
+    return acc;
+  }, {} as { [key: string]: any[] });
+  // ▲▲▲ ここまで修正 ▲▲▲
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -18,14 +43,11 @@ export default async function Home() {
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* サイドバー：lgスクリーン以上で表示 */}
           <aside className="hidden lg:block lg:w-1/4">
             <IndexSidebar />
           </aside>
 
-          {/* メインコンテンツ：lgスクリーンで幅を調整 */}
           <main className="w-full lg:w-3/4">
-            {/* ヒーローセクション */}
             <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8">
               <h1 className="text-4xl font-bold mb-4">IT言葉辞典</h1>
               <p className="text-xl mb-6">
@@ -35,7 +57,11 @@ export default async function Home() {
               <HeroSearch />
             </section>
 
-            {/* 高性能索引セクション */}
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">カテゴリーから探す</h2>
+              <CategoryTree categories={allCategories} termsByCategoryId={termsByCategoryId} />
+            </section>
+
             <section className="mb-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">スーパー索引</h2>
@@ -49,7 +75,6 @@ export default async function Home() {
               <SuperIndexClient allTerms={allTerms} />
             </section>
 
-            {/* 統計情報 */}
             <section className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">📊 サイト統計</h2>
               <div className="grid md:grid-cols-3 gap-6 text-center">
@@ -72,7 +97,6 @@ export default async function Home() {
               </div>
             </section>
 
-            {/* 学習のヒント */}
             <section className="mt-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">💡 効率的な学習のコツ</h2>
               <div className="grid md:grid-cols-2 gap-6">
