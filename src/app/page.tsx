@@ -1,11 +1,10 @@
-// src/app/page.tsx
-
 import Header from '../components/Header'
 import IndexSidebar from '../components/IndexSidebar'
 import { getStats, getAllSearchableTerms, getAllCategories } from '../lib/microcms' 
 import HeroSearch from '../components/HeroSearch'
 import SuperIndexClient from '../components/SuperIndexClient'
 import CategoryTree from '../components/CategoryTree'
+import TabbedContent from '../components/TabbedContent' // TabbedContentをインポート
 
 export default async function Home() {
   const [stats, allTerms, allCategories] = await Promise.all([
@@ -14,9 +13,7 @@ export default async function Home() {
     getAllCategories()
   ]);
 
-  // ▼▼▼ 【修正点】用語データをカテゴリーIDごとにグループ化するロジックを修正 ▼▼▼
   const termsByCategoryId = allTerms.reduce((acc, term) => {
-    // 'category'フィールドが配列であることを考慮し、forEachでループ処理する
     if (term.category && Array.isArray(term.category)) {
       term.category.forEach(cat => {
         const categoryId = cat.id;
@@ -24,7 +21,6 @@ export default async function Home() {
           if (!acc[categoryId]) {
             acc[categoryId] = [];
           }
-          // 必要な情報だけを格納する
           acc[categoryId].push({
             id: term.id,
             title: term.title,
@@ -35,7 +31,6 @@ export default async function Home() {
     }
     return acc;
   }, {} as { [key: string]: any[] });
-  // ▲▲▲ ここまで修正 ▲▲▲
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -56,24 +51,19 @@ export default async function Home() {
               </p>
               <HeroSearch />
             </section>
-
-            <section className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">カテゴリーから探す</h2>
-              <CategoryTree categories={allCategories} termsByCategoryId={termsByCategoryId} />
-            </section>
-
+            
+            {/* ▼▼▼ ここからタブセクションに変更 ▼▼▼ */}
             <section className="mb-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">スーパー索引</h2>
-                <a 
-                  href="/super-index" 
-                  className="text-blue-600 hover:text-blue-800 font-medium text-sm"
-                >
-                  専用ページで見る →
-                </a>
-              </div>
-              <SuperIndexClient allTerms={allTerms} />
+              <TabbedContent
+                categoryTree={
+                  <CategoryTree categories={allCategories} termsByCategoryId={termsByCategoryId} />
+                }
+                superIndex={
+                  <SuperIndexClient allTerms={allTerms} />
+                }
+              />
             </section>
+            {/* ▲▲▲ ここまで変更 ▲▲▲ */}
 
             <section className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">📊 サイト統計</h2>

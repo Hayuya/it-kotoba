@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import type { Category, Term } from '../lib/microcms'
 
-// 型定義
+// (型定義は変更なし)
 type TermNode = Pick<Term, 'id' | 'title' | 'slug'>;
 type CategoryNode = Category & { children: CategoryNode[] };
 type TermsByCategoryId = { [key: string]: TermNode[] };
@@ -75,17 +75,18 @@ const CategoryItem = ({
         )}
       </div>
       
-      {/* ▼▼▼ ここから展開エリアのUIを改善 ▼▼▼ */}
+      {/* ▼▼▼ ここから展開エリアのUIを修正 ▼▼▼ */}
       {isGrandChild && isOpen && terms.length > 0 && (
         <div className="my-2 ml-4 bg-gray-50 rounded-lg p-3">
-          <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-4 list-none pl-0">
+          <ul className="space-y-1 list-none pl-0">
             {terms.map(term => (
-              <li key={term.id}>
+              <li key={term.id} className="flex items-start">
+                <span className="text-gray-400 mr-2 mt-1.5">&middot;</span>
                 <Link 
                   href={`/terms/${term.slug}`}
                   target={openInNewTab ? '_blank' : '_self'}
                   rel={openInNewTab ? 'noopener noreferrer' : ''}
-                  className="block px-2 py-1 rounded-md text-sm text-blue-700 hover:bg-blue-100 hover:text-blue-900 transition-colors duration-150"
+                  className="flex-1 block px-2 py-1 rounded-md text-sm text-blue-700 hover:bg-blue-100 hover:text-blue-900 transition-colors duration-150"
                 >
                   {term.title}
                 </Link>
@@ -94,7 +95,7 @@ const CategoryItem = ({
           </ul>
         </div>
       )}
-      {/* ▲▲▲ ここまで改善 ▲▲▲ */}
+      {/* ▲▲▲ ここまで修正 ▲▲▲ */}
 
       {node.children.length > 0 && (
         <div>

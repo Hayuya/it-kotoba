@@ -34,9 +34,10 @@ export default function SuperIndexClient({ allTerms }: SuperIndexClientProps) {
       }
     });
 
+    // ▼▼▼ 各グループ内を厳密なABC順でソートするように修正 ▼▼▼
     for (const key in groups) {
       groups[key].sort((a, b) => {
-        return a.title.substring(1).localeCompare(b.title.substring(1), 'ja');
+        return a.title.localeCompare(b.title, 'en', { sensitivity: 'base' });
       });
     }
 
@@ -99,22 +100,23 @@ export default function SuperIndexClient({ allTerms }: SuperIndexClientProps) {
               </button>
               {isOpen && (
                 <div className="bg-gray-50 py-4 px-6 border-t border-gray-200">
-                  {/* ▼▼▼ ここから変更 ▼▼▼ */}
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:divide-x sm:divide-gray-200">
+                  {/* ▼▼▼ ここから展開エリアのUIを修正 ▼▼▼ */}
+                  <ul className="space-y-1 list-none pl-0">
                     {terms.map(term => (
-                      <li key={term.id} className="px-4 py-1">
+                      <li key={term.id} className="flex items-start">
+                        <span className="text-gray-400 mr-2 mt-1.5">&middot;</span>
                         <Link
                           href={`/terms/${term.slug}`}
                           target={openInNewTab ? '_blank' : '_self'}
                           rel={openInNewTab ? 'noopener noreferrer' : ''}
-                          className="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
+                          className="flex-1 block px-2 py-1 rounded-md text-blue-600 hover:bg-blue-100 hover:text-blue-800 transition-colors duration-200"
                         >
                           {term.title}
                         </Link>
                       </li>
                     ))}
                   </ul>
-                  {/* ▲▲▲ ここまで変更 ▲▲▲ */}
+                  {/* ▲▲▲ ここまで修正 ▲▲▲ */}
                 </div>
               )}
             </div>

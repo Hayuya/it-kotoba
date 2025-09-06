@@ -6,46 +6,93 @@ import { useSearchParams } from 'next/navigation'
 import TermsFilter from './TermsFilter'
 import { Term, getDifficultyColor, getDifficultyLabel } from '../lib/microcms'
 
-// 親コンポーネントから渡されるプロパティの型定義
 type SearchableTerm = Pick<Term, 'id' | 'title' | 'slug' | 'difficulty' | 'description' | 'publishedAt'> & { search_title?: string };
 
 interface TermSearchClientProps {
   initialTerms: SearchableTerm[];
 }
 
+// ▼▼▼ ここからスコアリングロジックを追加 ▼▼▼
+/**
+ * 用語と検索クエリの関連性スコアを計算する関数
+ * @param term - 評価対象の用語オブジェクト
+ * @param query - 小文字化された検索クエリ
+ * @returns スコア (高いほど関連性が高い)
+ */
+const calculateRelevanceScore = (term: SearchableTerm, query: string): number => {
+  const title = term.title.toLowerCase();
+  
+  // 1. 完全一致 (最高スコア)
+  if (title === query) {
+    return 100;
+  }
+  
+  // 2. 前方一致
+  if (title.startsWith(query)) {
+    return 90;
+  }
+  
+  // 3. 単語として一致 (正規表現で単語の境界をチェック)
+  const wordBoundaryRegex = new RegExp(`\\b${query}\\b`);
+  if (wordBoundaryRegex.test(title)) {
+    return 80;
+  }
+
+  // 4. search_title (別名)での前方一致
+  const searchTitle = term.search_title?.toLowerCase() || '';
+  if (searchTitle.split(',').some(t => t.trim().startsWith(query))) {
+    return 70;
+  }
+
+  // 5. 部分一致 (デフォルト)
+  return 10;
+};
+// ▲▲▲ ここまでスコアリングロジックを追加 ▲▲▲
+
 export default function TermSearchClient({ initialTerms }: TermSearchClientProps) {
   const searchParams = useSearchParams();
 
-  // URLに検索パラメータが存在するかどうかを判定
   const isSearchActive = useMemo(() => {
     const q = searchParams.get('q');
     const difficulty = searchParams.get('difficulty');
-    // キーワードが入力されているか、難易度が選択されている場合にtrue
     return (q && q.length > 0) || !!difficulty;
   }, [searchParams]);
 
-  // URLのクエリパラメータに基づいて、全用語リストをクライアントサイドでフィルタリングする
   const filteredTerms = useMemo(() => {
-    // 検索がアクティブでなければ、空の配列を返して何も表示しない
     if (!isSearchActive) {
       return [];
     }
 
     const selectedDifficulty = searchParams.get('difficulty');
     const searchQuery = searchParams.get('q');
+    const lowerCaseQuery = searchQuery?.toLowerCase() || '';
 
     let terms = initialTerms;
 
-    // 難易度で絞り込み
     if (selectedDifficulty) {
       terms = terms.filter(term => term.difficulty.includes(selectedDifficulty));
     }
-    // キーワードで絞り込み
+    
     if (searchQuery) {
-      const lowerCaseQuery = searchQuery.toLowerCase();
       terms = terms.filter(term => 
+        term.title.toLowerCase().includes(lowerCaseQuery) ||
         term.search_title?.toLowerCase().includes(lowerCaseQuery)
       );
+
+      // ▼▼▼ ここからソート処理を追加 ▼▼▼
+      terms.sort((a, b) => {
+        const scoreA = calculateRelevanceScore(a, lowerCaseQuery);
+        const scoreB = calculateRelevanceScore(b, lowerCaseQuery);
+        
+        // スコアが異なる場合は、スコアの高い方を優先
+        if (scoreB !== scoreA) {
+          return scoreB - scoreA;
+        }
+        
+        // スコアが同じ場合は、文字コード順で並び替え
+        return a.title.localeCompare(b.title);
+      });
+      // ▲▲▲ ここまでソート処理を追加 ▲▲▲
     }
 
     return terms;
@@ -67,7 +114,6 @@ export default function TermSearchClient({ initialTerms }: TermSearchClientProps
         <TermsFilter totalCount={filteredTerms.length} />
       </header>
       
-      {/* 検索がアクティブな時だけ結果を表示する */}
       {isSearchActive ? (
         filteredTerms.length > 0 ? (
           <div className="space-y-4 mb-8">
@@ -117,7 +163,6 @@ export default function TermSearchClient({ initialTerms }: TermSearchClientProps
           </div>
         )
       ) : (
-        // 検索がアクティブでない（初期状態の）場合に表示するメッセージ
         <div className="bg-white rounded-lg shadow-md p-8 text-center">
           <div className="text-gray-400 text-6xl mb-4">⌨️</div>
           <h3 className="text-xl font-semibold text-gray-800 mb-2">用語を検索してください</h3>
