@@ -77,9 +77,13 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm mb-4 md:mb-0">
               <p>© {currentYear} IT言葉辞典. All rights reserved.</p>
-              <p className="mt-1">
-                このサイトは、すべてのIT学習者の「知りたい」に応えるためのお供です。
+              {/* ▼▼▼ ここから修正 ▼▼▼ */}
+              <p className="mt-2 text-yellow-400">
+                ※当サイトは現在β版として運用しています。ご意見・ご要望は
+                <Link href="/contact" className="underline hover:text-yellow-300">お問い合わせ</Link>
+                からお寄せください。
               </p>
+              {/* ▲▲▲ ここまで修正 ▲▲▲ */}
             </div>
             <div className="flex space-x-6 text-sm">
               <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">

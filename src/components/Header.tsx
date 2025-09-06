@@ -15,9 +15,13 @@ export default function Header() {
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-2">
               <span className="text-xl font-bold">IT</span>
             </div>
-            {/* hidden sm:block を削除 */}
             <div>
-              <h1 className="text-xl font-bold text-gray-800">IT言葉辞典</h1>
+              {/* ▼▼▼ ここから修正 ▼▼▼ */}
+              <div className="flex items-center space-x-2">
+                <h1 className="text-xl font-bold text-gray-800">IT言葉辞典</h1>
+                <span className="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full">β版</span>
+              </div>
+              {/* ▲▲▲ ここまで修正 ▲▲▲ */}
               <p className="text-xs text-gray-500">情報処理技術関連用語索引</p>
             </div>
           </Link>
@@ -30,14 +34,12 @@ export default function Header() {
             >
               ホーム
             </Link>
-           {/* ▼▼▼ ここから追加 ▼▼▼ */}
             <Link 
               href="/super-index" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
               索引
             </Link>
-            {/* ▲▲▲ ここまで追加 ▲▲▲ */}
             <Link 
               href="/terms" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
