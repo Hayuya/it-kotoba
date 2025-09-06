@@ -54,7 +54,7 @@ export default async function AboutPage() {
 
                 <div>
                   <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                    🚀 圧倒的な高速表示と検索性
+                    高速表示と検索性
                   </h3>
                   <p className="text-gray-600 mb-4">
                     学習中の思考を止めさせない、ストレスフリーな体験を提供します。気になった用語は瞬時に検索・表示。豊富な絞り込み機能で、膨大な情報の中から目的の用語へ一直線にたどり着けます。
@@ -63,7 +63,7 @@ export default async function AboutPage() {
 
                 <div>
                   <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                    🤝 分かりやすさを追求した解説
+                    分かりやすさを追求した解説
                   </h3>
                   <p className="text-gray-600 mb-4">
                     単なる言葉の定義だけでなく、なぜそれが必要なのか、どのような場面で使われるのか、といった背景まで含めて解説。初学者でもイメージが掴めるよう、平易な言葉で説明することを心がけています。
@@ -72,7 +72,7 @@ export default async function AboutPage() {
                 
                 <div>
                   <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                    🌐 知識が広がる回遊性
+                    知識が広がる回遊性
                   </h3>
                   <p className="text-gray-600 mb-4">
                     一つの用語を調べたら、関連用語を辿って知識をどんどん広げていけます。点だった知識が線となり、やがて面となって体系的な理解へと繋がります。<br />
