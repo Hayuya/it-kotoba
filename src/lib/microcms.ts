@@ -1,3 +1,5 @@
+// src/lib/microcms.ts
+
 import { createClient } from 'microcms-js-sdk'
 
 
@@ -60,8 +62,10 @@ export interface Term {
   slug: string
   description: string
   content: string
-  category: Category
-  difficulty: string[] // 配列形式に変更
+  // ▼▼▼ ここから変更 ▼▼▼
+  category: Category // 変更なし（ただし、[slug]/page.tsx側で配列も許容するように修正）
+  // ▲▲▲ ここまで変更 ▲▲▲
+  difficulty: string[]
   tags: Tag[]
   relatedTerms: Term[]
   isRecommended: boolean
@@ -70,7 +74,7 @@ export interface Term {
   updatedAt: string
   publishedAt: string
   revisedAt: string
-  search_title?: string; // ▼▼▼【変更点】search_titleの型定義を追加 ▼▼▼
+  search_title?: string;
 }
 
 export interface MicroCMSListResponse<T> {

@@ -10,7 +10,8 @@ import {
   getDifficultyColor, 
   getDifficultyLabel, 
   formatDate,
-  getAllTermSlugs
+  getAllTermSlugs,
+  Category // Category型をインポート
 } from '../../../lib/microcms'
 import { BreadcrumbList, TechArticle, WithContext } from 'schema-dts'
 import JsonLd from '../../../components/JsonLd'
@@ -35,10 +36,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: 'ページが見つかりません - IT言葉'
     }
   }
+  
+  // ▼▼▼ ここから変更 ▼▼▼
+  // カテゴリーが配列でもオブジェクトでも対応できるように修正
+  const category: Category | undefined = Array.isArray(term.category) ? term.category[0] : term.category;
+  const categoryName = category?.name || '';
+  // ▲▲▲ ここまで変更 ▲▲▲
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const tags = term.tags || []
-  const keywords = [term.title, term.category.name, ...tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', ')
+  // ▼▼▼ ここから変更 ▼▼▼
+  const keywords = [term.title, categoryName, ...tags.map(tag => tag.name), '情報処理安全確保支援士', 'IT用語'].join(', ')
+  // ▲▲▲ ここまで変更 ▲▲▲
 
   return {
     title: `${term.title} - IT言葉`,
@@ -75,6 +84,15 @@ export default async function TermPage({ params }: Props) {
     notFound()
   }
 
+  // ▼▼▼ ここから変更 ▼▼▼
+  // カテゴリーが配列でもオブジェクトでも対応できるように修正
+  const category: Category | undefined = Array.isArray(term.category) ? term.category[0] : term.category;
+  if (!category) {
+    // カテゴリーが存在しない場合はエラーページなどを表示
+    notFound();
+  }
+  // ▲▲▲ ここまで変更 ▲▲▲
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const currentUrl = `${siteUrl}/terms/${term.slug}`
   const tags = term.tags || []
@@ -87,7 +105,9 @@ export default async function TermPage({ params }: Props) {
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'ホーム', item: siteUrl },
       { '@type': 'ListItem', position: 2, name: '用語一覧', item: `${siteUrl}/terms` },
-      { '@type': 'ListItem', position: 3, name: term.category.name, item: `${siteUrl}/categories/${term.category.slug}` }, // カテゴリページへのリンクを追加
+      // ▼▼▼ ここから変更 ▼▼▼
+      { '@type': 'ListItem', position: 3, name: category.name, item: `${siteUrl}/categories/${category.slug}` }, // カテゴリページへのリンクを追加
+      // ▲▲▲ ここまで変更 ▲▲▲
       { '@type': 'ListItem', position: 4, name: term.title, item: currentUrl },
     ],
   };
@@ -117,7 +137,9 @@ export default async function TermPage({ params }: Props) {
     },
     "datePublished": term.publishedAt,
     "dateModified": term.updatedAt,
-    "articleSection": term.category.name,
+    // ▼▼▼ ここから変更 ▼▼▼
+    "articleSection": category.name,
+    // ▲▲▲ ここまで変更 ▲▲▲
     "keywords": tags.map(tag => tag.name).join(", "),
   };
 
@@ -145,8 +167,9 @@ export default async function TermPage({ params }: Props) {
                 <li>/</li>
                 <li><Link href="/terms" className="hover:text-blue-600">用語一覧</Link></li>
                 <li>/</li>
-                {/* カテゴリページへのリンクを有効化 */}
-                <li><Link href={`/categories/${term.category.slug}`} className="hover:text-blue-600">{term.category.name}</Link></li>
+                {/* ▼▼▼ ここから変更 ▼▼▼ */}
+                <li><Link href={`/categories/${category.slug}`} className="hover:text-blue-600">{category.name}</Link></li>
+                {/* ▲▲▲ ここまで変更 ▲▲▲ */}
                 <li>/</li>
                 <li className="text-gray-800 font-medium">{term.title}</li>
               </ol>
@@ -155,12 +178,14 @@ export default async function TermPage({ params }: Props) {
             <article className="bg-white rounded-lg shadow-md overflow-hidden">
               <header className="p-8 border-b border-gray-200">
                 <div className="flex items-start justify-between mb-4">
+                  {/* ▼▼▼ ここから変更 ▼▼▼ */}
                   <div className="flex items-center space-x-3">
-                    <span className="text-2xl">{term.category.icon}</span>
+                    <span className="text-2xl">{category.icon}</span>
                     <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                      {term.category.name}
+                      {category.name}
                     </span>
                   </div>
+                  {/* ▲▲▲ ここまで変更 ▲▲▲ */}
                   <span className={`text-sm px-3 py-1 rounded-full ${getDifficultyColor(term.difficulty)}`}>
                     {getDifficultyLabel(term.difficulty)}
                   </span>
@@ -233,7 +258,6 @@ export default async function TermPage({ params }: Props) {
                     </div>
                   </div>
                   
-                  {/* ▼▼▼ ここから変更 ▼▼▼ */}
                   <div className="flex items-center space-x-4">
                     <Link
                       href="/super-index"
@@ -248,7 +272,6 @@ export default async function TermPage({ params }: Props) {
                       検索へ
                     </Link>
                   </div>
-                  {/* ▲▲▲ ここまで変更 ▲▲▲ */}
                 </div>
               </footer>
             </article>

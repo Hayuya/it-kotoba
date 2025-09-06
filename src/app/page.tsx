@@ -1,17 +1,27 @@
-// src/app/page.tsx
-
-import Header from '../components/Header'
-import IndexSidebar from '../components/IndexSidebar'
-import { getCategories, getStats, getAllSearchableTerms } from '../lib/microcms'
-import HeroSearch from '../components/HeroSearch'
-import SuperIndexClient from '../components/SuperIndexClient'
+import Header from '../components/Header';
+import IndexSidebar from '../components/IndexSidebar';
+import {
+  getCategories,
+  getStats,
+  getAllSearchableTerms,
+  getAllCategories, // <-- インポートを追加
+} from '../lib/microcms';
+import HeroSearch from '../components/HeroSearch';
+import SuperIndexClient from '../components/SuperIndexClient';
+import CategoryTree from '../components/CategoryTree'; // <-- 新規コンポーネントをインポート
+import { buildCategoryTree } from '../lib/categoryTree'; // <-- 新規ヘルパーをインポート
 
 export default async function Home() {
-  const [categories, stats, allTerms] = await Promise.all([
+  // Promise.allにgetAllCategoriesを追加して、全データを並行して取得
+  const [categories, stats, allTerms, allCategories] = await Promise.all([
     getCategories(),
     getStats(),
     getAllSearchableTerms(),
-  ])
+    getAllCategories(),
+  ]);
+
+  // 取得したデータからツリー構造を構築
+  const categoryTree = buildCategoryTree(allCategories, allTerms);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -19,15 +29,11 @@ export default async function Home() {
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* ▼▼▼ ここから変更 ▼▼▼ */}
-          {/* サイドバー：lgスクリーン以上で表示 */}
           <aside className="hidden lg:block lg:w-1/4">
             <IndexSidebar categories={categories} />
           </aside>
 
-          {/* メインコンテンツ：lgスクリーンで幅を調整 */}
           <main className="w-full lg:w-3/4">
-          {/* ▲▲▲ ここまで変更 ▲▲▲ */}
             {/* ヒーローセクション */}
             <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 mb-8">
               <h1 className="text-4xl font-bold mb-4">IT言葉辞典</h1>
@@ -37,6 +43,13 @@ export default async function Home() {
               </p>
               <HeroSearch />
             </section>
+
+            {/* ▼▼▼ ここから追加 ▼▼▼ */}
+            <section className="mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">カテゴリーから探す</h2>
+              <CategoryTree categoryTree={categoryTree} />
+            </section>
+            {/* ▲▲▲ ここまで追加 ▲▲▲ */}
 
             {/* 高性能索引セクション */}
             <section className="mb-8">
@@ -107,5 +120,5 @@ export default async function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }
