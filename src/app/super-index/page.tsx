@@ -1,7 +1,7 @@
 // src/app/super-index/page.tsx
 
 import { Metadata } from 'next';
-import Link from 'next/link'; // Linkコンポーネントをインポート
+import Link from 'next/link';
 import Header from '../../components/Header';
 import IndexSidebar from '../../components/IndexSidebar';
 import {getAllSearchableTerms } from '../../lib/microcms';
@@ -30,14 +30,17 @@ export default async function SuperIndexPage() {
           </aside>
           <main className="lg:w-3/4">
             <header className="bg-white rounded-lg shadow-md p-8 mb-8">
-              {/* ▼▼▼ ここから変更 ▼▼▼ */}
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-start justify-between mb-4">
                 <h1 className="text-3xl font-bold text-gray-900">スーパー索引</h1>
-                <Link href="/terms" className="text-sm font-medium text-blue-600 hover:underline">
-                  用語検索へ →
-                </Link>
+                <div className="flex flex-col items-end space-y-2">
+                  <Link href="/terms" className="text-sm font-medium text-blue-600 hover:underline">
+                    用語検索へ →
+                  </Link>
+                  <Link href="/categories" className="text-sm font-medium text-green-600 hover:underline">
+                    カテゴリ一覧へ →
+                  </Link>
+                </div>
               </div>
-              {/* ▲▲▲ ここまで変更 ▲▲▲ */}
               <p className="text-gray-600 leading-relaxed">
                 すべてのIT用語をアルファベット順にリストアップしています。<br />
                 セクションを開いて目的の用語を素早く見つけましょう。

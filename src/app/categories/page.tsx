@@ -10,19 +10,15 @@ export const metadata: Metadata = {
   description: 'IT用語をカテゴリーから探せます。技術分野や体系ごとに整理された用語を効率的に学習できます。',
 };
 
-// ビルド時に静的ページとして生成します
 export const dynamic = 'force-static';
 
 export default async function CategoriesPage() {
-  // カテゴリーと全用語データを並行して取得します
   const [allCategories, allTerms] = await Promise.all([
     getAllCategories(),
     getAllSearchableTerms()
   ]);
 
-  // ホームページと同様のロジックで、カテゴリーIDごとに関連用語を紐付けます
   const termsByCategoryId = allTerms.reduce((acc, term) => {
-    // カテゴリが単一でも配列でも対応できるように正規化
     const categories = term.category 
       ? (Array.isArray(term.category) ? term.category : [term.category]) 
       : [];
@@ -54,11 +50,16 @@ export default async function CategoriesPage() {
           </aside>
           <main className="lg:w-3/4">
             <header className="bg-white rounded-lg shadow-md p-8 mb-8">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-start justify-between mb-4">
                 <h1 className="text-3xl font-bold text-gray-900">カテゴリ一覧</h1>
-                <Link href="/terms" className="text-sm font-medium text-blue-600 hover:underline">
-                  用語検索へ →
-                </Link>
+                <div className="flex flex-col items-end space-y-2">
+                  <Link href="/terms" className="text-sm font-medium text-blue-600 hover:underline">
+                    用語検索へ →
+                  </Link>
+                  <Link href="/super-index" className="text-sm font-medium text-purple-600 hover:underline">
+                    スーパー索引へ →
+                  </Link>
+                </div>
               </div>
               <p className="text-gray-600 leading-relaxed">
                 IT用語をカテゴリーから探せます。<br />

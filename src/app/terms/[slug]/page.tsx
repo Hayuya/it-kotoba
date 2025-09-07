@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Header from '../../../components/Header'
 import IndexSidebar from '../../../components/IndexSidebar'
-import CopyUrlButton from '../../../components/CopyUrlButton'
+//import CopyUrlButton from '../../../components/CopyUrlButton'
 import { 
   getTermBySlug, 
   getDifficultyColor, 
@@ -43,7 +43,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${term.title} - IT言葉`,
     description: term.description,
     keywords: keywords,
-    // Canonical URLを動的に設定
     alternates: {
       canonical: `/terms/${term.slug}`,
     },
@@ -76,7 +75,6 @@ export default async function TermPage({ params }: Props) {
   const tags = term.tags || []
   const relatedTerms = term.relatedTerms || []
 
-  // パンくずリスト用のJSON-LD
   const breadcrumbJsonLd: WithContext<BreadcrumbList> = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -87,7 +85,6 @@ export default async function TermPage({ params }: Props) {
     ],
   };
 
-  // 記事用のJSON-LD (TechArticleを使用)
   const articleJsonLd: WithContext<TechArticle> = {
     '@context': 'https://schema.org',
     '@type': 'TechArticle',
@@ -97,7 +94,7 @@ export default async function TermPage({ params }: Props) {
     },
     "headline": term.title,
     "description": term.description,
-    "image": `${siteUrl}/ogp.png`, // 記事の代表画像
+    "image": `${siteUrl}/ogp.png`, 
     "author": {
       "@type": "Organization",
       "name": "IT言葉編集部"
@@ -117,7 +114,6 @@ export default async function TermPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 複数のJSON-LDをまとめてheadに出力 */}
       <head>
         <JsonLd schema={breadcrumbJsonLd} />
         <JsonLd schema={articleJsonLd} />
@@ -132,7 +128,6 @@ export default async function TermPage({ params }: Props) {
           </aside>
 
           <main className="lg:w-3/4">
-            {/* パンくずリスト */}
             <nav className="mb-6 text-sm">
               <ol className="flex items-center space-x-2 text-gray-500">
                 <li><Link href="/" className="hover:text-blue-600">ホーム</Link></li>
@@ -200,8 +195,8 @@ export default async function TermPage({ params }: Props) {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  {/*<div>
                     <h4 className="text-sm font-semibold text-gray-700 mb-2">この記事をシェア</h4>
                     <div className="flex space-x-3">
                       <a
@@ -216,20 +211,20 @@ export default async function TermPage({ params }: Props) {
                       </a>
                       <CopyUrlButton url={currentUrl} />
                     </div>
-                  </div>
+                  </div>*/}
                   
-                  <div className="flex items-center space-x-4">
+                  <div className="flex flex-col items-stretch sm:items-center sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
                     <Link
                       href="/super-index"
-                      className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                      className="text-center bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors font-medium"
                     >
-                      🔍 索引へ
+                      スーパー索引へ
                     </Link>
                     <Link
-                      href="/terms"
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                      href="/categories"
+                      className="text-center bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
                     >
-                      検索へ
+                      カテゴリー覧へ
                     </Link>
                   </div>
                 </div>

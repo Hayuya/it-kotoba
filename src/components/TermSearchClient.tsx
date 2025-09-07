@@ -12,42 +12,29 @@ interface TermSearchClientProps {
   initialTerms: SearchableTerm[];
 }
 
-// ▼▼▼ ここからスコアリングロジックを追加 ▼▼▼
-/**
- * 用語と検索クエリの関連性スコアを計算する関数
- * @param term - 評価対象の用語オブジェクト
- * @param query - 小文字化された検索クエリ
- * @returns スコア (高いほど関連性が高い)
- */
 const calculateRelevanceScore = (term: SearchableTerm, query: string): number => {
   const title = term.title.toLowerCase();
   
-  // 1. 完全一致 (最高スコア)
   if (title === query) {
     return 100;
   }
   
-  // 2. 前方一致
   if (title.startsWith(query)) {
     return 90;
   }
   
-  // 3. 単語として一致 (正規表現で単語の境界をチェック)
   const wordBoundaryRegex = new RegExp(`\\b${query}\\b`);
   if (wordBoundaryRegex.test(title)) {
     return 80;
   }
 
-  // 4. search_title (別名)での前方一致
   const searchTitle = term.search_title?.toLowerCase() || '';
   if (searchTitle.split(',').some(t => t.trim().startsWith(query))) {
     return 70;
   }
 
-  // 5. 部分一致 (デフォルト)
   return 10;
 };
-// ▲▲▲ ここまでスコアリングロジックを追加 ▲▲▲
 
 export default function TermSearchClient({ initialTerms }: TermSearchClientProps) {
   const searchParams = useSearchParams();
@@ -79,20 +66,16 @@ export default function TermSearchClient({ initialTerms }: TermSearchClientProps
         term.search_title?.toLowerCase().includes(lowerCaseQuery)
       );
 
-      // ▼▼▼ ここからソート処理を追加 ▼▼▼
       terms.sort((a, b) => {
         const scoreA = calculateRelevanceScore(a, lowerCaseQuery);
         const scoreB = calculateRelevanceScore(b, lowerCaseQuery);
         
-        // スコアが異なる場合は、スコアの高い方を優先
         if (scoreB !== scoreA) {
           return scoreB - scoreA;
         }
         
-        // スコアが同じ場合は、文字コード順で並び替え
         return a.title.localeCompare(b.title);
       });
-      // ▲▲▲ ここまでソート処理を追加 ▲▲▲
     }
 
     return terms;
@@ -101,11 +84,16 @@ export default function TermSearchClient({ initialTerms }: TermSearchClientProps
   return (
     <>
       <header className="bg-white rounded-lg shadow-md p-8 mb-8">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-start justify-between mb-4">
           <h1 className="text-3xl font-bold text-gray-900">IT用語検索</h1>
-          <Link href="/super-index" className="text-sm font-medium text-blue-600 hover:underline">
-            スーパー索引へ →
-          </Link>
+          <div className="flex flex-col items-end space-y-2">
+            <Link href="/super-index" className="text-sm font-medium text-blue-600 hover:underline">
+              スーパー索引へ →
+            </Link>
+            <Link href="/categories" className="text-sm font-medium text-green-600 hover:underline">
+              カテゴリ一覧へ →
+            </Link>
+          </div>
         </div>
         <p className="text-gray-600 mb-6">
           情報処理技術者試験で問われるIT用語を中心に収録しています。<br />

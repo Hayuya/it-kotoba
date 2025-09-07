@@ -33,24 +33,22 @@ export default function Header() {
               ホーム
             </Link>
             <Link 
+              href="/terms" 
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            >
+              検索
+            </Link>
+            <Link 
               href="/super-index" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
               索引
             </Link>
-            {/* ▼▼▼ ここから追加 ▼▼▼ */}
             <Link 
               href="/categories" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
               カテゴリー
-            </Link>
-            {/* ▲▲▲ ここまで追加 ▲▲▲ */}
-            <Link 
-              href="/terms" 
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              検索
             </Link>
             <Link 
               href="/about" 
@@ -109,27 +107,25 @@ export default function Header() {
                 ホーム
               </Link>
               <Link 
+                href="/terms" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                検索
+              </Link>
+              <Link 
                 href="/super-index" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 索引
               </Link>
-              {/* ▼▼▼ ここから追加 ▼▼▼ */}
               <Link 
                 href="/categories" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 カテゴリー
-              </Link>
-              {/* ▲▲▲ ここまで追加 ▲▲▲ */}
-              <Link 
-                href="/terms" 
-                className="text-gray-700 hover:text-blue-600 font-medium py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                検索
               </Link>
               <Link 
                 href="/about" 
