@@ -26,7 +26,7 @@ export default function PageWrapper({
                 おすすめ記事
               </h3>
               <p className="text-gray-600 mb-4">
-                IT言葉辞典が厳選した、特におすすめの用語をまとめてチェックできます。
+                ITに関するおすすめの記事をまとめてチェックできます。
               </p>
               <span className="font-semibold text-blue-600 group-hover:underline">
                 一覧を見る →
@@ -39,7 +39,7 @@ export default function PageWrapper({
                 コマンド置き場
               </h3>
               <p className="text-gray-600 mb-4">
-                よく使うコマンドや便利なコマンドの用語を集めました。逆引きにも便利です。
+                よく使うLinuxコマンドを集めました。
               </p>
               <span className="font-semibold text-green-600 group-hover:underline">
                 一覧を見る →

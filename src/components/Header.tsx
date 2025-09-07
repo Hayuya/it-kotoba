@@ -16,12 +16,10 @@ export default function Header() {
               <span className="text-xl font-bold">IT</span>
             </div>
             <div>
-              {/* ▼▼▼ ここから修正 ▼▼▼ */}
               <div className="flex items-center space-x-2">
                 <h1 className="text-xl font-bold text-gray-800">IT言葉辞典</h1>
                 <span className="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full">β版</span>
               </div>
-              {/* ▲▲▲ ここまで修正 ▲▲▲ */}
               <p className="text-xs text-gray-500">情報処理技術関連用語索引</p>
             </div>
           </Link>
@@ -40,6 +38,14 @@ export default function Header() {
             >
               索引
             </Link>
+            {/* ▼▼▼ ここから追加 ▼▼▼ */}
+            <Link 
+              href="/categories" 
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            >
+              カテゴリー
+            </Link>
+            {/* ▲▲▲ ここまで追加 ▲▲▲ */}
             <Link 
               href="/terms" 
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
@@ -109,6 +115,15 @@ export default function Header() {
               >
                 索引
               </Link>
+              {/* ▼▼▼ ここから追加 ▼▼▼ */}
+              <Link 
+                href="/categories" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                カテゴリー
+              </Link>
+              {/* ▲▲▲ ここまで追加 ▲▲▲ */}
               <Link 
                 href="/terms" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-2"
