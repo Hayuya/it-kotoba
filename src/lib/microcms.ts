@@ -220,6 +220,29 @@ export const getTermBySlug = async (slug: string): Promise<Term | null> => {
   }
 }
 
+export const getRecommendedTerms = async (limit: number = 6): Promise<Term[]> => {
+  try {
+    const { contents } = await client.get({
+      endpoint: 'terms',
+      queries: {
+        filters: 'isRecommended[equals]true',
+        limit,
+        orders: 'order',
+      },
+    })
+
+    // 各termのtagsとrelatedTermsを安全に処理
+    return contents.map((term: any) => ({
+      ...term,
+      tags: term.tags || [],
+      relatedTerms: term.relatedTerms || [],
+    }))
+  } catch (error) {
+    console.error('Error fetching recommended terms:', error)
+    return []
+  }
+}
+
 export const getTermsByTag = async (
   tagId: string,
   queries?: {
