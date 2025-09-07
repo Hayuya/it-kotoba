@@ -57,6 +57,7 @@ export interface Term {
   category?: Category
   tags: Tag[]
   relatedTerms: Term[]
+  isRecommended: boolean
   order?: number
   createdAt: string
   updatedAt: string
