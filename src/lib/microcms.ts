@@ -528,3 +528,42 @@ export const getStats = async () => {
     }
   }
 }
+// サイトマップ生成用：全用語のスラッグと更新日時を取得
+export const getAllTermsForSitemap = async (): Promise<{ slug: string; updatedAt: string }[]> => {
+  try {
+    const allContents: { slug: string; updatedAt: string }[] = [];
+    const limit = 100;
+    let offset = 0;
+    let totalCount = 0;
+
+    const firstResponse = await client.get<MicroCMSListResponse<{ slug: string; updatedAt: string }>>({
+      endpoint: 'terms',
+      queries: { fields: 'slug,updatedAt', limit, offset },
+    });
+
+    allContents.push(...firstResponse.contents);
+    totalCount = firstResponse.totalCount;
+    offset += limit;
+
+    const promises = [];
+    while (offset < totalCount) {
+      promises.push(
+        client.get<MicroCMSListResponse<{ slug: string; updatedAt: string }>>({
+          endpoint: 'terms',
+          queries: { fields: 'slug,updatedAt', limit, offset },
+        })
+      );
+      offset += limit;
+    }
+
+    const responses = await Promise.all(promises);
+    responses.forEach(res => allContents.push(...res.contents));
+    
+    return allContents;
+  } catch (error) {
+    console.error('Error fetching all terms for sitemap:', error);
+    return [];
+  }
+}
+
+// ...（既存のコードが続く場合はそのまま）...
