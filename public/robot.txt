@@ -9,4 +9,4 @@ Disallow: /api/
 Disallow: /_next/
 
 # サイトマップの場所を明記
-Sitemap: https://it-aikotoba.vercel.app/sitemap.xml
+Sitemap: https://itkotoba.com/sitemap.xml
