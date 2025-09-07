@@ -17,7 +17,6 @@ type IndexTerm = Pick<Term, 'id' | 'title' | 'slug'>;
 
 export default function IndexSidebar() {
   const [selectedIndex, setSelectedIndex] = useState<string>('')
-  const [indexType, setIndexType] = useState<'alphabet' | 'number'>('alphabet')
   const [filterQuery, setFilterQuery] = useState('')
   const [loading, setLoading] = useState(true)
   
@@ -66,13 +65,6 @@ export default function IndexSidebar() {
   }, [allTerms])
 
 
-  // 索引タイプ（ABC/数字）を切り替える
-  const handleIndexTypeChange = (type: 'alphabet' | 'number') => {
-    setIndexType(type)
-    setSelectedIndex('')
-    setFilterQuery('')
-  }
-
   // 索引の項目（A, B, C...）をクリックしたときの処理
   const handleIndexClick = (index: string) => {
     setFilterQuery('')
@@ -104,66 +96,36 @@ export default function IndexSidebar() {
           </Link>
         </div>
         
-        <div className="flex space-x-2 mb-4">
+        <div className="grid grid-cols-6 gap-1">
+          {ALPHABET_GROUPS.map((item) => (
+            <button
+              key={item}
+              onClick={() => handleIndexClick(item)}
+              className={`p-2 text-center text-sm rounded transition-colors ${
+                selectedIndex === item
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {item}
+            </button>
+          ))}
+          {/* 0-9ボタンを4マス使って配置 */}
           <button
-            onClick={() => handleIndexTypeChange('alphabet')}
-            className={`px-3 py-1 text-sm rounded-full transition-colors ${
-              indexType === 'alphabet'
+            key={NUMBER_GROUP}
+            onClick={() => handleIndexClick(NUMBER_GROUP)}
+            className={`col-span-4 p-2 text-center text-sm rounded transition-colors ${
+              selectedIndex === NUMBER_GROUP
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            ABC
+            {NUMBER_GROUP}
           </button>
-          <button
-            onClick={() => handleIndexTypeChange('number')}
-            className={`px-3 py-1 text-sm rounded-full transition-colors ${
-              indexType === 'number'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            数字
-          </button>
-        </div>
-
-        <div className="mb-4">
-          {indexType === 'alphabet' && (
-            <div className="grid grid-cols-6 gap-1">
-              {ALPHABET_GROUPS.map((letter) => (
-                <button
-                  key={letter}
-                  onClick={() => handleIndexClick(letter)}
-                  className={`p-2 text-center text-sm rounded transition-colors ${
-                    selectedIndex === letter
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {letter}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {indexType === 'number' && (
-            <div className="flex justify-center">
-              <button
-                onClick={() => handleIndexClick(NUMBER_GROUP)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  selectedIndex === NUMBER_GROUP
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                0-9
-              </button>
-            </div>
-          )}
         </div>
 
         {selectedIndex && (
-          <div className="border-t border-gray-200 pt-4">
+          <div className="border-t border-gray-200 pt-4 mt-4">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">
               「{selectedIndex}」で始まる用語 
               {indexTerms.length > 0 && `(${indexTerms.length}件)`}
