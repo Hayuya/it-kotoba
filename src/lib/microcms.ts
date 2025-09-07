@@ -57,7 +57,6 @@ export interface Term {
   category?: Category
   tags: Tag[]
   relatedTerms: Term[]
-  isRecommended: boolean
   order?: number
   createdAt: string
   updatedAt: string
@@ -217,46 +216,6 @@ export const getTermBySlug = async (slug: string): Promise<Term | null> => {
   } catch (error) {
     console.error('Error fetching term by slug:', error)
     return null
-  }
-}
-
-export const getRecommendedTerms = async (limit: number = 6): Promise<Term[]> => {
-  try {
-    const { contents } = await client.get({
-      endpoint: 'terms',
-      queries: {
-        filters: 'isRecommended[equals]true',
-        limit,
-        orders: 'order',
-      },
-    })
-
-    // 各termのtagsとrelatedTermsを安全に処理
-    return contents.map((term: any) => ({
-      ...term,
-      tags: term.tags || [],
-      relatedTerms: term.relatedTerms || [],
-    }))
-  } catch (error) {
-    console.error('Error fetching recommended terms:', error)
-    return []
-  }
-}
-
-// クライアントサイド用のおすすめ記事取得関数
-export const getRecommendedTermsClient = async (limit: number = 6): Promise<Term[]> => {
-  try {
-    const response = await fetch(`/api/terms?filters=isRecommended[equals]true&limit=${limit}&orders=order`)
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch recommended terms')
-    }
-
-    const data = await response.json()
-    return data.success ? data.data.contents : []
-  } catch (error) {
-    console.error('Error fetching recommended terms (client):', error)
-    return []
   }
 }
 
