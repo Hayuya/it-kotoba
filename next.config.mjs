@@ -38,31 +38,27 @@ const nextConfig = {
       },
     ];
   },
-  // ISR (Incremental Static Regeneration) 設定
-  async rewrites() {
-    return [
-      {
-        source: '/sitemap.xml',
-        destination: '/api/sitemap',
-      },
-    ];
-  },
-  // 最適化設定
+  // ▼▼▼ この rewrites セクションを削除 ▼▼▼
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/sitemap.xml',
+  //       destination: '/api/sitemap',
+  //     },
+  //   ];
+  // },
+  // ▲▲▲ ここまで削除 ▲▲▲
   swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // TypeScript設定
   typescript: {
     ignoreBuildErrors: false,
   },
-  // ESLint設定
   eslint: {
     ignoreDuringBuilds: false,
   },
-  // 出力設定
   output: 'standalone',
-  // パワード by Next.js の削除
   poweredByHeader: false,
 };
 
