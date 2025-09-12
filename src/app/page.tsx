@@ -47,7 +47,7 @@ export default async function Home() {
               <h1 className="text-4xl font-bold mb-4">IT言葉辞典</h1>
               <p className="text-xl mb-6">
                 参考書の横に、学びのそばに。<br />
-                IT学習の「分からない」を瞬時に解決する高速用語辞典。
+                IT学習の「分からない」を瞬時に解決。
               </p>
               <HeroSearch />
             </section>
